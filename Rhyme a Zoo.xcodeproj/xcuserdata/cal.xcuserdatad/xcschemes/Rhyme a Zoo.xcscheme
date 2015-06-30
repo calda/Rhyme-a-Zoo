@@ -34,6 +34,20 @@
                ReferencedContainer = "container:Rhyme a Zoo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "2E45E1891B429BF000A8A802"
+               BuildableName = "Rhyme a Zoo Tests.xctest"
+               BlueprintName = "Rhyme a Zoo Tests"
+               ReferencedContainer = "container:Rhyme a Zoo.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -49,6 +63,16 @@
                BlueprintIdentifier = "2E0899911B40A5D300693309"
                BuildableName = "Rhyme a ZooTests.xctest"
                BlueprintName = "Rhyme a ZooTests"
+               ReferencedContainer = "container:Rhyme a Zoo.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "2E45E1891B429BF000A8A802"
+               BuildableName = "Rhyme a Zoo Tests.xctest"
+               BlueprintName = "Rhyme a Zoo Tests"
                ReferencedContainer = "container:Rhyme a Zoo.xcodeproj">
             </BuildableReference>
          </TestableReference>

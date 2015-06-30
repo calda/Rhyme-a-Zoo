@@ -8,13 +8,20 @@
 
 import Foundation
 import UIKit
+import UIKit.UIGestureRecognizerSubclass
+
+func RZUserOwnsAnimalKey(animal: String) -> String {
+    return "userOwnsAnimal:\(animal)"
+}
 
 class BuildingViewController : UIViewController {
     
     @IBOutlet weak var backgroundImage: UIImageView!
     @IBOutlet weak var blurredBackground: UIImageView!
+    @IBOutlet weak var infoButton: UIButton!
+    @IBOutlet weak var buildingButton: UIButton!
     
-    let percentageFrames = [
+    let percentageFrames = [ //each point is a percentage of the total width/height of the background image
         "giraffe" : CGRect(origin: CGPointMake(0.637, 0.0493), size: CGSizeMake(0.318, 0.921)),
         "hippo" : CGRect(origin: CGPointMake(0.038, 0.011), size: CGSizeMake(0.378, 0.369)),
         "kangaroo" : CGRect(origin: CGPointMake(0.115, 0.433), size: CGSizeMake(0.450, 0.550)),
@@ -42,10 +49,9 @@ class BuildingViewController : UIViewController {
         "pterodactyl" : CGRect(origin: CGPointMake(0.758, 0.129), size: CGSizeMake(0.29, 0.316)),
         "stegasaurus" : CGRect(origin: CGPointMake(0.281, 0.417), size: CGSizeMake(0.288, 0.25)),
         "trex" : CGRect(origin: CGPointMake(0.527, 0.197), size: CGSizeMake(0.389, 0.791)),
-        "centaur" : CGRect(origin: CGPointMake(0.014, 0.309), size: CGSizeMake(0.217, 0.39)),
         "triceratop" : CGRect(origin: CGPointMake(0.021, 0.315), size: CGSizeMake(0.244, 0.36)),
-        
-        "dummy" : CGRectZero
+        "mermaid" : CGRect(origin: CGPointMake(0.616, 0.293), size: CGSizeMake(0.353, 0.784)),
+        "centaur" : CGRect(origin: CGPointMake(0.278, 0.173), size: CGSizeMake(0.302, 0.498))
     ]
     
     let buildingAnimals = [
@@ -56,15 +62,17 @@ class BuildingViewController : UIViewController {
         ["alligator", "iguana", "turtle", "rattlesnake"],
         ["baboon", "chimp", "gorilla", "monkey"],
         ["pterodactyl", "stegasaurus", "triceratop", "trex"],
-        []
-        
+        ["mermaid", "centaur"]
     ]
     
-    var buttonFrames: [String : CGRect] = [:]
+    var buttons: [String : UIButton] = [:]
+    var animalAudioNumber: [String : Int] = [:]
     var building: Int!
+    var displaySize: CGSize!
     
-    func decorate(#building: Int) {
+    func decorate(#building: Int, displaySize: CGSize) {
         self.building = building
+        self.displaySize = displaySize
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -72,62 +80,125 @@ class BuildingViewController : UIViewController {
         let image = UIImage(named:"building\(building).jpg")
         backgroundImage.image = image
         blurredBackground.image = image
-    }
-    
-    override func viewDidAppear(animated: Bool) {
+        
         //generate frames for animal buttons
-        buttonFrames = [:]
-        let sceneSize = backgroundImage.frame.size
+        buttons = [:]
+        animalAudioNumber = [:]
+        let displayHeight = displaySize.height
+        let currentHeight = self.backgroundImage.frame.height
+        let ratio = displayHeight / currentHeight
+        let backgroundSize = self.backgroundImage.frame
+        let sceneSize = CGSizeMake(backgroundSize.width * ratio, backgroundSize.height * ratio)
         
         for animal in buildingAnimals[building - 1] {
             let frame = percentageFrames[animal]!
             let origin = CGPointMake(frame.origin.x * sceneSize.width, frame.origin.y * sceneSize.height)
             let size = CGSizeMake(frame.width * sceneSize.width, frame.height * sceneSize.height)
-            let imageFrame = CGRect(origin: origin, size: size)
-            buttonFrames.updateValue(imageFrame, forKey: animal)
-        }
-        
-        for animal in buildingAnimals[building - 1] {
-            let userOwnsAnimal = building < 1000
+            let buttonFrame = CGRect(origin: origin, size: size)
+            
+            //add button to view
+            let dataKey = RZUserOwnsAnimalKey(animal)
+            let userOwnsAnimal = data.boolForKey(dataKey)
             
             let image: UIImage?
             if userOwnsAnimal {
                 image = UIImage(named: "\(animal)#color")
             }
             else {
-               image = UIImage(named: animal)
+                image = UIImage(named: animal)
             }
             
-            let imageView = UIImageView(frame: buttonFrames[animal]!)
-            imageView.image = image
-            backgroundImage.addSubview(imageView)
+            let button = UIButton(frame: buttonFrame)
+            button.setImage(image, forState: UIControlState.Normal)
+            button.userInteractionEnabled = false
+            backgroundImage.addSubview(button)
+            
+            buttons.updateValue(button, forKey: animal)
+            
+            //start on random audio
+            let random = Int(arc4random_uniform(2) + 1)
+            animalAudioNumber.updateValue(random, forKey: animal)
         }
+        
         backgroundImage.layer.masksToBounds = true
         backgroundImage.clipsToBounds = true
         
+        //hide info button if there is no relevant audio
+        if building > 6 {
+            infoButton.hidden = true
+        } else {
+            infoButton.hidden = false
+        }
+        
+        buildingButton.setImage(UIImage(named: "button-\(building)"), forState: .Normal)
     }
     
-    var origin: CGPoint?
-    
     @IBAction func tapDetected(sender: UITapGestureRecognizer) {
-        let touch = sender.locationInView(backgroundImage)
-        let widthUnrounded = touch.x / backgroundImage.frame.width
-        let heightUnrounded = touch.y / backgroundImage.frame.height
-        let width = CGFloat(round(1000 * widthUnrounded) / 1000)
-        let height = CGFloat(round(1000 * heightUnrounded) / 1000)
+        if UAIsAudioPlaying() { return } //don't do visual effects if audio is already playing
         
-        if origin == nil {
-            origin = CGPointMake(width, height)
+        let touch = sender.locationInView(backgroundImage)
+        var anyHit = false //only allow the top hitbox if two overlap
+        
+        for animal in buildingAnimals[building - 1] {
+            let button = buttons[animal]!
+            let frame = button.frame
+            
+            if CGRectContainsPoint(frame, touch) && !anyHit {
+                anyHit = true
+                
+                if sender.state == .Ended {
+                    button.highlighted = false
+                    //play an audio for that animal
+                    let audio = animalAudioNumber[animal]!
+                    let audioName = "\(animal)_\(audio)"
+                    let success = UAPlayer().play(audioName, ofType: "mp3", ifConcurrent: .Ignore)
+                    
+                    if success {
+                        //increment audio numver
+                        var nextAudio = audio + 1
+                        if nextAudio == 4 {
+                            nextAudio = 1
+                        }
+                        animalAudioNumber.updateValue(nextAudio, forKey: animal)
+                    }
+                }
+                else if sender.state == .Began || sender.state == .Changed {
+                    button.highlighted = true
+                }
+            }
+            else {
+                button.highlighted = false
+            }
         }
-        else {
-            let size = CGSizeMake(width - origin!.x, height - origin!.y)
-            println("CGRect(origin: CGPointMake(\(origin!.x), \(origin!.y)), size: CGSizeMake(\(size.width), \(size.height))),")
-            origin = nil
-        }
+    }
+    
+    @IBAction func infoPress(sender: AnyObject) {
+        let audioName = "building\(building)"
+        UAPlayer().play(audioName, ofType: ".mp3", ifConcurrent: .Ignore)
     }
     
     @IBAction func homePressed(sender: AnyObject) {
+        UAHaltPlayback()
         self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+}
+
+class UITouchGestureRecognizer : UIGestureRecognizer {
+    
+    override func touchesBegan(touches: Set<NSObject>!, withEvent event: UIEvent!) {
+        super.touchesBegan(touches, withEvent: event)
+        self.state = .Began
+    }
+    
+    override func touchesMoved(touches: Set<NSObject>!, withEvent event: UIEvent!) {
+        super.touchesMoved(touches, withEvent: event)
+        self.state = .Began
+    }
+    
+    override func touchesEnded(touches: Set<NSObject>!, withEvent event: UIEvent!) {
+        super.touchesEnded(touches, withEvent: event)
+        self.state = .Ended
     }
     
 }

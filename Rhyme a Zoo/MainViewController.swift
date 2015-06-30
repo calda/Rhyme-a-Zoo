@@ -19,6 +19,39 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet var panGestureRecognizer: UIPanGestureRecognizer!
     
     override func viewDidAppear(animated: Bool) {
+        
+        //test the database because I'm dumb and deleted the Unit Tests
+        /*    ALL OF THESE TESTS PASSED ON JUNE 30, 2015   */
+        
+        /*println(RZQuizDatabase)
+        println(RZQuizDatabase.getQuiz(0).questions[0].options[0].word)
+        
+        for i in 0 ..< RZQuizDatabase.count {
+            let quiz = RZQuizDatabase.getQuiz(i)
+            for question in quiz.questions {
+                let options = question.options
+                let words = options.map{ return $0.word }
+                let success = contains(words, question.answer)
+                if !success {
+                    println("A question's options array does not contain the question's answer.")
+                }
+            }
+        }
+        
+        for i in 0 ..< 10 {
+            println(RZQuizDatabase.getQuiz(i))
+        }
+        println(RZQuizDatabase.quizesForLevel(1))
+        println(RZQuizDatabase.quizesForLevel(2))
+        println(RZQuizDatabase.quizesForLevel(3))
+
+        for level in 1...RZQuizDatabase.levelCount {
+            let quizes = RZQuizDatabase.quizesForLevel(level)
+            if quizes.count != 5 {
+                println("\(level) does not have 5 quizes.")
+            }
+        }*/
+        
         buttonFrames = [:]
         //prepare dictionary of original button frames
         for subview in buttonsSuperview.subviews {

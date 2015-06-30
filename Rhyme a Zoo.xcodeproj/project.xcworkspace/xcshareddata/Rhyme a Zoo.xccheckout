@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>D65D4F32-6E78-43F4-AAE4-CB0FB883C3FF</string>
+	<key>IDESourceControlProjectName</key>
+	<string>project</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>72B5E18F3DFE0BA5A472BE6EBB5F8389BD7097AA</key>
+		<string>https://github.com/Calda/Rhyme-a-Zoo.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Rhyme a Zoo.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>72B5E18F3DFE0BA5A472BE6EBB5F8389BD7097AA</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/Calda/Rhyme-a-Zoo.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>72B5E18F3DFE0BA5A472BE6EBB5F8389BD7097AA</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>72B5E18F3DFE0BA5A472BE6EBB5F8389BD7097AA</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Rhyme%20a%20Zoo</string>
+		</dict>
+	</array>
+</dict>
+</plist>
