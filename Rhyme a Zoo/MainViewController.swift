@@ -18,6 +18,18 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
     var buttonFrames: [UIButton : CGRect] = [:]
     @IBOutlet var panGestureRecognizer: UIPanGestureRecognizer!
     
+    override func viewWillAppear(animated: Bool) {
+        //set gradient
+        let gradient = CAGradientLayer()
+        gradient.frame = UIScreen.mainScreen().bounds
+        gradient.colors = [
+            UIColor(red: 35.0 / 255.0, green: 77.0 / 255.0, blue: 164.0 / 255.0, alpha: 1.0).CGColor,
+            UIColor(red: 63.0 / 255.0, green: 175.0 / 255.0, blue: 245.0 / 255.0, alpha: 1.0).CGColor
+        ]
+        self.view.layer.insertSublayer(gradient, atIndex: 0)
+        self.view.backgroundColor = UIColor.clearColor()
+    }
+    
     override func viewDidAppear(animated: Bool) {
         
         //test the database because I'm dumb and deleted the Unit Tests
@@ -61,16 +73,6 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
         }
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "touchDownNotificationRecieved:", name: RZMainMenuTouchDownNotification, object: nil)
-        
-        //set gradient
-        let gradient = CAGradientLayer()
-        gradient.frame = self.view.frame
-        gradient.colors = [
-            UIColor(red: 35.0 / 255.0, green: 77.0 / 255.0, blue: 164.0 / 255.0, alpha: 1.0).CGColor,
-            UIColor(red: 63.0 / 255.0, green: 175.0 / 255.0, blue: 245.0 / 255.0, alpha: 1.0).CGColor
-        ]
-        self.view.layer.insertSublayer(gradient, atIndex: 0)
-        self.view.backgroundColor = UIColor.clearColor()
     }
     
     func touchDownNotificationRecieved(notification: NSNotification) {
@@ -107,6 +109,9 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
                 
                 if frame.contains(touch) {
                     if let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier(button.restorationIdentifier!) as? UIViewController {
+                        if let controller = controller as? CatalogViewController {
+                            controller.animatingFromHome = true
+                        }
                         self.presentViewController(controller, animated: true, completion: nil)
                     }
                 }

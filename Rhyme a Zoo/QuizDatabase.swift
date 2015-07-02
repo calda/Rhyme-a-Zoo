@@ -75,6 +75,10 @@ class QuizDatabase {
         return Quiz(number)
     }
     
+    func getRhyme(index: Int) -> Rhyme {
+        return getQuiz(index)
+    }
+    
     func quizesForLevel(level: Int) -> [Quiz!] {
         var displayOrderArray: [Quiz!] = [nil, nil, nil, nil, nil]
         for quiz in Quizes.filter(QuizLevel == level) {
@@ -86,6 +90,8 @@ class QuizDatabase {
     }
     
 }
+
+typealias Rhyme = Quiz
 
 ///Avaliable though RZQuizDatabase. Contains 4 Questions.
 struct Quiz : Printable {
@@ -207,5 +213,15 @@ extension Array {
             swap(&list[i], &list[j])
         }
         return list
+    }
+}
+
+extension Int {
+    func threeCharacterString() -> String {
+        let start = "\(self)"
+        let length = count(start)
+        if length == 1 { return "00\(start)" }
+        else if length == 2 { return "0\(start)" }
+        else { return start }
     }
 }

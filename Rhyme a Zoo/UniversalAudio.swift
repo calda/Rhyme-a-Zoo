@@ -79,14 +79,32 @@ class UAPlayer {
             
             dispatch_async(UAAudioQueue, {
                 while(player.playing) {
-                    if UAShouldHaltPlayback {
-                        player.stop()
+                    if UAShouldHaltPlayback && !self.fading {
+                        self.doVolumeFade()
                         UAAudioIsPlaying = false
                     }
                 }
+                
                 player.stop()
                 UAAudioIsPlaying = false
             })
+        }
+    }
+    
+    var fading = false
+    
+    func doVolumeFade() {
+        fading = true
+        if let player = player {
+            if player.volume > 0.1 {
+                player.volume = player.volume - 0.1
+                delay(0.1) {
+                    self.doVolumeFade()
+                }
+            } else {
+                player.stop()
+            }
+            
         }
     }
     

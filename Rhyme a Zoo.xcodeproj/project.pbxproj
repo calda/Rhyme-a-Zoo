@@ -2856,6 +2856,9 @@
 		2EC1AB561B41477C00A635AB /* turtle#color.png in Resources */ = {isa = PBXBuildFile; fileRef = 2EC1AB191B41477C00A635AB /* turtle#color.png */; };
 		2EC1AB571B41477C00A635AB /* wolf.png in Resources */ = {isa = PBXBuildFile; fileRef = 2EC1AB1A1B41477C00A635AB /* wolf.png */; };
 		2EC1AB581B41477C00A635AB /* wolf#color.png in Resources */ = {isa = PBXBuildFile; fileRef = 2EC1AB1B1B41477C00A635AB /* wolf#color.png */; };
+		2ED9B1F91B44D16F007932C4 /* CatalogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ED9B1F81B44D16F007932C4 /* CatalogViewController.swift */; };
+		2ED9B1FE1B450705007932C4 /* illustration_shadow.png in Resources */ = {isa = PBXBuildFile; fileRef = 2ED9B1FD1B450705007932C4 /* illustration_shadow.png */; };
+		2ED9B2001B45087C007932C4 /* RhymeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ED9B1FF1B45087C007932C4 /* RhymeViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -5760,6 +5763,9 @@
 		2EC1AB191B41477C00A635AB /* turtle#color.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "turtle#color.png"; path = "Zoo/turtle#color.png"; sourceTree = "<group>"; };
 		2EC1AB1A1B41477C00A635AB /* wolf.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = wolf.png; path = Zoo/wolf.png; sourceTree = "<group>"; };
 		2EC1AB1B1B41477C00A635AB /* wolf#color.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "wolf#color.png"; path = "Zoo/wolf#color.png"; sourceTree = "<group>"; };
+		2ED9B1F81B44D16F007932C4 /* CatalogViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CatalogViewController.swift; sourceTree = "<group>"; };
+		2ED9B1FD1B450705007932C4 /* illustration_shadow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = illustration_shadow.png; path = Quiz/illustrations/illustration_shadow.png; sourceTree = "<group>"; };
+		2ED9B1FF1B45087C007932C4 /* RhymeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RhymeViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -5801,9 +5807,11 @@
 				2E6F5C711B42657100E37B65 /* QuizDatabase.swift */,
 				2E0899821B40A5D200693309 /* AppDelegate.swift */,
 				2E0899841B40A5D200693309 /* MainViewController.swift */,
-				2E089F331B41053000693309 /* BodyViewController.swift */,
+				2ED9B1F81B44D16F007932C4 /* CatalogViewController.swift */,
+				2ED9B1FF1B45087C007932C4 /* RhymeViewController.swift */,
 				2EBB787B1B41154100DEE989 /* ZooViewController.swift */,
 				2EBB788D1B41222500DEE989 /* BuildingViewController.swift */,
+				2E089F331B41053000693309 /* BodyViewController.swift */,
 				2E6F5C6D1B42347500E37B65 /* UniversalAudio.swift */,
 				2E0899861B40A5D200693309 /* Main.storyboard */,
 				2E0899891B40A5D200693309 /* Images.xcassets */,
@@ -6507,6 +6515,7 @@
 		2E45E19C1B42BB7000A8A802 /* illustrations */ = {
 			isa = PBXGroup;
 			children = (
+				2ED9B1FD1B450705007932C4 /* illustration_shadow.png */,
 				2E45E19D1B42BB7E00A8A802 /* illustration_001.jpg */,
 				2E45E19E1B42BB7E00A8A802 /* illustration_002.jpg */,
 				2E45E19F1B42BB7E00A8A802 /* illustration_004.jpg */,
@@ -9535,6 +9544,7 @@
 				2E45E5BA1B42BB9700A8A802 /* question_341.mp3 in Resources */,
 				2E45E7EF1B42BBD900A8A802 /* thumbnail_109.jpg in Resources */,
 				2E45F3141B42BCCD00A8A802 /* Sumitra.mp3 in Resources */,
+				2ED9B1FE1B450705007932C4 /* illustration_shadow.png in Resources */,
 				2E45F6E71B42BD0D00A8A802 /* Troubles.jpg in Resources */,
 				2E45F19B1B42BCCD00A8A802 /* Farmer.mp3 in Resources */,
 				2E45F10C1B42BCCD00A8A802 /* Bones.mp3 in Resources */,
@@ -11701,10 +11711,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2ED9B2001B45087C007932C4 /* RhymeViewController.swift in Sources */,
 				2E0899851B40A5D200693309 /* MainViewController.swift in Sources */,
 				2E6F5C6E1B42347500E37B65 /* UniversalAudio.swift in Sources */,
 				2EBB788E1B41222500DEE989 /* BuildingViewController.swift in Sources */,
 				2EBB787C1B41154100DEE989 /* ZooViewController.swift in Sources */,
+				2ED9B1F91B44D16F007932C4 /* CatalogViewController.swift in Sources */,
 				2E6F5C721B42657100E37B65 /* QuizDatabase.swift in Sources */,
 				2E0899831B40A5D200693309 /* AppDelegate.swift in Sources */,
 				2E089F341B41053000693309 /* BodyViewController.swift in Sources */,
