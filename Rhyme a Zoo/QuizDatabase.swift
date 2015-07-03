@@ -36,6 +36,9 @@ private let WordBank = sql["WORDBANK"]
 let WordText = Expression<String>("Word")
 let WordCategory = Expression<Int>("Category")
 
+//UserDefaults keys managed by the database
+let RZFavoritesKey = "com.hearatale.raz.favorites"
+
 ///Top level database structure. Globally available at RZQuizDatabase. Contains many Quizes.
 ///Quiz Database -> Quiz -> Question -> Option
 class QuizDatabase {
@@ -87,6 +90,29 @@ class QuizDatabase {
             displayOrderArray[quizDisplayOrder - 1] = Quiz(quizNumber)
         }
         return displayOrderArray.filter{ $0 != nil }
+    }
+    
+    func getIndexForRhyme(rhyme: Rhyme) -> Int {
+        for i in 0 ..< quizNumberMap.count {
+            if quizNumberMap[i] == rhyme.number {
+                return i
+            }
+        }
+        return -1
+    }
+    
+    func isQuizFavorite(number: Int) -> Bool {
+        if let favs = data.arrayForKey(RZFavoritesKey) as? [Int] {
+            return contains(favs, number)
+        }
+        return false
+    }
+    
+    func numberOfFavories() -> Int {
+        if var favs = data.arrayForKey(RZFavoritesKey) as? [Int] {
+            return favs.count
+        }
+        return 0
     }
     
 }
@@ -144,6 +170,27 @@ struct Quiz : Printable {
         }
     }
     
+    func setFavoriteStatus(fav: Bool) {
+        if var favs = data.arrayForKey(RZFavoritesKey) as? [Int] {
+            if fav && !contains(favs, number) {
+                favs.append(number)
+                data.setValue(favs, forKey: RZFavoritesKey)
+            } else if !fav && contains(favs, number) {
+                let index = (favs as NSArray).indexOfObject(number)
+                favs.removeAtIndex(index)
+                data.setValue(favs, forKey: RZFavoritesKey)
+            }
+        }
+        else {
+            //favs array doesn't exist
+            let favs = [number]
+            data.setValue(favs, forKey: RZFavoritesKey)
+        }
+    }
+    
+    func isFavorite() -> Bool {
+        return RZQuizDatabase.isQuizFavorite(number)
+    }
 
 }
 
@@ -157,7 +204,7 @@ struct Question: Printable {
     let answer: String
     let category: Int
     let text: String
-    var options: [Option] {
+    var shuffledOptions: [Option] {
         get {
             var array: [Option] = []
             for option in WordBank.filter(WordCategory == category) {
@@ -167,6 +214,7 @@ struct Question: Printable {
             return array.shuffled()
         }
     }
+    
     var description: String {
         get{
             return "(Question \(number))[\(text)]"
@@ -200,7 +248,12 @@ struct Option: Printable {
         self.word = word
     }
     
-    //TODO: implement getters for image and audio
+    func playAudio() {
+        var success = UAPlayer().play(word, ofType: ".mp3", ifConcurrent: .Interrupt)
+        if !success {
+            UAPlayer().play(word.lowercaseString, ofType: ".mp3", ifConcurrent: .Interrupt)
+        }
+    }
     
 }
 

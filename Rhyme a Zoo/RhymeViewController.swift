@@ -17,25 +17,32 @@ class RhymeViewController : UIViewController {
     @IBOutlet weak var buttonGradientWidth: NSLayoutConstraint!
     @IBOutlet weak var likeButton: UIButton!
     @IBOutlet weak var likeBottom: NSLayoutConstraint!
+    @IBOutlet weak var previousButton: UIButton!
+    @IBOutlet weak var nextButton: UIButton!
+    @IBOutlet weak var quizButton: UIButton!
+    var quizBounceTimer: NSTimer?
     @IBOutlet weak var repeatButton: UIButton!
     @IBOutlet weak var repeatHeight: NSLayoutConstraint!
     @IBOutlet weak var rhymeText: UILabel!
+    @IBOutlet weak var scrollContent: UIView!
+    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var scrollContentHeight: NSLayoutConstraint!
     var rhymeString: String!
     
-    var rhyme: Rhyme!
+    var rhyme: Rhyme! = Rhyme(1) //for testing if this is inital
     
     func decorate(rhyme: Rhyme) {
         self.rhyme = rhyme
     }
     
-    override func viewWillAppear(animate: Bool) {
-        self.view.clipsToBounds = true
-        
+    //MARK: - View Setup
+    
+    func decorateForRhyme(rhyme: Rhyme, updateBackground: Bool = true) {
         //decorate cell for rhyme
         let number = rhyme.number.threeCharacterString()
         let illustration = UIImage(named: "illustration_\(number).jpg")
         rhymePage.image = illustration
-        blurredPage.image = illustration
+        if updateBackground { blurredPage.image = illustration }
         
         let rawText = rhyme.rhymeText
         //add new lines
@@ -48,6 +55,21 @@ class RhymeViewController : UIViewController {
         paragraphStyle.paragraphSpacing = 9.5
         let attributed = NSAttributedString(string: rhymeString, attributes: [NSParagraphStyleAttributeName : paragraphStyle])
         rhymeText.attributedText = attributed
+        
+        //set up buttons
+        let rhymeIndex = RZQuizDatabase.getIndexForRhyme(rhyme)
+        previousButton.hidden = (rhymeIndex == 0)
+        nextButton.hidden = (rhymeIndex == (RZQuizDatabase.count - 1))
+        
+        let favorite = rhyme.isFavorite()
+        likeButton.setImage(UIImage(named: (favorite ? "button-unlike" : "button-heart")), forState: .Normal)
+        
+    }
+    
+    override func viewWillAppear(animate: Bool) {
+        self.view.clipsToBounds = true
+        
+        decorateForRhyme(rhyme)
         
         //mask the rhyme page
         let height = UIScreen.mainScreen().bounds.height
@@ -71,8 +93,7 @@ class RhymeViewController : UIViewController {
         
         //remove the buttonGradientView if this is a 4S
         let size = UIScreen.mainScreen().bounds.size
-        let aspect = size.height / size.width
-        if aspect > 0.6 || aspect < 0.5 {
+        if size.width <= 480.0 {
             //is 4S
             buttonGradientWidth.constant = 0
             self.view.layoutIfNeeded()
@@ -82,16 +103,41 @@ class RhymeViewController : UIViewController {
         likeBottom.constant = 10
         repeatHeight.constant = 0
         repeatButton.imageView!.contentMode = UIViewContentMode.ScaleAspectFit
+        quizButton.enabled = false
         self.view.layoutIfNeeded()
+    
+        updateScrollView()
+        
+    }
+    
+    func updateScrollView() {
+        //check if the content height needs to be updated
+        let width = scrollView.frame.width
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.paragraphSpacing = 9.5
+        let attributes = [NSParagraphStyleAttributeName : paragraphStyle, NSFontAttributeName : rhymeText.font]
+        let idealSize = (rhymeString as NSString).boundingRectWithSize(CGSizeMake(width, 1000), options: .UsesLineFragmentOrigin | .UsesFontLeading, attributes: attributes, context: nil)
+        
+        let difference = abs(idealSize.height - scrollContent.frame.height)
+        if difference > 6.0 && idealSize.height > scrollView.frame.height {
+            scrollContentHeight.constant = difference * 1.2
+            self.view.layoutIfNeeded()
+        } else {
+            scrollContentHeight.constant = 0.0
+        }
     }
     
     override func viewDidAppear(animated: Bool) {
         playRhyme()
     }
     
+    //MARK: - Handling Playback of the Rhyme
+    
     var rhymeTimers: [NSTimer]?
     
     func playRhyme() {
+        quizBounceTimer?.invalidate()
+        
         let number = rhyme.number.threeCharacterString()
         let audioName = "rhyme_\(number)"
         let success = UAPlayer().play(audioName, ofType: "mp3", ifConcurrent: .Ignore)
@@ -116,81 +162,9 @@ class RhymeViewController : UIViewController {
         }
     }
     
-    func cropRhymeToFit(currentWord: Int) -> (newString: String, wordsRemovedBeforeCurrent: Int) {
-        let text = rhymeString
-        let lines = getLinesArrayOfStringInLabel(text, rhymeText)
-        let lineHeight = rhymeText.font.lineHeight + 9.5
-        let maxLines = Int(rhymeText.frame.height / lineHeight)
+    func updateAttributedTextForCurrentWord(currentWord: Int) {
         
-        //TODO: calculate actual line height now that they are variable :(
-        //probably gonna have to change it to a scroll view
-        //for the best tbh
-        
-        if lines.count > maxLines {
-            
-            //get line with current
-            var lineWithCurrent = -1
-            var numberOfWords = 0
-            
-            for l in 0 ..< lines.count {
-                if lineWithCurrent != -1 { continue }
-                
-                let line = lines[l]
-                let words = line.componentsSeparatedByString(" ")
-                for word in words {
-                    if numberOfWords == currentWord {
-                        lineWithCurrent = l
-                    }
-                    numberOfWords += 1
-                }
-            }
-            
-            println(lineWithCurrent)
-            
-            if lineWithCurrent == -1 {
-                lineWithCurrent = lines.count
-            }
-            
-            //decide how many lines to remove
-            let center = Int(maxLines / 2)
-            if lineWithCurrent < center {
-                return (text, 0) //do nothing because current line to at top
-            }
-            
-            var linesToRemove = lineWithCurrent - center
-            
-            if lineWithCurrent + center + 1 >= lines.count {
-                //the bottom line should always be at the bottom if visible
-                linesToRemove = lines.count - (maxLines + 1)
-            }
-            
-            //remove the number of lines
-            var newText = ""
-            var removedWordCount = 0
-            
-            for l in 0 ..< lines.count {
-                let line = lines[l]
-                
-                if l > linesToRemove { //keep line
-                    newText = newText + line
-                } else {
-                    let wordCount = line.componentsSeparatedByString(" ").count
-                    removedWordCount += wordCount
-                }
-            }
-            
-            return (newText, removedWordCount)
-            
-            
-        }
-        return (text, 0)
-    }
-    
-    func updateAttributedTextForCurrentWord(originalCurrentWord: Int) {
-
-        let (text, wordsRemoved) = cropRhymeToFit(originalCurrentWord)
-        let currentWord = originalCurrentWord - wordsRemoved
-        
+        var text = rhymeString
         let replacedLineBreaks = text.stringByReplacingOccurrencesOfString("\n", withString: "~\n", options: nil, range: nil)
         let noSpaces = replacedLineBreaks.stringByReplacingOccurrencesOfString(" ", withString: "\n", options: nil, range: nil)
         let words = noSpaces.componentsSeparatedByString("\n")
@@ -223,7 +197,7 @@ class RhymeViewController : UIViewController {
             //current will always end with a space though
             let index = current.endIndex.predecessor()
             let lastCharacter = current.substringFromIndex(index)
-            let punctuation = [".", ",", ":", ";", "/", "\\", "\""]
+            let punctuation = [".", ",", ":", ";", "/", "\\", "\"", "?", "!"]
             
             if contains(punctuation, lastCharacter) {
                 current = current.substringToIndex(index)
@@ -260,7 +234,65 @@ class RhymeViewController : UIViewController {
         }
         
         rhymeText.attributedText = finalString
+        
+        scrollCurrentLineToVisible(currentWord)
     }
+    
+    func scrollCurrentLineToVisible(currentWord: Int) {
+        
+        if scrollContent.frame.height > scrollView.frame.height {
+            
+            let availableHeight = scrollView.frame.height
+            let text = rhymeString
+            let lines = getLinesArrayOfStringInLabel(text, rhymeText)
+            
+            //get line with current
+            var lineWithCurrent = -1
+            var currentLinePosition: CGFloat = 0
+            var numberOfWords = 0
+            
+            for l in 0 ..< lines.count {
+                if lineWithCurrent != -1 { continue }
+                
+                let line = lines[l]
+                let words = line.componentsSeparatedByString(" ")
+                for word in words {
+                    if numberOfWords == currentWord {
+                        lineWithCurrent = l
+                    }
+                    numberOfWords += 1
+                }
+                
+                if lineWithCurrent != -1 { continue }
+                
+                var lineHeight = rhymeText.font.lineHeight
+                if (line as NSString).containsString("\n") {
+                    //is a paragraph break
+                    lineHeight += 9.5
+                }
+                currentLinePosition += lineHeight
+            }
+            
+            if lineWithCurrent == -1 { //no word is highlighed, only happens at the end
+                currentLinePosition = CGFloat.max //mimic all the way at the bottom
+            }
+            
+            //do nothing if currentLinePosition is less than half-way down the block
+            if currentLinePosition < availableHeight / 2 {
+                currentLinePosition = 0
+            }
+            
+            //bottom line must always be at the bottom of the frame
+            if currentLinePosition + (availableHeight) > scrollContent.frame.height {
+                currentLinePosition = scrollContent.frame.height - (availableHeight)
+            }
+            
+            scrollView.setContentOffset(CGPointMake(0, currentLinePosition), animated: true)
+            
+            
+        }
+    }
+    
     
     func rhymeFinishedPlaying() {
         UAHaltPlayback()
@@ -268,33 +300,55 @@ class RhymeViewController : UIViewController {
         //animate buttons
         likeBottom.constant = 70
         repeatHeight.constant = 50
+        quizButton.enabled = true
         UIView.animateWithDuration(0.4, animations: {
             self.view.layoutIfNeeded()
         })
+        
+        quizBounceTimer?.invalidate()
+        delay(2.0) {
+            self.bounceQuizIcon()
+            self.quizBounceTimer = NSTimer.scheduledTimerWithTimeInterval(3.5, target: self, selector: "bounceQuizIcon", userInfo: nil, repeats: true)
+        }
     }
+    
+    func bounceQuizIcon() {
+        if !quizButton.enabled {
+            quizBounceTimer?.invalidate()
+            return
+        }
+        
+        UIView.animateWithDuration(0.3, animations: {
+                self.quizButton.transform = CGAffineTransformMakeTranslation(0.0, -50.0)
+            }, completion: { success in
+                UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: nil, animations: {
+                    self.quizButton.transform = CGAffineTransformMakeTranslation(0.0, 0.0)
+                }, completion: nil)
+        })
+    }
+    
+    //MARK: - Interface Buttons
     
     @IBAction func repeatButtonPressed(sender: AnyObject) {
         playRhyme()
         likeBottom.constant = 10
         repeatHeight.constant = 0
+        quizButton.enabled = false
         UIView.animateWithDuration(0.4, animations: {
             self.view.layoutIfNeeded()
         })
     }
     
     @IBAction func likeButtonPressed(sender: UIButton) {
-
-        UIView.animateWithDuration(0.25, delay: 0.0, options: nil, animations: {
-                sender.transform = CGAffineTransformMakeScale(1.3, 1.3)
-            }, completion: { success in
-                UIView.animateWithDuration(0.25) {
-                    sender.transform = CGAffineTransformMakeScale(1.0, 1.0)
-                }
-        })
+        let favorite = !rhyme.isFavorite()
+        rhyme.setFavoriteStatus(favorite)
+        
+        self.likeButton.setImage(UIImage(named: (favorite ? "button-unlike" : "button-heart")), forState: .Normal)
+        playTransitionForView(self.likeButton, duration: 2.0, transition: "rippleEffect")
     }
     
-    @IBAction func listButtonPressed(sender: AnyObject) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+    func endPlayback() {
+        quizBounceTimer?.invalidate()
         UAHaltPlayback()
         
         //cancel rhyme timers
@@ -304,6 +358,61 @@ class RhymeViewController : UIViewController {
             }
         }
     }
+    
+    @IBAction func listButtonPressed(sender: AnyObject) {
+        self.dismissViewControllerAnimated(true, completion: nil)
+        endPlayback()
+    }
+    
+    @IBAction func quizButtonPressed(sender: AnyObject) {
+        let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("quiz") as! QuizViewController
+        controller.quiz = rhyme
+        quizBounceTimer?.invalidate()
+        self.presentViewController(controller, animated: true, completion: nil)
+    }
+    
+    
+    //MARK: - Transitioning between rhymes
+    
+    @IBAction func nextRhyme(sender: UIButton) {
+        let currentIndex = RZQuizDatabase.getIndexForRhyme(rhyme)
+        animateChangeToRhyme(RZQuizDatabase.getRhyme(currentIndex + 1), transition: "pageCurl")
+    }
+    
+    @IBAction func previousRhyme(sender: UIButton) {
+        let currentIndex = RZQuizDatabase.getIndexForRhyme(rhyme)
+        animateChangeToRhyme(RZQuizDatabase.getRhyme(currentIndex - 1), transition: "pageUnCurl")
+    }
+    
+    func animateChangeToRhyme(rhyme: Rhyme, transition: String) {
+        
+        nextButton.enabled = false
+        previousButton.enabled = false
+        
+        likeBottom.constant = 10
+        repeatHeight.constant = 0
+        quizButton.enabled = false
+        UIView.animateWithDuration(0.4, animations: {
+            self.view.layoutIfNeeded()
+        })
+        
+        self.rhyme = rhyme
+        decorateForRhyme(rhyme, updateBackground: false)
+        updateScrollView()
+        endPlayback()
+        playTransitionForView(self.view, duration: 0.5, transition: transition)
+        delay(0.5) {
+            self.blurredPage.image = self.rhymePage.image
+            playTransitionForView(self.blurredPage, duration: 1.0, transition: kCATransitionFade)
+            delay(0.6) {
+                self.playRhyme()
+                self.nextButton.enabled = true
+                self.previousButton.enabled = true
+            }
+        }
+        
+    }
+    
 }
 
 ///stackoverflow.com/questions/4421267/how-to-get-text-from-nth-line-of-uilabel

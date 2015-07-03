@@ -43,3 +43,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
 }
+
+func playTransitionForView(view: UIView, #duration: Double, transition transitionName: String) {
+    let transition = CATransition()
+    transition.duration = duration
+    transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+    transition.type = transitionName
+    view.layer.addAnimation(transition, forKey: nil)
+}
