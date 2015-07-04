@@ -41,6 +41,8 @@ class QuizViewController : UIViewController {
     @IBOutlet weak var nextButton: UIButton!
     @IBOutlet weak var previousButton: UIButton!
     
+    var timers: [NSTimer] = []
+    
     override func viewWillAppear(animated: Bool) {
         self.view.clipsToBounds = true
         //sort IB arrays
@@ -66,10 +68,14 @@ class QuizViewController : UIViewController {
             originalContainerFrames.append(container.frame)
         }
         
-        startQuiz(quiz)
+        startQuiz(quiz, playAudio: false)
     }
     
-    func startQuiz(quiz: Quiz) {
+    override func viewDidAppear(animated: Bool) {
+        playQuizAudio()
+    }
+    
+    func startQuiz(quiz: Quiz, playAudio: Bool = true) {
         var animateTransition = (self.quiz != nil) //is not first quiz
         self.quiz = quiz
         let quizNumber = quiz.number.threeCharacterString()
@@ -80,10 +86,10 @@ class QuizViewController : UIViewController {
         }
         
         questionNumber = -1
-        nextQuestion()
+        nextQuestion(playAudio: playAudio)
     }
     
-    func nextQuestion() {
+    func nextQuestion(playAudio: Bool = true) {
         questionNumber += 1
         answerAttempts = 0
         
@@ -122,11 +128,51 @@ class QuizViewController : UIViewController {
             }
         }
         
+        if playAudio { playQuizAudio() }
+    }
+    
+    func playQuizAudio() {
         //play audio
         let audioNumber = question.number.threeCharacterString()
         let audioName = "question_\(audioNumber)"
-        let success = UAPlayer().play(audioName, ofType: "mp3", ifConcurrent: .Interrupt)
+        var success = UAPlayer().play(audioName, ofType: "mp3", ifConcurrent: .Interrupt)
+        if !success { success = UAPlayer().play(audioName, ofType: "mp3", ifConcurrent: .Interrupt) } //try again just because
         
+        let questionLength = UALengthOfFile(audioName, ofType: "mp3")
+        var currentDelay = questionLength
+        
+        for i in 0...4 {
+            let timer = NSTimer.scheduledTimerWithTimeInterval(currentDelay, target: self, selector: "playAudioForOption:", userInfo: i, repeats: false)
+            
+            if i == 4 { continue }
+            //calculate next delay
+            let audioName = options[i].word
+            var duration = UALengthOfFile(audioName, ofType: "mp3")
+            if duration == 0.0 { duration = 1.0 }
+            
+            currentDelay += duration
+            timers.append(timer)
+        }
+    }
+    
+    func playAudioForOption(timer: NSTimer) {
+        if let option = timer.userInfo as? Int{
+            self.highlightOption(option)
+            if option == 4 {
+                stopAllTimers()
+                return
+            }
+            
+            let audioName = options[option].word
+            UAPlayer().play(audioName, ofType: "mp3", ifConcurrent: .Interrupt)
+        }
+    }
+    
+    func stopAllTimers() {
+        for timer in timers {
+            timer.invalidate()
+        }
+        timers = []
     }
     
     func endQuiz() {
@@ -149,6 +195,7 @@ class QuizViewController : UIViewController {
         if silverCoins != 0 && goldCoins != 0 { coinString += " and"}
         if silverCoins == 1 { coinString += " 1 silver coin" }
         if silverCoins > 1 { coinString += " \(silverCoins) silver coins"}
+        coinString += "!"
         
         if silverCoins == 0 && goldCoins == 0 {
             coinString = "You didn't earn any coins."
@@ -167,8 +214,8 @@ class QuizViewController : UIViewController {
         
         //update buttons
         let quizIndex = RZQuizDatabase.getIndexForRhyme(quiz)
-        previousButton.hidden = (quizIndex == 0)
-        nextButton.hidden = (quizIndex == (RZQuizDatabase.count - 1))
+        previousButton.hidden = quiz.getPrevious(fromFavorites: RZShowingFavorites) == nil
+        nextButton.hidden = quiz.getNext(fromFavorites: RZShowingFavorites) == nil
         
         delay(1.0) {
             UAPlayer().play(audioName, ofType: "mp3", ifConcurrent: .Interrupt)
@@ -179,7 +226,11 @@ class QuizViewController : UIViewController {
         UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.0, options: nil, animations: {
             self.quizOverViewTop.constant = 0.0
             self.view.layoutIfNeeded()
-            }, completion: nil)
+        }, completion: nil)
+        
+        //update data
+        quiz.saveQuizResult(gold: goldCoins, silver: silverCoins)
+        RZQuizDatabase.advanceLevelIfCurrentIsComplete()
     }
     
     //MARK: - User Interaction
@@ -192,6 +243,7 @@ class QuizViewController : UIViewController {
         for i in 0...3 {
             let frame = originalContainerFrames[i]
             if frame.contains(touch) && optionContainers[i].alpha == 1.0 {
+                stopAllTimers()
                 touched = i
                 continue
             }
@@ -282,37 +334,51 @@ class QuizViewController : UIViewController {
         }
     }
     
+    @IBAction func replayQuestion(sender: AnyObject) {
+        if timers.count == 0 { //is the question playback timers aren't active
+            playQuizAudio()
+            shakeTitle()
+        }
+    }
+    
+    func shakeTitle() {
+        let animations : [CGFloat] = [20.0, -20.0, 10.0, -10.0, 3.0, -3.0, 0]
+        for i in 0 ..< animations.count {
+            let frameOrigin = CGPointMake(questionText.frame.origin.x + animations[i], questionText.frame.origin.y)
+            
+            UIView.animateWithDuration(0.1, delay: NSTimeInterval(0.1 * Double(i)), options: nil, animations: {
+                self.questionText.frame.origin = frameOrigin
+                }, completion: nil)
+        }
+    }
+    
+    
     @IBAction func returnToRhyme(sender: AnyObject) {
         self.dismissViewControllerAnimated(true, completion: nil)
     }
     
     @IBAction func playOffsetRhyme(sender: UIButton) {
         let offset = sender.tag
-        let rhymeIndex = RZQuizDatabase.getIndexForRhyme(quiz)
-        let newIndex = rhymeIndex + offset
-        let rhyme = RZQuizDatabase.getRhyme(newIndex)
+        let rhyme = self.quiz.getWithOffsetIndex(offset, fromFavorites: RZShowingFavorites)
         
-        if let rhymeController = self.presentingViewController as? RhymeViewController {
+        if let rhymeController = self.presentingViewController as? RhymeViewController, let rhyme = rhyme {
             rhymeController.decorate(rhyme)
         }
         self.dismissViewControllerAnimated(true, completion: nil)
     }
     
-    
-    
-    
 }
 
 func setCoinsInImageViews(imageViews: [UIImageView], #gold: Int, #silver: Int, #big: Bool) {
     let goldImage = UIImage(named: big ? "coin-gold-big" : "coin-gold")
-    let silverImage = UIImage(named: big ? "coin-silver-big" : "coin-gold")
+    let silverImage = UIImage(named: big ? "coin-silver-big" : "coin-silver")
     
     for i in 0 ..< gold {
         imageViews[i].alpha = 1.0
         imageViews[i].image = goldImage
     }
     for i in 0 ..< silver {
-        imageViews[i].alpha = 1.0
+        imageViews[i + gold].alpha = 1.0
         imageViews[i + gold].image = silverImage
     }
     for i in 0 ..< imageViews.count {
@@ -322,18 +388,3 @@ func setCoinsInImageViews(imageViews: [UIImageView], #gold: Int, #silver: Int, #
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

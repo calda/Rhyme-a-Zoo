@@ -34,14 +34,28 @@ func UAIsAudioPlaying() -> Bool {
     return UAAudioIsPlaying
 }
 
+func UALengthOfFile(name: String, ofType type: String) -> NSTimeInterval {
+    if let path = NSBundle.mainBundle().pathForResource(name, ofType: type) {
+        let URL = NSURL(fileURLWithPath: path)!
+        let asset = AVURLAsset(URL: URL, options: nil)
+        
+        let time = asset.duration
+        return NSTimeInterval(CMTimeGetSeconds(time))
+    }
+    return 0.0
+}
+
 class UAPlayer {
 
     var player: AVAudioPlayer?
     
     func play(name: String, ofType type: String, ifConcurrent mode: UAConcurrentAudioMode = .Interrupt ) -> Bool {
         
+        AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, error: nil)
+        
         if let path = NSBundle.mainBundle().pathForResource(name, ofType: type) {
             let data = NSData(contentsOfFile: path)
+            
             player = AVAudioPlayer(data: data, error: nil)
             
             if mode == .Interrupt {

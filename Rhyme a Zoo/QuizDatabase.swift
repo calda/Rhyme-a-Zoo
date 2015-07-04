@@ -38,6 +38,8 @@ let WordCategory = Expression<Int>("Category")
 
 //UserDefaults keys managed by the database
 let RZFavoritesKey = "com.hearatale.raz.favorites"
+let RZQuizResultsKey = "com.hearatale.raz.quizResults"
+let RZQuizLevelKey = "com.hearatale.raz.quizLevel"
 
 ///Top level database structure. Globally available at RZQuizDatabase. Contains many Quizes.
 ///Quiz Database -> Quiz -> Question -> Option
@@ -82,7 +84,7 @@ class QuizDatabase {
         return getQuiz(index)
     }
     
-    func quizesForLevel(level: Int) -> [Quiz!] {
+    func quizesInLevel(level: Int) -> [Quiz!] {
         var displayOrderArray: [Quiz!] = [nil, nil, nil, nil, nil]
         for quiz in Quizes.filter(QuizLevel == level) {
             let quizNumber = quiz[QuizNumber]
@@ -113,6 +115,26 @@ class QuizDatabase {
             return favs.count
         }
         return 0
+    }
+    
+    func currentLevel() -> Int {
+        var level = data.integerForKey(RZQuizLevelKey)
+        if level == 0 {
+            data.setInteger(1, forKey: RZQuizLevelKey)
+            return 1
+        }
+        return level
+    }
+    
+    func advanceLevelIfCurrentIsComplete() -> Bool {
+        let current = currentLevel()
+        let complete = quizesInLevel(currentLevel()).filter{ $0.quizHasBeenPlayed() }.count == 5
+        
+        if complete {
+            let newLevel = min(current + 1, levelCount)
+            data.setInteger(newLevel, forKey: RZQuizLevelKey)
+        }
+        return complete
     }
     
 }
@@ -190,6 +212,65 @@ struct Quiz : Printable {
     
     func isFavorite() -> Bool {
         return RZQuizDatabase.isQuizFavorite(number)
+    }
+    
+    func saveQuizResult(#gold: Int, silver: Int) {
+        var results: [String : String] = [:]
+        if let resultsDict = data.dictionaryForKey(RZQuizResultsKey) as? [String : String] {
+            results = resultsDict
+        }
+        
+        let resultString = "\(gold):\(silver)"
+        results.updateValue(resultString, forKey: number.threeCharacterString())
+        
+        data.setValue(results, forKey: RZQuizResultsKey)
+    }
+    
+    func quizHasBeenPlayed() -> Bool {
+        if let resultsDict = data.dictionaryForKey(RZQuizResultsKey) as? [String : String] {
+            return contains(resultsDict.keys.array, number.threeCharacterString())
+        }
+        return false
+    }
+    
+    func getQuizResult() -> (gold: Int, silver: Int) {
+        if let resultsDict = data.dictionaryForKey(RZQuizResultsKey) as? [String : String] {
+            if let result = resultsDict[number.threeCharacterString()] {
+                let splits = split(result){ $0 == ":" }
+                if splits.count == 2 {
+                    let gold = splits[0].toInt()
+                    let silver = splits[1].toInt()
+                    
+                    if let gold = gold, let silver = silver {
+                        return (gold, silver)
+                    }
+                }
+            }
+        }
+        return (0,0)
+    }
+    
+    func getNext(fromFavorites favs: Bool) -> Quiz? {
+        return getWithOffsetIndex(1, fromFavorites: favs)
+    }
+    
+    func getPrevious(fromFavorites favs: Bool) -> Quiz? {
+        return getWithOffsetIndex(-1, fromFavorites: favs)
+    }
+    
+    func getWithOffsetIndex(offset: Int, fromFavorites favs: Bool) -> Quiz? {
+        var numbersArray = RZQuizDatabase.quizNumberMap
+        
+        if let favsArray = data.arrayForKey(RZFavoritesKey) as? [Int] where favs {
+            numbersArray = favsArray
+        }
+        
+        if let thisIndex = find(numbersArray, self.number) {
+            let searchIndex = thisIndex + offset
+            if searchIndex < 0 || searchIndex >= numbersArray.count { return nil }
+            return Quiz(numbersArray[searchIndex])
+        }
+        return nil
     }
 
 }

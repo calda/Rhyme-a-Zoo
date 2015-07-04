@@ -30,6 +30,8 @@ class RhymeViewController : UIViewController {
     var rhymeString: String!
     
     var rhyme: Rhyme! = Rhyme(1) //for testing if this is inital
+    var nextRhyme: Rhyme?
+    var previousRhyme: Rhyme?
     
     func decorate(rhyme: Rhyme) {
         self.rhyme = rhyme
@@ -58,8 +60,13 @@ class RhymeViewController : UIViewController {
         
         //set up buttons
         let rhymeIndex = RZQuizDatabase.getIndexForRhyme(rhyme)
-        previousButton.hidden = (rhymeIndex == 0)
-        nextButton.hidden = (rhymeIndex == (RZQuizDatabase.count - 1))
+        previousRhyme = rhyme.getPrevious(fromFavorites: RZShowingFavorites)
+        nextRhyme = rhyme.getNext(fromFavorites: RZShowingFavorites)
+        previousButton.hidden = previousRhyme == nil
+        nextButton.hidden = nextRhyme == nil
+        
+        let quizPlayed = rhyme.quizHasBeenPlayed()
+        quizButton.setImage(UIImage(named: (quizPlayed ? "button-check" : "button-question")), forState: .Normal)
         
         let favorite = rhyme.isFavorite()
         likeButton.setImage(UIImage(named: (favorite ? "button-unlike" : "button-heart")), forState: .Normal)
@@ -103,9 +110,8 @@ class RhymeViewController : UIViewController {
         likeBottom.constant = 10
         repeatHeight.constant = 0
         repeatButton.imageView!.contentMode = UIViewContentMode.ScaleAspectFit
-        quizButton.enabled = false
         self.view.layoutIfNeeded()
-    
+        
         updateScrollView()
         
     }
@@ -137,6 +143,10 @@ class RhymeViewController : UIViewController {
     
     func playRhyme() {
         quizBounceTimer?.invalidate()
+        
+        //disable quiz button if it hasn't been played yet
+        quizButton.enabled = rhyme.quizHasBeenPlayed()
+        quizButton.userInteractionEnabled = quizButton.enabled
         
         let number = rhyme.number.threeCharacterString()
         let audioName = "rhyme_\(number)"
@@ -170,7 +180,6 @@ class RhymeViewController : UIViewController {
         let words = noSpaces.componentsSeparatedByString("\n")
         var before: String = ""
         var current: String = ""
-        var currentPunctuation = ""
         var after: String = ""
         
         for i in 0 ..< words.count {
@@ -185,25 +194,7 @@ class RhymeViewController : UIViewController {
         current = current.stringByReplacingOccurrencesOfString("~ ", withString: "\n", options: nil, range: nil)
         after = after.stringByReplacingOccurrencesOfString("~ ", withString: "\n", options: nil, range: nil)
         
-        //ignore current if it is empty
-        if current != "" {
-            //detach punctuation from current and attach it to after
-            //detach \n first
-            if current.hasSuffix("\n") {
-                after = "\n" + after
-                current = current.stringByReplacingOccurrencesOfString("\n", withString: "", options: nil, range: nil)
-            }
-            
-            //current will always end with a space though
-            let index = current.endIndex.predecessor()
-            let lastCharacter = current.substringFromIndex(index)
-            let punctuation = [".", ",", ":", ";", "/", "\\", "\"", "?", "!"]
-            
-            if contains(punctuation, lastCharacter) {
-                current = current.substringToIndex(index)
-                currentPunctuation = lastCharacter
-            }
-        } else {
+        if current == "" {
             //current was empty so this is the end of the audio
             UAHaltPlayback()
             delay(1.0) {
@@ -215,11 +206,11 @@ class RhymeViewController : UIViewController {
         let beforeColor = UIColor(white: 0.14, alpha: 1.0)
         let currentColor = UIColor(hue: 0.597, saturation: 0.89, brightness: 0.64, alpha: 1.0)
         let afterColor = UIColor(white: 0.14, alpha: 0.6)
-        let colors = [beforeColor, currentColor, beforeColor, afterColor]
-        let rawParts = [before, current, currentPunctuation, after]
+        let colors = [beforeColor, currentColor, afterColor]
+        let rawParts = [before, current, after]
         var finalString = NSMutableAttributedString(string: "")
         
-        for i in 0...3 {
+        for i in 0...2 {
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.paragraphSpacing = 9.5
             
@@ -301,13 +292,13 @@ class RhymeViewController : UIViewController {
         likeBottom.constant = 70
         repeatHeight.constant = 50
         quizButton.enabled = true
+        quizButton.userInteractionEnabled = true
         UIView.animateWithDuration(0.4, animations: {
             self.view.layoutIfNeeded()
         })
         
         quizBounceTimer?.invalidate()
-        delay(2.0) {
-            self.bounceQuizIcon()
+        if !rhyme.quizHasBeenPlayed() {
             self.quizBounceTimer = NSTimer.scheduledTimerWithTimeInterval(3.5, target: self, selector: "bounceQuizIcon", userInfo: nil, repeats: true)
         }
     }
@@ -319,11 +310,11 @@ class RhymeViewController : UIViewController {
         }
         
         UIView.animateWithDuration(0.3, animations: {
-                self.quizButton.transform = CGAffineTransformMakeTranslation(0.0, -50.0)
+            self.quizButton.transform = CGAffineTransformMakeTranslation(0.0, -50.0)
             }, completion: { success in
                 UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: nil, animations: {
                     self.quizButton.transform = CGAffineTransformMakeTranslation(0.0, 0.0)
-                }, completion: nil)
+                    }, completion: nil)
         })
     }
     
@@ -333,7 +324,6 @@ class RhymeViewController : UIViewController {
         playRhyme()
         likeBottom.constant = 10
         repeatHeight.constant = 0
-        quizButton.enabled = false
         UIView.animateWithDuration(0.4, animations: {
             self.view.layoutIfNeeded()
         })
@@ -365,23 +355,30 @@ class RhymeViewController : UIViewController {
     }
     
     @IBAction func quizButtonPressed(sender: AnyObject) {
-        let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("quiz") as! QuizViewController
-        controller.quiz = rhyme
-        quizBounceTimer?.invalidate()
-        self.presentViewController(controller, animated: true, completion: nil)
+        if rhyme.quizHasBeenPlayed() {
+            //play audio that probably doesn't exist yet
+        }
+        else {
+            let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("quiz") as! QuizViewController
+            controller.quiz = rhyme
+            quizBounceTimer?.invalidate()
+            self.presentViewController(controller, animated: true, completion: nil)
+        }
     }
     
     
     //MARK: - Transitioning between rhymes
     
     @IBAction func nextRhyme(sender: UIButton) {
-        let currentIndex = RZQuizDatabase.getIndexForRhyme(rhyme)
-        animateChangeToRhyme(RZQuizDatabase.getRhyme(currentIndex + 1), transition: "pageCurl")
+        if let next = nextRhyme {
+            animateChangeToRhyme(next, transition: "pageCurl")
+        }
     }
     
     @IBAction func previousRhyme(sender: UIButton) {
-        let currentIndex = RZQuizDatabase.getIndexForRhyme(rhyme)
-        animateChangeToRhyme(RZQuizDatabase.getRhyme(currentIndex - 1), transition: "pageUnCurl")
+        if let previous = previousRhyme {
+            animateChangeToRhyme(previous, transition: "pageCurl")
+        }
     }
     
     func animateChangeToRhyme(rhyme: Rhyme, transition: String) {
@@ -391,7 +388,6 @@ class RhymeViewController : UIViewController {
         
         likeBottom.constant = 10
         repeatHeight.constant = 0
-        quizButton.enabled = false
         UIView.animateWithDuration(0.4, animations: {
             self.view.layoutIfNeeded()
         })
@@ -417,7 +413,7 @@ class RhymeViewController : UIViewController {
 
 ///stackoverflow.com/questions/4421267/how-to-get-text-from-nth-line-of-uilabel
 func getLinesArrayOfStringInLabel(text: NSString, label:UILabel) -> [String] {
-
+    
     let font:UIFont = label.font
     let rect:CGRect = label.frame
     
