@@ -128,11 +128,11 @@ class BodyViewController : UIViewController {
         classHeaderBackground.backgroundColor = themedColor
         
         //tint buttons
-        let buttonsToTint = [colorBack, colorDice, colorDownload]
+        let buttonsToTint = [colorDice, colorDownload]
         for button in buttonsToTint {
             let tintable = button.imageView!.image!.imageWithRenderingMode(.AlwaysTemplate)
             button.setImage(tintable, forState: UIControlState.Normal)
-            button.imageView!.tintColor = themedColor
+            button.imageView!.tintColor = UIColor(white: 0.95, alpha: 1.0)
         }
         
         //tint images
@@ -140,7 +140,7 @@ class BodyViewController : UIViewController {
         for imageView in imagesToTint {
             let tintable = imageView.image?.imageWithRenderingMode(.AlwaysTemplate)
             imageView.image = tintable
-            imageView.tintColor = themedColor
+            imageView.tintColor = UIColor(white: 0.95, alpha: 1.0)
         }
         
         
@@ -240,7 +240,7 @@ class BodyViewController : UIViewController {
     
     @IBAction func reset(sender: UIButton) {
         //show warning alert
-        let warning = UIAlertController(title: "Reset Friend", message: "This cannot be undone.", preferredStyle: .Alert)
+        let warning = UIAlertController(title: "Reset Zookeeper", message: "This cannot be undone.", preferredStyle: .Alert)
         let cancelAction = UIAlertAction(title: "Nevermind", style: .Default, handler: nil)
         let resetAction = UIAlertAction(title: "Reset", style: UIAlertActionStyle.Destructive, handler: { alert in
             
@@ -446,9 +446,8 @@ class BodyFeature {
     
     func getImage(#cropped: Bool) -> UIImage {
         let bundle = NSBundle.mainBundle()
-        let filePath = bundle.pathForResource(fileName + (cropped ? "#cropped" : ""), ofType: "png")
-        let data = NSData(contentsOfFile: filePath!)!
-        return UIImage(data: data)!
+        let name = fileName + (cropped ? "#cropped" : "")
+        return UIImage(named: name)!
     }
     
 }
@@ -561,7 +560,7 @@ class BodyCell : UICollectionViewCell {
         image.image = nil //deinit previous
         
         featureName = feature.fileName
-        self.backgroundColor = UIColor.whiteColor()
+        self.backgroundColor = UIColor.clearColor()
         self.alpha = 0.0
         
         dispatch_async(WWBodyBackgroundThread, {
@@ -570,9 +569,9 @@ class BodyCell : UICollectionViewCell {
             
             dispatch_async(dispatch_get_main_queue(), {
                 self.image.image = featureImage
-                UIView.animateWithDuration(0.3, animations: {
+                UIView.animateWithDuration(0.3, delay: 0.0, options: UIViewAnimationOptions.AllowUserInteraction, animations: {
                     self.alpha = 1.0
-                })
+                }, completion: nil)
             })
             
         })

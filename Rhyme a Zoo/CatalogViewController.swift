@@ -100,26 +100,8 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
         collectionView.reloadData()
             
         if animatingFromHome {
-            //set background gradient
-            let gradient = CAGradientLayer()
-            gradient.frame = UIScreen.mainScreen().bounds
-            gradient.colors = [
-                UIColor(red: 35.0 / 255.0, green: 77.0 / 255.0, blue: 164.0 / 255.0, alpha: 1.0).CGColor,
-                UIColor(red: 63.0 / 255.0, green: 175.0 / 255.0, blue: 245.0 / 255.0, alpha: 1.0).CGColor
-            ]
-            self.view.layer.insertSublayer(gradient, atIndex: 0)
-            self.view.backgroundColor = UIColor.clearColor()
-            
-            //add button gradient
-            let buttonGradient = CAGradientLayer()
-            buttonGradient.colors = gradient.colors
-            buttonGradient.frame = UIScreen.mainScreen().bounds
-            buttonGradientView.layer.insertSublayer(buttonGradient, atIndex: 0)
-            buttonGradientView.layer.masksToBounds = true
-            buttonGradientView.alpha = 1.0
-            
             //set collection view position to current unplayed level
-            let minimumIndex = (RZQuizDatabase.currentLevel() - 1) * 5
+            let minimumIndex = max(1, (RZQuizDatabase.currentLevel() - 1) * 5)
             var unplayedIndex = minimumIndex
             
             for i in (minimumIndex - 1) ..< RZQuizDatabase.currentLevel() * 5 {
@@ -199,6 +181,7 @@ class RhymeCell : UICollectionViewCell {
     
     func decorate(index: Int, showFavorites: Bool) {
         self.coins = [coin1, coin2, coin3, coin4, coin5]
+        self.alpha = 0.0
         
         dispatch_async(RZAsyncQueue, {
             let rhyme: Rhyme
@@ -227,15 +210,21 @@ class RhymeCell : UICollectionViewCell {
                 var countToShow = gold + silver
                 
                 if gold + silver == 0 && hasBeenPlayed {
-                    countToShow == 5
+                    countToShow = 5
                 }
-                else {
-                    setCoinsInImageViews(self.coins, gold: gold, silver: silver, big: false)
-                }
+                setCoinsInImageViews(self.coins, gold: gold, silver: silver, big: false)
                 
+                self.coinContainer.hidden = !hasBeenPlayed
                 self.coinContainer.removeConstraint(self.coinContainerAspect)
                 self.coinContainerAspect = NSLayoutConstraint(item: self.coinContainer, attribute: .Width, relatedBy: .Equal, toItem: self.coinContainer, attribute: .Height, multiplier: CGFloat(countToShow), constant: 0.0)
                 self.coinContainer.addConstraint(self.coinContainerAspect)
+                
+                UIView.animateWithDuration(0.2, delay: 0.0, options: UIViewAnimationOptions.AllowUserInteraction, animations: {
+                    self.alpha = 1.0
+                }, completion: nil)
+                
+                //self.layer.shouldRasterize = true
+                //self.layer.rasterizationScale = UIScreen.mainScreen().scale
                 
             })
         })

@@ -40,6 +40,7 @@ let WordCategory = Expression<Int>("Category")
 let RZFavoritesKey = "com.hearatale.raz.favorites"
 let RZQuizResultsKey = "com.hearatale.raz.quizResults"
 let RZQuizLevelKey = "com.hearatale.raz.quizLevel"
+let RZPlayerBalanceKey = "com.hearatale.raz.balance"
 
 ///Top level database structure. Globally available at RZQuizDatabase. Contains many Quizes.
 ///Quiz Database -> Quiz -> Question -> Option
@@ -137,6 +138,16 @@ class QuizDatabase {
         return complete
     }
     
+    func getPlayerBalance() -> Double {
+        return data.doubleForKey(RZPlayerBalanceKey)
+    }
+    
+    func changePlayerBalanceBy(amount: Double) {
+        let current = getPlayerBalance()
+        let new = current + amount
+        data.setDouble(new, forKey: RZPlayerBalanceKey)
+    }
+    
 }
 
 typealias Rhyme = Quiz
@@ -224,6 +235,10 @@ struct Quiz : Printable {
         results.updateValue(resultString, forKey: number.threeCharacterString())
         
         data.setValue(results, forKey: RZQuizResultsKey)
+        
+        //also update player balance
+        let cashInflux = Double(gold) + (Double(silver) * 0.5)
+        RZQuizDatabase.changePlayerBalanceBy(cashInflux)
     }
     
     func quizHasBeenPlayed() -> Bool {
@@ -268,7 +283,12 @@ struct Quiz : Printable {
         if let thisIndex = find(numbersArray, self.number) {
             let searchIndex = thisIndex + offset
             if searchIndex < 0 || searchIndex >= numbersArray.count { return nil }
-            return Quiz(numbersArray[searchIndex])
+            let quiz = Quiz(numbersArray[searchIndex])
+            
+            if !favs && quiz.level > RZQuizDatabase.currentLevel() {
+                return nil
+            }
+            return quiz
         }
         return nil
     }

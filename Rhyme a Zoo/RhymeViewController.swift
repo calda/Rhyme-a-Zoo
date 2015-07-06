@@ -68,6 +68,10 @@ class RhymeViewController : UIViewController {
         let quizPlayed = rhyme.quizHasBeenPlayed()
         quizButton.setImage(UIImage(named: (quizPlayed ? "button-check" : "button-question")), forState: .Normal)
         
+        //disable quiz button if it hasn't been played yet
+        quizButton.enabled = rhyme.quizHasBeenPlayed()
+        quizButton.userInteractionEnabled = !quizButton.enabled
+        
         let favorite = rhyme.isFavorite()
         likeButton.setImage(UIImage(named: (favorite ? "button-unlike" : "button-heart")), forState: .Normal)
         
@@ -87,16 +91,6 @@ class RhymeViewController : UIViewController {
         let maskLayer = CAShapeLayer()
         maskLayer.path = UIBezierPath(roundedRect: maskRect, cornerRadius: maskHeight / 20.0).CGPath
         rhymePage.layer.mask = maskLayer
-        
-        //add button gradient
-        let buttonGradient = CAGradientLayer()
-        buttonGradient.colors = [
-            UIColor(red: 35.0 / 255.0, green: 77.0 / 255.0, blue: 164.0 / 255.0, alpha: 1.0).CGColor,
-            UIColor(red: 63.0 / 255.0, green: 175.0 / 255.0, blue: 245.0 / 255.0, alpha: 1.0).CGColor
-        ]
-        buttonGradient.frame = UIScreen.mainScreen().bounds
-        buttonGradientView.layer.insertSublayer(buttonGradient, atIndex: 0)
-        buttonGradientView.layer.masksToBounds = true
         
         //remove the buttonGradientView if this is a 4S
         let size = UIScreen.mainScreen().bounds.size
@@ -146,7 +140,7 @@ class RhymeViewController : UIViewController {
         
         //disable quiz button if it hasn't been played yet
         quizButton.enabled = rhyme.quizHasBeenPlayed()
-        quizButton.userInteractionEnabled = quizButton.enabled
+        quizButton.userInteractionEnabled = !quizButton.enabled
         
         let number = rhyme.number.threeCharacterString()
         let audioName = "rhyme_\(number)"
@@ -292,10 +286,10 @@ class RhymeViewController : UIViewController {
         likeBottom.constant = 70
         repeatHeight.constant = 50
         quizButton.enabled = true
-        quizButton.userInteractionEnabled = true
-        UIView.animateWithDuration(0.4, animations: {
+        quizButton.userInteractionEnabled = !rhyme.quizHasBeenPlayed()
+        UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.AllowUserInteraction, animations: {
             self.view.layoutIfNeeded()
-        })
+        }, completion: nil)
         
         quizBounceTimer?.invalidate()
         if !rhyme.quizHasBeenPlayed() {
@@ -384,6 +378,7 @@ class RhymeViewController : UIViewController {
     func animateChangeToRhyme(rhyme: Rhyme, transition: String) {
         
         nextButton.enabled = false
+        quizButton.enabled = rhyme.quizHasBeenPlayed()
         previousButton.enabled = false
         
         likeBottom.constant = 10

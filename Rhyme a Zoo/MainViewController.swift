@@ -17,17 +17,10 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var buttonsSuperview: UIView!
     var buttonFrames: [UIButton : CGRect] = [:]
     @IBOutlet var panGestureRecognizer: UIPanGestureRecognizer!
+    @IBOutlet weak var blurBackground: UIImageView!
     
     override func viewWillAppear(animated: Bool) {
-        //set gradient
-        let gradient = CAGradientLayer()
-        gradient.frame = UIScreen.mainScreen().bounds
-        gradient.colors = [
-            UIColor(red: 35.0 / 255.0, green: 77.0 / 255.0, blue: 164.0 / 255.0, alpha: 1.0).CGColor,
-            UIColor(red: 63.0 / 255.0, green: 175.0 / 255.0, blue: 245.0 / 255.0, alpha: 1.0).CGColor
-        ]
-        self.view.layer.insertSublayer(gradient, atIndex: 0)
-        self.view.backgroundColor = UIColor.clearColor()
+
     }
     
     override func viewDidAppear(animated: Bool) {

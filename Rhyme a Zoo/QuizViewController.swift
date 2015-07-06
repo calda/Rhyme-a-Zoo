@@ -13,7 +13,6 @@ class QuizViewController : UIViewController {
     
     @IBOutlet weak var blurredBackground: UIImageView!
     @IBOutlet weak var questionText: UILabel!
-    @IBOutlet weak var questionNumberIcon: UIButton!
     @IBOutlet weak var backButton: UIButton!
     @IBOutlet var optionIcons: [UIImageView]!
     @IBOutlet var optionLabels: [UILabel]!
@@ -23,7 +22,7 @@ class QuizViewController : UIViewController {
     @IBOutlet var optionContainers: [UIView]!
     var originalContainerFrames: [CGRect] = []
     
-    var quiz: Quiz! = Quiz(1)
+    var quiz: Quiz! = Quiz(115)
     var questionNumber: Int = -1
     var question: Question!
     var options: [Option]!
@@ -40,8 +39,12 @@ class QuizViewController : UIViewController {
     @IBOutlet weak var coinViewWidth: NSLayoutConstraint!
     @IBOutlet weak var nextButton: UIButton!
     @IBOutlet weak var previousButton: UIButton!
+    @IBOutlet weak var repeatButton: UIButton!
+    
     
     var timers: [NSTimer] = []
+    
+    //MARK: - Managing the view controller
     
     override func viewWillAppear(animated: Bool) {
         self.view.clipsToBounds = true
@@ -53,7 +56,7 @@ class QuizViewController : UIViewController {
         coins = (coins as NSArray).sortedArrayUsingDescriptors([NSSortDescriptor(key: "tag", ascending: true)]) as! [UIImageView]
         
         quizOverView.backgroundColor = UIColor.clearColor()
-        quizOverViewTop.constant = UIScreen.mainScreen().bounds.height
+        quizOverViewTop.constant = -UIScreen.mainScreen().bounds.height
         self.view.layoutIfNeeded()
         
         for icon in optionIcons {
@@ -103,8 +106,6 @@ class QuizViewController : UIViewController {
         
         //decorate screen
         questionText.text = question.text
-        let numberImage = UIImage(named: "button-\(questionNumber + 1)")
-        questionNumberIcon.setImage(numberImage, forState: .Normal)
         
         for i in 0 ... 3 {
             let option = options[i]
@@ -132,17 +133,26 @@ class QuizViewController : UIViewController {
     }
     
     func playQuizAudio() {
+        
+        UIView.animateWithDuration(0.6, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.AllowUserInteraction, animations: {
+            self.repeatButton.transform = CGAffineTransformMakeScale(0.75,0.75)
+        }, completion: nil)
+        self.repeatButton.enabled = false
+        
         //play audio
         let audioNumber = question.number.threeCharacterString()
         let audioName = "question_\(audioNumber)"
-        var success = UAPlayer().play(audioName, ofType: "mp3", ifConcurrent: .Interrupt)
-        if !success { success = UAPlayer().play(audioName, ofType: "mp3", ifConcurrent: .Interrupt) } //try again just because
+        let success = UAPlayer().play(audioName, ofType: "mp3", ifConcurrent: .Interrupt)
         
         let questionLength = UALengthOfFile(audioName, ofType: "mp3")
         var currentDelay = questionLength
         
         for i in 0...4 {
+            //don't play audio if the item isn't visible
+            if i != 4 && optionContainers[i].alpha == 0 { continue }
+            
             let timer = NSTimer.scheduledTimerWithTimeInterval(currentDelay, target: self, selector: "playAudioForOption:", userInfo: i, repeats: false)
+            timers.append(timer)
             
             if i == 4 { continue }
             //calculate next delay
@@ -151,7 +161,6 @@ class QuizViewController : UIViewController {
             if duration == 0.0 { duration = 1.0 }
             
             currentDelay += duration
-            timers.append(timer)
         }
     }
     
@@ -159,6 +168,13 @@ class QuizViewController : UIViewController {
         if let option = timer.userInfo as? Int{
             self.highlightOption(option)
             if option == 4 {
+                
+                //animate in repeat button
+                UIView.animateWithDuration(0.6, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.AllowUserInteraction, animations: {
+                    self.repeatButton.transform = CGAffineTransformMakeScale(1.0, 1.0)
+                    }, completion: nil)
+                self.repeatButton.enabled = true
+                
                 stopAllTimers()
                 return
             }
@@ -176,12 +192,15 @@ class QuizViewController : UIViewController {
     }
     
     func endQuiz() {
+        //update data
+        quiz.saveQuizResult(gold: goldCoins, silver: silverCoins)
+        RZQuizDatabase.advanceLevelIfCurrentIsComplete()
+        
         //disable the quiz
         touchRecognizer.enabled = false
         UIView.animateWithDuration(0.3) {
             self.questionText.alpha = 0.0
             self.questionContainer.alpha = 0.0
-            self.questionNumberIcon.alpha = 0.0
         }
         
         if goldCoins == 4 { goldCoins = 5 }
@@ -202,7 +221,8 @@ class QuizViewController : UIViewController {
             audioName = "quiz-over-bad"
         }
         
-        let count = goldCoins + silverCoins
+        var count = goldCoins + silverCoins
+        if count == 0 { count = 5 }
         //update constraints for coinView
         coinView.removeConstraint(coinViewAspect)
         let newAspect = NSLayoutConstraint(item: coinView, attribute: .Width, relatedBy: .Equal, toItem: coinView, attribute: .Height, multiplier: CGFloat(count), constant: 0.0)
@@ -210,6 +230,7 @@ class QuizViewController : UIViewController {
         coinViewAspect = newAspect
         
         coinViewWidth.constant = -coinView.frame.height * CGFloat(5 - count)
+        coinsLabel.text = coinString
         self.view.layoutIfNeeded()
         
         //update buttons
@@ -217,20 +238,24 @@ class QuizViewController : UIViewController {
         previousButton.hidden = quiz.getPrevious(fromFavorites: RZShowingFavorites) == nil
         nextButton.hidden = quiz.getNext(fromFavorites: RZShowingFavorites) == nil
         
-        delay(1.0) {
-            UAPlayer().play(audioName, ofType: "mp3", ifConcurrent: .Interrupt)
-        }
-        
-        coinsLabel.text = coinString
+        //cue audio
+        UAPlayer().play(audioName, ofType: "mp3", ifConcurrent: .Interrupt)
+        let audioLength = UALengthOfFile(audioName, ofType: "mp3")
+        let timer = NSTimer.scheduledTimerWithTimeInterval(audioLength - 0.1, target: self, selector: "playCompletionSound", userInfo: count > 1, repeats: false)
+        timers.append(timer)
         
         UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.0, options: nil, animations: {
             self.quizOverViewTop.constant = 0.0
             self.view.layoutIfNeeded()
         }, completion: nil)
-        
-        //update data
-        quiz.saveQuizResult(gold: goldCoins, silver: silverCoins)
-        RZQuizDatabase.advanceLevelIfCurrentIsComplete()
+    }
+    
+    func playCompletionSound() {
+        let encouragement = true
+        let name = "encouragement_"
+        let count = encouragement ? 20 : 0
+        let random = Int(arc4random_uniform(UInt32(count))) + 1
+        UAPlayer().play("\(name)\(random)", ofType: ".mp3", ifConcurrent: .Ignore)
     }
     
     //MARK: - User Interaction
@@ -243,9 +268,18 @@ class QuizViewController : UIViewController {
         for i in 0...3 {
             let frame = originalContainerFrames[i]
             if frame.contains(touch) && optionContainers[i].alpha == 1.0 {
+                
+                //end the speaking of the question
                 stopAllTimers()
+                
+                //animate in repeat button
+                UIView.animateWithDuration(0.6, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.AllowUserInteraction, animations: {
+                    self.repeatButton.transform = CGAffineTransformMakeScale(1.0, 1.0)
+                    }, completion: nil)
+                self.repeatButton.enabled = true
+                
                 touched = i
-                continue
+                break
             }
         }
         
@@ -272,10 +306,14 @@ class QuizViewController : UIViewController {
     }
     
     func highlightOption(option: Int) {
+        var scale: CGFloat = 1.2
+        let aspect = self.view.frame.width / self.view.frame.height
+        if aspect > 1.8 { scale = 1.1 } //4S and iPad
+        
         for container in optionContainers {
             if container.tag == option {
                 UIView.animateWithDuration(0.3) {
-                    container.transform = CGAffineTransformMakeScale(1.2, 1.2)
+                    container.transform = CGAffineTransformMakeScale(scale, scale)
                 }
             } else {
                 UIView.animateWithDuration(0.3) {
@@ -316,7 +354,7 @@ class QuizViewController : UIViewController {
             
             UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 0.3, initialSpringVelocity: 0.0, options: nil, animations: {
                 self.optionContainers[guess].transform = CGAffineTransformMakeScale(1.3, 1.3)
-                }, completion: nil)
+                }, completion: nil) 
             
             delay(1.0) {
                 if self.questionNumber != 3 {
@@ -354,6 +392,10 @@ class QuizViewController : UIViewController {
     
     
     @IBAction func returnToRhyme(sender: AnyObject) {
+        stopAllTimers()
+        if UAIsAudioPlaying() {
+            UAHaltPlayback()
+        }
         self.dismissViewControllerAnimated(true, completion: nil)
     }
     
@@ -383,7 +425,7 @@ func setCoinsInImageViews(imageViews: [UIImageView], #gold: Int, #silver: Int, #
     }
     for i in 0 ..< imageViews.count {
         if i >= gold + silver {
-            imageViews[i].alpha = 0.0
+            imageViews[i].alpha = (gold + silver == 0 ? 0.2 : 0.0)
             imageViews[i].image = goldImage
         }
     }
