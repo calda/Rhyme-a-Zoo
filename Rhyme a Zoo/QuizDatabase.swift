@@ -41,6 +41,8 @@ let RZFavoritesKey = "com.hearatale.raz.favorites"
 let RZQuizResultsKey = "com.hearatale.raz.quizResults"
 let RZQuizLevelKey = "com.hearatale.raz.quizLevel"
 let RZPlayerBalanceKey = "com.hearatale.raz.balance"
+let RZAnimalsKey = "com.hearatale.raz.animals"
+let RZZooLevelKey = "com.hearatale.raz.animalLevel"
 
 ///Top level database structure. Globally available at RZQuizDatabase. Contains many Quizes.
 ///Quiz Database -> Quiz -> Question -> Option
@@ -138,6 +140,8 @@ class QuizDatabase {
         return complete
     }
     
+    //bank 
+    
     func getPlayerBalance() -> Double {
         return data.doubleForKey(RZPlayerBalanceKey)
     }
@@ -146,6 +150,55 @@ class QuizDatabase {
         let current = getPlayerBalance()
         let new = current + amount
         data.setDouble(new, forKey: RZPlayerBalanceKey)
+    }
+    
+    //zoo management
+    
+    private func ownedAnimals() -> [String] {
+        if let array = data.arrayForKey(RZAnimalsKey) as? [String] {
+            return array
+        }
+        //array doesn't exist
+        data.setValue([], forKey: RZAnimalsKey)
+        return []
+    }
+    
+    func playerOwnsAnimal(animal: String) -> Bool {
+        return contains(ownedAnimals(), animal)
+    }
+    
+    func canAffordAnimal() -> Bool {
+        return getPlayerBalance() > 20.0
+    }
+    
+    func purchaseAnimal(animal: String) {
+        if !canAffordAnimal() { return }
+        
+        changePlayerBalanceBy(-20.0)
+        var animals = ownedAnimals()
+        animals.append(animal)
+        data.setValue(animals, forKey: RZAnimalsKey)
+    }
+    
+    func currentZooLevel() -> Int {
+        let level = data.integerForKey(RZZooLevelKey)
+        if level == 0 {
+            data.setInteger(1, forKey: RZZooLevelKey)
+            return 1
+        }
+        return level
+    }
+    
+    func advanceCurrentLevelIfComplete(animals: [String]) -> Bool {
+        var complete = true
+        for animal in animals {
+            complete = complete && playerOwnsAnimal(animal)
+        }
+        if complete {
+            let currentLevel = currentZooLevel()
+            data.setInteger(currentLevel + 1, forKey: RZZooLevelKey)
+        }
+        return complete
     }
     
 }

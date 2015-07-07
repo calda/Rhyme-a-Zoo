@@ -10,10 +10,6 @@ import Foundation
 import UIKit
 import UIKit.UIGestureRecognizerSubclass
 
-func RZUserOwnsAnimalKey(animal: String) -> String {
-    return "userOwnsAnimal:\(animal)"
-}
-
 class BuildingViewController : UIViewController {
     
     @IBOutlet weak var backgroundImage: UIImageView!
@@ -54,6 +50,39 @@ class BuildingViewController : UIViewController {
         "centaur" : CGRect(origin: CGPointMake(0.278, 0.173), size: CGSizeMake(0.302, 0.498))
     ]
     
+    let coinCenters = [ //each point is a percentage of the total width/height of the background image
+        "giraffe" : CGPointMake(0.761, 0.944),
+        "hippo" : CGPointMake(0.217, 0.355),
+        "kangaroo" : CGPointMake(0.369, 0.947),
+        "panda" : CGPointMake(0.588, 0.517),
+        "ostrich" : CGPointMake(0.532, 0.773),
+        "owl" : CGPointMake(0.106, 0.491),
+        "parrot" : CGPointMake(0.809, 0.477),
+        "flamingo" : CGPointMake(0.317, 0.723),
+        "seal" : CGPointMake(0.229, 0.888),
+        "shark" : CGPointMake(0.791, 0.507),
+        "squid" : CGPointMake(0.219, 0.219),
+        "dolphin" : CGPointMake(0.671, 0.235),
+        "wolf" : CGPointMake(0.793, 0.925),
+        "lion" : CGPointMake(0.235, 0.939),
+        "tiger" : CGPointMake(0.197, 0.325),
+        "jaguar" : CGPointMake(0.548, 0.187),
+        "alligator" : CGPointMake(0.416, 0.491),
+        "iguana" : CGPointMake(0.926, 0.709),
+        "turtle" : CGPointMake(0.677, 0.336),
+        "rattlesnake" : CGPointMake(0.102, 0.757),
+        "baboon" : CGPointMake(0.169, 0.347),
+        "monkey" : CGPointMake(0.612, 0.723),
+        "gorilla" : CGPointMake(0.914, 0.475),
+        "chimp" : CGPointMake(0.251, 0.896),
+        "pterodactyl" : CGPointMake(0.853, 0.387),
+        "stegasaurus" : CGPointMake(0.47, 0.675),
+        "trex" : CGPointMake(0.663, 0.925),
+        "triceratop" : CGPointMake(0.163, 0.627),
+        "mermaid" : CGPointMake(0.735, 0.805),
+        "centaur" : CGPointMake(0.444, 0.643)
+    ]
+    
     let buildingAnimals = [
         ["hippo", "kangaroo", "panda", "giraffe"],
         ["ostrich", "owl", "parrot", "flamingo"],
@@ -65,7 +94,8 @@ class BuildingViewController : UIViewController {
         ["mermaid", "centaur"]
     ]
     
-    var buttons: [String : UIButton] = [:]
+    var animalButtons: [String : UIButton] = [:]
+    var buyButtons: [UIButton] = []
     var animalAudioNumber: [String : Int] = [:]
     var building: Int!
     var displaySize: CGSize!
@@ -82,7 +112,7 @@ class BuildingViewController : UIViewController {
         blurredBackground.image = image
         
         //generate frames for animal buttons
-        buttons = [:]
+        animalButtons = [:]
         animalAudioNumber = [:]
         let displayHeight = displaySize.height
         let currentHeight = self.backgroundImage.frame.height
@@ -97,11 +127,10 @@ class BuildingViewController : UIViewController {
             let buttonFrame = CGRect(origin: origin, size: size)
             
             //add button to view
-            let dataKey = RZUserOwnsAnimalKey(animal)
-            let userOwnsAnimal = data.boolForKey(dataKey)
+            let playerOwnsAnimal = RZQuizDatabase.playerOwnsAnimal(animal)
             
             let image: UIImage?
-            if userOwnsAnimal {
+            if playerOwnsAnimal {
                 image = UIImage(named: "\(animal)#color")
             }
             else {
@@ -112,12 +141,37 @@ class BuildingViewController : UIViewController {
             button.setImage(image, forState: UIControlState.Normal)
             button.userInteractionEnabled = false
             backgroundImage.addSubview(button)
-            
-            buttons.updateValue(button, forKey: animal)
+            animalButtons.updateValue(button, forKey: animal)
             
             //start on random audio
             let random = Int(arc4random_uniform(2) + 1)
             animalAudioNumber.updateValue(random, forKey: animal)
+            
+            //add buy button if this is current level
+            let currentLevel = RZQuizDatabase.currentZooLevel()
+            if currentLevel == building && !RZQuizDatabase.playerOwnsAnimal(animal) {
+                let size = CGSizeMake(50, 40)
+                let percentCenter = coinCenters[animal]!
+                let center = CGPointMake(percentCenter.x * sceneSize.width, percentCenter.y * sceneSize.height)
+                var buyFrame = CGRectMake(center.x - size.width/2, center.y - size.height/2, size.width, size.height)
+                //calculate the offset so that these buttons are in the main view instead
+                let screenWidth = UIScreen.mainScreen().bounds.width
+                let unusedWidth = screenWidth - sceneSize.width
+                let offset = unusedWidth / 2
+                buyFrame.offset(dx: offset, dy: 0)
+                
+                let buyButton = UIButton(frame: buyFrame)
+                buyButton.setImage(UIImage(named: "coin-stack"), forState: .Normal)
+                buyButton.imageView!.contentMode = UIViewContentMode.ScaleAspectFit
+                buyButton.addTarget(self, action: "purchasePressed:", forControlEvents: .TouchUpInside)
+                buyButton.restorationIdentifier = animal
+                self.view.addSubview(buyButton)
+                buyButtons.append(buyButton)
+                
+                if !RZQuizDatabase.canAffordAnimal() {
+                    buyButton.alpha = 0.75
+                }
+            }
         }
         
         backgroundImage.layer.masksToBounds = true
@@ -139,8 +193,17 @@ class BuildingViewController : UIViewController {
         let touch = sender.locationInView(backgroundImage)
         var anyHit = false //only allow the top hitbox if two overlap
         
+        //activate this code to get percentage points for touches
+        /*if sender.state != .Began { return }
+        let xun = touch.x / backgroundImage.frame.width
+        let yun = touch.y / backgroundImage.frame.height
+        let x = Double(round(1000*xun)/1000)
+        let y = Double(round(1000*yun)/1000)
+        println("CGPointMake(\(x), \(y))")
+        return*/
+        
         for animal in buildingAnimals[building - 1] {
-            let button = buttons[animal]!
+            let button = animalButtons[animal]!
             let frame = button.frame
             
             if CGRectContainsPoint(frame, touch) && !anyHit {
@@ -180,6 +243,31 @@ class BuildingViewController : UIViewController {
     @IBAction func homePressed(sender: AnyObject) {
         UAHaltPlayback()
         self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func purchasePressed(sender: UIButton) {
+        if !RZQuizDatabase.canAffordAnimal() {
+            UAPlayer().play("moreMoney", ofType: ".mp3", ifConcurrent: .Ignore)
+            return
+        }
+        if let animal = sender.restorationIdentifier {
+            RZQuizDatabase.purchaseAnimal(animal)
+            sender.removeFromSuperview()
+            RZQuizDatabase.advanceCurrentLevelIfComplete(buildingAnimals[building - 1])
+            
+            //color in animal and play sound
+            UAPlayer().play("correct", ofType: ".mp3", ifConcurrent: .Interrupt)
+            let animalButton = animalButtons[animal]!
+            let colored = UIImage(named: "\(animal)#color")
+            animalButton.setImage(colored, forState: .Normal)
+            
+            //disable buy buttons if the user can't afford another animal
+            if !RZQuizDatabase.canAffordAnimal() {
+                for button in buyButtons {
+                    button.alpha = 0.75
+                }
+            }
+        }
     }
     
 }

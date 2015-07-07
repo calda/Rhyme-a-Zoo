@@ -2785,6 +2785,7 @@
 		2E6F5C6E1B42347500E37B65 /* UniversalAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E6F5C6D1B42347500E37B65 /* UniversalAudio.swift */; };
 		2E6F5C701B425D3900E37B65 /* LegacyDB.db in Resources */ = {isa = PBXBuildFile; fileRef = 2E6F5C6F1B425D3900E37B65 /* LegacyDB.db */; };
 		2E6F5C721B42657100E37B65 /* QuizDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E6F5C711B42657100E37B65 /* QuizDatabase.swift */; };
+		2EA044AB1B4BB93B005AE1B4 /* moreMoney.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2EA044AA1B4BB93B005AE1B4 /* moreMoney.mp3 */; };
 		2EBA6CB21B4691110047D1EA /* QuizViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EBA6CB11B4691100047D1EA /* QuizViewController.swift */; };
 		2EBB787C1B41154100DEE989 /* ZooViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EBB787B1B41154100DEE989 /* ZooViewController.swift */; };
 		2EBB788E1B41222500DEE989 /* BuildingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EBB788D1B41222500DEE989 /* BuildingViewController.swift */; };
@@ -5726,6 +5727,7 @@
 		2E6F5C6D1B42347500E37B65 /* UniversalAudio.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniversalAudio.swift; sourceTree = "<group>"; };
 		2E6F5C6F1B425D3900E37B65 /* LegacyDB.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = LegacyDB.db; sourceTree = "<group>"; };
 		2E6F5C711B42657100E37B65 /* QuizDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizDatabase.swift; sourceTree = "<group>"; };
+		2EA044AA1B4BB93B005AE1B4 /* moreMoney.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = moreMoney.mp3; path = Zoo/moreMoney.mp3; sourceTree = "<group>"; };
 		2EBA6CB11B4691100047D1EA /* QuizViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizViewController.swift; sourceTree = "<group>"; };
 		2EBB787B1B41154100DEE989 /* ZooViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZooViewController.swift; sourceTree = "<group>"; };
 		2EBB788D1B41222500DEE989 /* BuildingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuildingViewController.swift; sourceTree = "<group>"; };
@@ -8790,6 +8792,7 @@
 		2EBB78681B4112F700DEE989 /* Zoo */ = {
 			isa = PBXGroup;
 			children = (
+				2EA044AA1B4BB93B005AE1B4 /* moreMoney.mp3 */,
 				2E6F5BA91B4233A100E37B65 /* animal audio */,
 				2EC1AABD1B41476A00A635AB /* background1.jpg */,
 				2EC1AABE1B41476A00A635AB /* background2.jpg */,
@@ -9860,6 +9863,7 @@
 				2E45F6981B42BD0D00A8A802 /* sad.jpg in Resources */,
 				2E6F5C5E1B4233AD00E37B65 /* tiger_1.mp3 in Resources */,
 				2E45E6F11B42BBBA00A8A802 /* rhyme_092.mp3 in Resources */,
+				2EA044AB1B4BB93B005AE1B4 /* moreMoney.mp3 in Resources */,
 				2EE4DB8E1B4A5B4800F9578C /* quiz-over-bad.mp3 in Resources */,
 				2E45F24B1B42BCCD00A8A802 /* Meow.mp3 in Resources */,
 				2E45F56A1B42BD0D00A8A802 /* A.jpg in Resources */,

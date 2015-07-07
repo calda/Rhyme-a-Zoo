@@ -364,6 +364,12 @@ class QuizViewController : UIViewController {
                 self.nextQuestion()
             }
             
+            //disable repeal button
+            UIView.animateWithDuration(0.6, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.AllowUserInteraction, animations: {
+                self.repeatButton.transform = CGAffineTransformMakeScale(0.75,0.75)
+                }, completion: nil)
+            self.repeatButton.enabled = false
+            
         } else { //incorrect
             UAPlayer().play("incorrect", ofType: "mp3", ifConcurrent: .Interrupt)
             UIView.animateWithDuration(0.2) {
