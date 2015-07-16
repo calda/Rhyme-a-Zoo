@@ -43,6 +43,8 @@ let RZQuizLevelKey = "com.hearatale.raz.quizLevel"
 let RZPlayerBalanceKey = "com.hearatale.raz.balance"
 let RZAnimalsKey = "com.hearatale.raz.animals"
 let RZZooLevelKey = "com.hearatale.raz.animalLevel"
+let RZKeeperNumberKey = "com.hearatale.raz.keeperNumber"
+let RZKeeperGenderKey = "com.hearatale.raz.keeperGender"
 
 ///Top level database structure. Globally available at RZQuizDatabase. Contains many Quizes.
 ///Quiz Database -> Quiz -> Question -> Option
@@ -201,6 +203,34 @@ class QuizDatabase {
         return complete
     }
     
+    //zookeeper
+    
+    func getKeeperGender() -> String {
+        let gender = data.stringForKey(RZKeeperGenderKey)
+        if gender == nil || (gender != "boy" && gender != "girl") {
+            data.setValue("boy", forKey: RZKeeperGenderKey)
+            return "boy"
+        }
+        return gender!
+    }
+    
+    func setKeeperGender(gender: String) {
+        data.setValue(gender, forKey: RZKeeperGenderKey)
+    }
+    
+    func getKeeperNumber() -> Int {
+        let number = data.integerForKey(RZKeeperNumberKey)
+        if number == 0 {
+            data.setValue(1, forKey: RZKeeperNumberKey)
+            return 1
+        }
+        return number
+    }
+    
+    func setKeeperNumber(number: Int) {
+        data.setValue(number, forKey: RZKeeperNumberKey)
+    }
+    
 }
 
 typealias Rhyme = Quiz
@@ -344,6 +374,25 @@ struct Quiz : Printable {
             return quiz
         }
         return nil
+    }
+    
+    func getNextUnplayed(fromFavorites: Bool) -> Quiz? {
+        var next = getNext(fromFavorites: fromFavorites)
+        while next != nil && next!.quizHasBeenPlayed() {
+            next = next!.getNext(fromFavorites: fromFavorites)
+        }
+        
+        if next == nil {
+            //there aren't any unplayed after, so check if there is an unplayed before
+            var previous = getPrevious(fromFavorites: fromFavorites)
+            var attemptCount = 0
+            while previous != nil && previous!.quizHasBeenPlayed() && attemptCount < 5 {
+                previous = previous!.getPrevious(fromFavorites: fromFavorites)
+            }
+            return previous
+        }
+        
+        return next
     }
 
 }

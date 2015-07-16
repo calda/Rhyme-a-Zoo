@@ -48,9 +48,10 @@ class RhymeViewController : UIViewController {
         
         let rawText = rhyme.rhymeText
         //add new lines
-        var text = rawText.stringByReplacingOccurrencesOfString(";/", withString: "\n", options: nil, range: nil)
+        var text = rawText.stringByReplacingOccurrencesOfString("/", withString: "\n", options: nil, range: nil)
+        text = text.stringByReplacingOccurrencesOfString(";", withString: ",", options: nil, range: nil)
         text = text.stringByReplacingOccurrencesOfString("\'", withString: "'", options: nil, range: nil)
-        text = rawText.stringByReplacingOccurrencesOfString("/", withString: "\n", options: nil, range: nil)
+        text = text.stringByReplacingOccurrencesOfString("/", withString: "\n", options: nil, range: nil)
         rhymeString = text
         
         let paragraphStyle = NSMutableParagraphStyle()
@@ -67,10 +68,7 @@ class RhymeViewController : UIViewController {
         
         let quizPlayed = rhyme.quizHasBeenPlayed()
         quizButton.setImage(UIImage(named: (quizPlayed ? "button-check" : "button-question")), forState: .Normal)
-        
-        //disable quiz button if it hasn't been played yet
-        quizButton.enabled = rhyme.quizHasBeenPlayed()
-        quizButton.userInteractionEnabled = !quizButton.enabled
+        quizButton.enabled = false
         
         let favorite = rhyme.isFavorite()
         likeButton.setImage(UIImage(named: (favorite ? "button-unlike" : "button-heart")), forState: .Normal)
@@ -139,8 +137,7 @@ class RhymeViewController : UIViewController {
         quizBounceTimer?.invalidate()
         
         //disable quiz button if it hasn't been played yet
-        quizButton.enabled = rhyme.quizHasBeenPlayed()
-        quizButton.userInteractionEnabled = !quizButton.enabled
+        quizButton.enabled = false
         
         let number = rhyme.number.threeCharacterString()
         let audioName = "rhyme_\(number)"
@@ -280,13 +277,11 @@ class RhymeViewController : UIViewController {
     
     
     func rhymeFinishedPlaying() {
-        UAHaltPlayback()
         
         //animate buttons
         likeBottom.constant = 70
         repeatHeight.constant = 50
         quizButton.enabled = true
-        quizButton.userInteractionEnabled = !rhyme.quizHasBeenPlayed()
         UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.AllowUserInteraction, animations: {
             self.view.layoutIfNeeded()
         }, completion: nil)
@@ -294,6 +289,9 @@ class RhymeViewController : UIViewController {
         quizBounceTimer?.invalidate()
         if !rhyme.quizHasBeenPlayed() {
             self.quizBounceTimer = NSTimer.scheduledTimerWithTimeInterval(3.5, target: self, selector: "bounceQuizIcon", userInfo: nil, repeats: true)
+            delay(0.5) {
+                self.quizButtonPressed(self)
+            }
         }
     }
     
@@ -349,15 +347,10 @@ class RhymeViewController : UIViewController {
     }
     
     @IBAction func quizButtonPressed(sender: AnyObject) {
-        if rhyme.quizHasBeenPlayed() {
-            //play audio that probably doesn't exist yet
-        }
-        else {
-            let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("quiz") as! QuizViewController
-            controller.quiz = rhyme
-            quizBounceTimer?.invalidate()
-            self.presentViewController(controller, animated: true, completion: nil)
-        }
+        let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("quiz") as! QuizViewController
+        controller.quiz = rhyme
+        quizBounceTimer?.invalidate()
+        self.presentViewController(controller, animated: true, completion: nil)
     }
     
     
@@ -378,7 +371,7 @@ class RhymeViewController : UIViewController {
     func animateChangeToRhyme(rhyme: Rhyme, transition: String) {
         
         nextButton.enabled = false
-        quizButton.enabled = rhyme.quizHasBeenPlayed()
+        quizButton.enabled = false
         previousButton.enabled = false
         
         likeBottom.constant = 10

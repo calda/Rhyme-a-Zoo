@@ -9,12 +9,13 @@
 import Foundation
 import UIKit
 
-let RZCurrentLevelKey = "currentLevel"
-
-class ZooViewController : UIViewController {
+class ZooViewController : UIViewController, UIGestureRecognizerDelegate {
 
     @IBOutlet weak var backgroundImage: UIImageView!
     @IBOutlet weak var levelIcon: UIButton!
+    var zookeeperImage: UIImageView!
+    @IBOutlet var mainButtons: [UIButton]!
+    @IBOutlet weak var quitZookeeperButton: UIButton!
     
     let percentageFrames = [ //in percentages relative to the image view
         CGRect(origin: CGPointMake(0.541, 0.195), size: CGSizeMake(0.175, 0.160)),
@@ -31,11 +32,7 @@ class ZooViewController : UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         //update background to level
-        var level = data.integerForKey(RZCurrentLevelKey)
-        if level == 0  {
-            data.setInteger(1, forKey: RZCurrentLevelKey)
-            level = 1
-        }
+        var level = RZQuizDatabase.currentZooLevel()
         levelIcon.setImage(UIImage(named: "button-\(level)"), forState: .Normal)
         
         backgroundImage.image = UIImage(named: "background\(level).jpg")
@@ -55,9 +52,16 @@ class ZooViewController : UIViewController {
     
     @IBAction func tapDetected(sender: UITapGestureRecognizer) {
         
-        let level = data.integerForKey(RZCurrentLevelKey)
+        if let zookeeperImage = self.zookeeperImage {
+            //in zookeeper mode
+            UIView.animateWithDuration(0.2, animations: {
+                self.zookeeperImage.center = sender.locationInView(self.zookeeperImage.superview)
+            })
+            return
+        }
         
         let touch = sender.locationInView(backgroundImage)
+        
         for i in 0 ..< buttonFrames.count {
             let j = buttonFrames.count - (i + 1) //go through frames backwards
             let frame = buttonFrames[j]
@@ -66,6 +70,7 @@ class ZooViewController : UIViewController {
                 let building = j + 1
                 var canOpenBuilding = true
                 
+                let level = RZQuizDatabase.currentZooLevel()
                 if level < 7 && building >= 7 { canOpenBuilding = false }
                 
                 if canOpenBuilding {
@@ -83,6 +88,34 @@ class ZooViewController : UIViewController {
         }
     }
     
+    @IBAction func panDetected(sender: UIPanGestureRecognizer) {
+        if let zookeeperImage = self.zookeeperImage {
+            //in zookeeper mode
+            UIView.animateWithDuration(0.2, animations: {
+                self.zookeeperImage.center = sender.locationInView(self.zookeeperImage.superview)
+            })
+        }
+    }
+    
+    var previousKeeperScale: CGFloat = 1.0
+    var currentKeeperScale: CGFloat = 1.0
+    @IBAction func pinchRecognized(sender: UIPinchGestureRecognizer) {
+        if let zookeeperImage = self.zookeeperImage {
+            
+            if sender.state == .Began {
+                previousKeeperScale = currentKeeperScale
+            }
+            
+            let scale = sender.scale
+            currentKeeperScale = min(previousKeeperScale * scale, 3.0)
+            zookeeperImage.transform = CGAffineTransformMakeScale(currentKeeperScale, currentKeeperScale)
+        }
+    }
+    
+    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+    
     @IBAction func questionPressed(sender: AnyObject) {
         for i in 0 ..< numberButtonPercentages.count {
             showBuildingIcon(i + 1)
@@ -90,7 +123,7 @@ class ZooViewController : UIViewController {
     }
     
     @IBAction func levelButtonPressed(sender: AnyObject) {
-        let currentLevel = data.integerForKey(RZCurrentLevelKey)
+        let currentLevel = RZQuizDatabase.currentZooLevel()
         showBuildingIcon(currentLevel)
     }
     
@@ -108,7 +141,7 @@ class ZooViewController : UIViewController {
     func showBuildingIcon(buildingNumber: Int) {
         let percentagePoint = numberButtonPercentages[buildingNumber - 1]
         
-        let level = data.integerForKey(RZCurrentLevelKey)
+        let level = RZQuizDatabase.currentZooLevel()
         if (buildingNumber == 7 || buildingNumber == 8) && level < 7 {
             return
         }
@@ -135,6 +168,57 @@ class ZooViewController : UIViewController {
                 })
                 
         })
+    }
+    
+    @IBAction func zookeeperPressed(sender: AnyObject) {
+        if zookeeperImage == nil {
+            //add zookeeper
+            let number = RZQuizDatabase.getKeeperNumber()
+            let gender = RZQuizDatabase.getKeeperGender()
+            let imageName = "zookeeper-\(gender)\(number)"
+            let image = UIImage(named: imageName)
+            zookeeperImage = UIImageView(image: image)
+            
+            let height = self.view.frame.height * 0.5
+            let width = height * (0.5746835443)
+            let size = CGSizeMake(width, height)
+            zookeeperImage.frame.size = size
+            zookeeperImage.center = self.view.center
+            self.view.addSubview(zookeeperImage)
+            
+            //animate
+            zookeeperImage.alpha = 0.0
+            zookeeperImage.transform = CGAffineTransformMakeScale(0.5, 0.5)
+            UIView.animateWithDuration(0.6, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: nil, animations: {
+                self.zookeeperImage.alpha = 1.0
+                self.zookeeperImage.transform = CGAffineTransformMakeScale(1.0, 1.0)
+                for button in self.mainButtons {
+                    button.alpha = 0.0
+                }
+                self.quitZookeeperButton.alpha = 1.0
+                
+            }, completion: nil)
+        }
+        
+        else {
+            UIView.animateWithDuration(0.6, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: nil, animations: {
+                self.zookeeperImage.alpha = 0.0
+                self.zookeeperImage.transform = CGAffineTransformMakeScale(self.currentKeeperScale * 0.5, self.currentKeeperScale * 0.5)
+                
+                for button in self.mainButtons {
+                    button.alpha = 1.0
+                }
+                self.quitZookeeperButton.alpha = 0.0
+            }, completion: { success in
+                
+                //clean up zookeeper
+                self.zookeeperImage.removeFromSuperview()
+                self.zookeeperImage = nil
+                self.currentKeeperScale = 1.0
+                self.previousKeeperScale = 1.0
+                
+            })
+        }
     }
     
     @IBAction func homePressed(sender: AnyObject) {

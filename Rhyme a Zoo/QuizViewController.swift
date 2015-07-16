@@ -29,6 +29,7 @@ class QuizViewController : UIViewController {
     var answerAttempts = 0
     var goldCoins = 0
     var silverCoins = 0
+    var quizPlayedBefore = false
     
     @IBOutlet weak var quizOverView: UIView!
     @IBOutlet weak var quizOverViewTop: NSLayoutConstraint!
@@ -68,6 +69,8 @@ class QuizViewController : UIViewController {
         }
         
         for container in optionContainers {
+            container.superview?.layoutIfNeeded()
+            container.layoutIfNeeded()
             originalContainerFrames.append(container.frame)
         }
         
@@ -79,6 +82,8 @@ class QuizViewController : UIViewController {
     }
     
     func startQuiz(quiz: Quiz, playAudio: Bool = true) {
+        quizPlayedBefore = quiz.quizHasBeenPlayed()
+
         var animateTransition = (self.quiz != nil) //is not first quiz
         self.quiz = quiz
         let quizNumber = quiz.number.threeCharacterString()
@@ -193,8 +198,10 @@ class QuizViewController : UIViewController {
     
     func endQuiz() {
         //update data
-        quiz.saveQuizResult(gold: goldCoins, silver: silverCoins)
-        RZQuizDatabase.advanceLevelIfCurrentIsComplete()
+        if !quizPlayedBefore {
+            quiz.saveQuizResult(gold: goldCoins, silver: silverCoins)
+            RZQuizDatabase.advanceLevelIfCurrentIsComplete()
+        }
         
         //disable the quiz
         touchRecognizer.enabled = false
@@ -233,16 +240,20 @@ class QuizViewController : UIViewController {
         coinsLabel.text = coinString
         self.view.layoutIfNeeded()
         
-        //update buttons
-        let quizIndex = RZQuizDatabase.getIndexForRhyme(quiz)
-        previousButton.hidden = quiz.getPrevious(fromFavorites: RZShowingFavorites) == nil
-        nextButton.hidden = quiz.getNext(fromFavorites: RZShowingFavorites) == nil
-        
         //cue audio
         UAPlayer().play(audioName, ofType: "mp3", ifConcurrent: .Interrupt)
         let audioLength = UALengthOfFile(audioName, ofType: "mp3")
         let timer = NSTimer.scheduledTimerWithTimeInterval(audioLength - 0.1, target: self, selector: "playCompletionSound", userInfo: count > 1, repeats: false)
         timers.append(timer)
+        
+        //update buttons
+        let quizIndex = RZQuizDatabase.getIndexForRhyme(quiz)
+        previousButton.hidden = quiz.getPrevious(fromFavorites: RZShowingFavorites) == nil
+        nextButton.hidden = quiz.getNext(fromFavorites: RZShowingFavorites) == nil
+        //hide buttons if this was the first time playing the quizes but only if there is a next unplayed to go to
+        let hideButtons = !self.quizPlayedBefore && quiz.getNextUnplayed(RZShowingFavorites) != nil
+        nextButton.hidden = nextButton.hidden || hideButtons
+        previousButton.hidden = previousButton.hidden || hideButtons
         
         UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.0, options: nil, animations: {
             self.quizOverViewTop.constant = 0.0
@@ -255,7 +266,20 @@ class QuizViewController : UIViewController {
         let name = "encouragement_"
         let count = encouragement ? 20 : 0
         let random = Int(arc4random_uniform(UInt32(count))) + 1
-        UAPlayer().play("\(name)\(random)", ofType: ".mp3", ifConcurrent: .Ignore)
+        UAPlayer().play("\(name)\(random)", ofType: ".mp3", ifConcurrent: .Interrupt)
+        let duration = UALengthOfFile("\(name)\(random)", ofType: ".mp3")
+        
+        //transition to next unplayed rhyme
+        if !quizPlayedBefore {
+            delay(duration + 0.5) {
+                let unplayed = self.quiz.getNextUnplayed(RZShowingFavorites)
+                
+                if let rhymeController = self.presentingViewController as? RhymeViewController, let rhyme = unplayed {
+                    rhymeController.decorate(rhyme)
+                }
+                self.dismissViewControllerAnimated(true, completion: nil)
+            }
+        }
     }
     
     //MARK: - User Interaction
