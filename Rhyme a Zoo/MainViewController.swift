@@ -9,7 +9,7 @@
 import UIKit
 import SQLite
 
-let data = NSUserDefaults.standardUserDefaults()
+var data = NSUserDefaults.standardUserDefaults()
 let RZMainMenuTouchDownNotification = "com.hearatale.raz.main-menu-touch-down"
 
 class MainViewController: UIViewController, UIGestureRecognizerDelegate {
@@ -24,7 +24,6 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     
     override func viewDidAppear(animated: Bool) {
-        
         //test the database because I'm dumb and deleted the Unit Tests
         /*    ALL OF THESE TESTS PASSED ON JUNE 30, 2015   */
         

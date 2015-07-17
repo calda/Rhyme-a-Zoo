@@ -36,15 +36,27 @@ private let WordBank = sql["WORDBANK"]
 let WordText = Expression<String>("Word")
 let WordCategory = Expression<Int>("Category")
 
-//UserDefaults keys managed by the database
-let RZFavoritesKey = "com.hearatale.raz.favorites"
-let RZQuizResultsKey = "com.hearatale.raz.quizResults"
-let RZQuizLevelKey = "com.hearatale.raz.quizLevel"
-let RZPlayerBalanceKey = "com.hearatale.raz.balance"
-let RZAnimalsKey = "com.hearatale.raz.animals"
-let RZZooLevelKey = "com.hearatale.raz.animalLevel"
-let RZKeeperNumberKey = "com.hearatale.raz.keeperNumber"
-let RZKeeperGenderKey = "com.hearatale.raz.keeperGender"
+//User Data Keys managed by the database
+let RZFavoritesKey: NSString = "com.hearatale.raz.favorites"
+let RZQuizResultsKey: NSString  = "com.hearatale.raz.quizResults"
+let RZQuizLevelKey: NSString  = "com.hearatale.raz.quizLevel"
+let RZPlayerBalanceKey: NSString  = "com.hearatale.raz.balance"
+let RZAnimalsKey: NSString  = "com.hearatale.raz.animals"
+let RZZooLevelKey: NSString  = "com.hearatale.raz.animalLevel"
+let RZKeeperNumberKey: NSString  = "com.hearatale.raz.keeperNumber"
+let RZKeeperGenderKey: NSString  = "com.hearatale.raz.keeperGender"
+
+//managing the user
+var RZCurrentUser: String = "defaultUser"
+
+func userKey(key: NSString, forUser user: String) -> String {
+    let originalKey = key as String
+    return "\(originalKey).\(user)"
+}
+
+func userKey(key: NSString) -> String {
+    return userKey(key, forUser: RZCurrentUser)
+}
 
 ///Top level database structure. Globally available at RZQuizDatabase. Contains many Quizes.
 ///Quiz Database -> Quiz -> Question -> Option
@@ -109,23 +121,23 @@ class QuizDatabase {
     }
     
     func isQuizFavorite(number: Int) -> Bool {
-        if let favs = data.arrayForKey(RZFavoritesKey) as? [Int] {
+        if let favs = data.arrayForKey(userKey(RZFavoritesKey)) as? [Int] {
             return contains(favs, number)
         }
         return false
     }
     
     func numberOfFavories() -> Int {
-        if var favs = data.arrayForKey(RZFavoritesKey) as? [Int] {
+        if var favs = data.arrayForKey(userKey(RZFavoritesKey)) as? [Int] {
             return favs.count
         }
         return 0
     }
     
     func currentLevel() -> Int {
-        var level = data.integerForKey(RZQuizLevelKey)
+        var level = data.integerForKey(userKey(RZQuizLevelKey))
         if level == 0 {
-            data.setInteger(1, forKey: RZQuizLevelKey)
+            data.setInteger(1, forKey: userKey(RZQuizLevelKey))
             return 1
         }
         return level
@@ -137,7 +149,7 @@ class QuizDatabase {
         
         if complete {
             let newLevel = min(current + 1, levelCount)
-            data.setInteger(newLevel, forKey: RZQuizLevelKey)
+            data.setInteger(newLevel, forKey: userKey(RZQuizLevelKey))
         }
         return complete
     }
@@ -145,23 +157,23 @@ class QuizDatabase {
     //bank 
     
     func getPlayerBalance() -> Double {
-        return data.doubleForKey(RZPlayerBalanceKey)
+        return data.doubleForKey(userKey(RZPlayerBalanceKey))
     }
     
     func changePlayerBalanceBy(amount: Double) {
         let current = getPlayerBalance()
         let new = current + amount
-        data.setDouble(new, forKey: RZPlayerBalanceKey)
+        data.setDouble(new, forKey: userKey(RZPlayerBalanceKey))
     }
     
     //zoo management
     
     private func ownedAnimals() -> [String] {
-        if let array = data.arrayForKey(RZAnimalsKey) as? [String] {
+        if let array = data.arrayForKey(userKey(RZAnimalsKey)) as? [String] {
             return array
         }
         //array doesn't exist
-        data.setValue([], forKey: RZAnimalsKey)
+        data.setValue([], forKey: userKey(RZAnimalsKey))
         return []
     }
     
@@ -179,13 +191,13 @@ class QuizDatabase {
         changePlayerBalanceBy(-20.0)
         var animals = ownedAnimals()
         animals.append(animal)
-        data.setValue(animals, forKey: RZAnimalsKey)
+        data.setValue(animals, forKey: userKey(RZAnimalsKey))
     }
     
     func currentZooLevel() -> Int {
-        let level = data.integerForKey(RZZooLevelKey)
+        let level = data.integerForKey(userKey(RZZooLevelKey))
         if level == 0 {
-            data.setInteger(1, forKey: RZZooLevelKey)
+            data.setInteger(1, forKey: userKey(RZZooLevelKey))
             return 1
         }
         return level
@@ -198,7 +210,7 @@ class QuizDatabase {
         }
         if complete {
             let currentLevel = currentZooLevel()
-            data.setInteger(currentLevel + 1, forKey: RZZooLevelKey)
+            data.setInteger(currentLevel + 1, forKey: userKey(RZZooLevelKey))
         }
         return complete
     }
@@ -206,29 +218,29 @@ class QuizDatabase {
     //zookeeper
     
     func getKeeperGender() -> String {
-        let gender = data.stringForKey(RZKeeperGenderKey)
+        let gender = data.stringForKey(userKey(RZKeeperGenderKey))
         if gender == nil || (gender != "boy" && gender != "girl") {
-            data.setValue("boy", forKey: RZKeeperGenderKey)
+            data.setValue("boy", forKey: userKey(RZKeeperGenderKey))
             return "boy"
         }
         return gender!
     }
     
     func setKeeperGender(gender: String) {
-        data.setValue(gender, forKey: RZKeeperGenderKey)
+        data.setValue(gender, forKey: userKey(RZKeeperGenderKey))
     }
     
     func getKeeperNumber() -> Int {
-        let number = data.integerForKey(RZKeeperNumberKey)
+        let number = data.integerForKey(userKey(RZKeeperNumberKey))
         if number == 0 {
-            data.setValue(1, forKey: RZKeeperNumberKey)
+            data.setValue(1, forKey: userKey(RZKeeperNumberKey))
             return 1
         }
         return number
     }
     
     func setKeeperNumber(number: Int) {
-        data.setValue(number, forKey: RZKeeperNumberKey)
+        data.setValue(number, forKey: userKey(RZKeeperNumberKey))
     }
     
 }
@@ -287,20 +299,20 @@ struct Quiz : Printable {
     }
     
     func setFavoriteStatus(fav: Bool) {
-        if var favs = data.arrayForKey(RZFavoritesKey) as? [Int] {
+        if var favs = data.arrayForKey(userKey(RZFavoritesKey)) as? [Int] {
             if fav && !contains(favs, number) {
                 favs.append(number)
-                data.setValue(favs, forKey: RZFavoritesKey)
+                data.setValue(favs, forKey: userKey(RZFavoritesKey))
             } else if !fav && contains(favs, number) {
                 let index = (favs as NSArray).indexOfObject(number)
                 favs.removeAtIndex(index)
-                data.setValue(favs, forKey: RZFavoritesKey)
+                data.setValue(favs, forKey: userKey(RZFavoritesKey))
             }
         }
         else {
             //favs array doesn't exist
             let favs = [number]
-            data.setValue(favs, forKey: RZFavoritesKey)
+            data.setValue(favs, forKey: userKey(RZFavoritesKey))
         }
     }
     
@@ -310,14 +322,14 @@ struct Quiz : Printable {
     
     func saveQuizResult(#gold: Int, silver: Int) {
         var results: [String : String] = [:]
-        if let resultsDict = data.dictionaryForKey(RZQuizResultsKey) as? [String : String] {
+        if let resultsDict = data.dictionaryForKey(userKey(RZQuizResultsKey)) as? [String : String] {
             results = resultsDict
         }
         
         let resultString = "\(gold):\(silver)"
         results.updateValue(resultString, forKey: number.threeCharacterString())
         
-        data.setValue(results, forKey: RZQuizResultsKey)
+        data.setValue(results, forKey: userKey(RZQuizResultsKey))
         
         //also update player balance
         let cashInflux = Double(gold) + (Double(silver) * 0.5)
@@ -325,14 +337,14 @@ struct Quiz : Printable {
     }
     
     func quizHasBeenPlayed() -> Bool {
-        if let resultsDict = data.dictionaryForKey(RZQuizResultsKey) as? [String : String] {
+        if let resultsDict = data.dictionaryForKey(userKey(RZQuizResultsKey)) as? [String : String] {
             return contains(resultsDict.keys.array, number.threeCharacterString())
         }
         return false
     }
     
     func getQuizResult() -> (gold: Int, silver: Int) {
-        if let resultsDict = data.dictionaryForKey(RZQuizResultsKey) as? [String : String] {
+        if let resultsDict = data.dictionaryForKey(userKey(RZQuizResultsKey)) as? [String : String] {
             if let result = resultsDict[number.threeCharacterString()] {
                 let splits = split(result){ $0 == ":" }
                 if splits.count == 2 {
@@ -359,7 +371,7 @@ struct Quiz : Printable {
     func getWithOffsetIndex(offset: Int, fromFavorites favs: Bool) -> Quiz? {
         var numbersArray = RZQuizDatabase.quizNumberMap
         
-        if let favsArray = data.arrayForKey(RZFavoritesKey) as? [Int] where favs {
+        if let favsArray = data.arrayForKey(userKey(RZFavoritesKey)) as? [Int] where favs {
             numbersArray = favsArray
         }
         

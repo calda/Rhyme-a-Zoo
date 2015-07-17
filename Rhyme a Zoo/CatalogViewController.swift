@@ -52,7 +52,7 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
         let rhyme: Rhyme
         if RZShowingFavorites {
             let favIndex = indexPath.item
-            let favs = data.arrayForKey(RZFavoritesKey) as! [Int]
+            let favs = data.arrayForKey(userKey(RZFavoritesKey)) as! [Int]
             let rhymeNumber = favs[favIndex]
             rhyme = Rhyme(rhymeNumber)
         } else {
@@ -187,7 +187,7 @@ class RhymeCell : UICollectionViewCell {
             let rhyme: Rhyme
             
             if showFavorites {
-                let favs = data.arrayForKey(RZFavoritesKey) as! [Int]
+                let favs = data.arrayForKey(userKey(RZFavoritesKey)) as! [Int]
                 let number = favs[index]
                 rhyme = Rhyme(number)
             } else {
