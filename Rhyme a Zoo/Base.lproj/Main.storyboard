@@ -1291,10 +1291,10 @@
                                 <rect key="frame" x="0.0" y="0.0" width="568" height="320"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pcc-f7-yiI" userLabel="cards">
-                                        <rect key="frame" x="0.0" y="36" width="568" height="284"/>
+                                        <rect key="frame" x="24" y="60" width="520" height="260"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" restorationIdentifier="rhymes" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UXF-DJ-D0N" userLabel="Rhymes">
-                                                <rect key="frame" x="0.0" y="0.0" width="142" height="284"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="130" height="260"/>
                                                 <animations/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="UXF-DJ-D0N" secondAttribute="height" multiplier="1:2" id="Yc0-fg-g9f"/>
@@ -1305,7 +1305,7 @@
                                                 <state key="highlighted" backgroundImage="Rhymes"/>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" restorationIdentifier="zoo" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LBA-xO-xi7" userLabel="Zoo">
-                                                <rect key="frame" x="142" y="0.0" width="142" height="284"/>
+                                                <rect key="frame" x="130" y="0.0" width="130" height="260"/>
                                                 <animations/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="LBA-xO-xi7" secondAttribute="height" multiplier="1:2" id="KMk-0y-epf"/>
@@ -1316,7 +1316,7 @@
                                                 <state key="highlighted" backgroundImage="Zoo"/>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" restorationIdentifier="bank" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BPx-rJ-wIT" userLabel="Bank">
-                                                <rect key="frame" x="284" y="0.0" width="142" height="284"/>
+                                                <rect key="frame" x="260" y="0.0" width="130" height="260"/>
                                                 <animations/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="BPx-rJ-wIT" secondAttribute="height" multiplier="1:2" id="Kfl-3v-rmX"/>
@@ -1327,7 +1327,7 @@
                                                 <state key="highlighted" backgroundImage="Bank"/>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" restorationIdentifier="you" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yqL-UY-VNQ" userLabel="Zoo Keeper">
-                                                <rect key="frame" x="426" y="0.0" width="142" height="284"/>
+                                                <rect key="frame" x="390" y="0.0" width="130" height="260"/>
                                                 <animations/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="yqL-UY-VNQ" secondAttribute="height" multiplier="1:2" id="aho-27-Bbg"/>
@@ -1369,7 +1369,7 @@
                                         </variation>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NpM-04-6BU" userLabel="touch view" customClass="TouchView" customModule="Rhyme_a_Zoo" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="36" width="568" height="284"/>
+                                        <rect key="frame" x="24" y="60" width="520" height="260"/>
                                         <animations/>
                                         <color key="backgroundColor" red="1" green="0.99994051456451416" blue="0.99998050928115845" alpha="0.01" colorSpace="calibratedRGB"/>
                                         <connections>
@@ -1377,23 +1377,69 @@
                                             <outletCollection property="gestureRecognizers" destination="NXy-V6-ZJM" appends="YES" id="SJ0-wa-FhK"/>
                                         </connections>
                                     </view>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="happy.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="pJR-58-HbD" userLabel="user icon">
+                                        <rect key="frame" x="32" y="10" width="50" height="50"/>
+                                        <animations/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="pJR-58-HbD" secondAttribute="height" multiplier="1:1" id="RsR-v0-mEF"/>
+                                            <constraint firstAttribute="width" secondItem="pJR-58-HbD" secondAttribute="height" multiplier="1:1" id="uHo-os-srg"/>
+                                        </constraints>
+                                        <variation key="default">
+                                            <mask key="constraints">
+                                                <exclude reference="uHo-os-srg"/>
+                                            </mask>
+                                        </variation>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cal" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="88F-Qs-GE7">
+                                        <rect key="frame" x="87" y="16" width="387" height="38"/>
+                                        <animations/>
+                                        <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="36"/>
+                                        <color key="textColor" red="0.99999678134918213" green="0.99967384338378906" blue="0.99975836277008057" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dES-Ne-joa">
+                                        <rect key="frame" x="484" y="10" width="50" height="50"/>
+                                        <animations/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="dES-Ne-joa" secondAttribute="height" multiplier="1:1" id="sgx-Hu-ooo"/>
+                                        </constraints>
+                                        <state key="normal" image="button-logout">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="logoutPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="hKc-DB-XQv"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
+                                    <constraint firstItem="pJR-58-HbD" firstAttribute="top" secondItem="K7g-MO-5Ee" secondAttribute="top" constant="10" id="4Mn-r9-fHc"/>
+                                    <constraint firstItem="pcc-f7-yiI" firstAttribute="top" relation="greaterThanOrEqual" secondItem="K7g-MO-5Ee" secondAttribute="top" constant="60" id="5qw-gQ-v4r"/>
                                     <constraint firstAttribute="centerX" secondItem="pcc-f7-yiI" secondAttribute="centerX" id="7dw-GO-Hmw"/>
                                     <constraint firstItem="NpM-04-6BU" firstAttribute="top" secondItem="pcc-f7-yiI" secondAttribute="top" id="7gP-qK-qPh"/>
+                                    <constraint firstItem="88F-Qs-GE7" firstAttribute="leading" secondItem="pJR-58-HbD" secondAttribute="trailing" constant="5" id="Bvq-Yq-UpC"/>
                                     <constraint firstAttribute="centerX" secondItem="pcc-f7-yiI" secondAttribute="centerX" id="DJx-Ii-HfU"/>
+                                    <constraint firstAttribute="height" secondItem="pcc-f7-yiI" secondAttribute="height" priority="999" id="Gpz-5z-2Ur"/>
+                                    <constraint firstItem="pJR-58-HbD" firstAttribute="centerY" secondItem="88F-Qs-GE7" secondAttribute="centerY" constant="0.5" id="Iih-VG-9ij"/>
                                     <constraint firstAttribute="bottom" secondItem="pcc-f7-yiI" secondAttribute="bottom" id="Jqh-12-e1p"/>
                                     <constraint firstItem="NpM-04-6BU" firstAttribute="bottom" secondItem="pcc-f7-yiI" secondAttribute="bottom" id="KHw-ce-ceg"/>
+                                    <constraint firstItem="dES-Ne-joa" firstAttribute="leading" secondItem="88F-Qs-GE7" secondAttribute="trailing" constant="10" id="TrK-24-pgR"/>
+                                    <constraint firstItem="pJR-58-HbD" firstAttribute="bottom" secondItem="dES-Ne-joa" secondAttribute="bottom" id="cQE-Bs-r20"/>
+                                    <constraint firstItem="NpM-04-6BU" firstAttribute="leading" secondItem="pJR-58-HbD" secondAttribute="leading" constant="-8" id="gW4-dY-ojo"/>
+                                    <constraint firstItem="NpM-04-6BU" firstAttribute="top" secondItem="pJR-58-HbD" secondAttribute="bottom" id="gY6-a6-7xn"/>
+                                    <constraint firstItem="pJR-58-HbD" firstAttribute="height" secondItem="88F-Qs-GE7" secondAttribute="height" multiplier="1.3" id="p4g-Vr-3Ha"/>
                                     <constraint firstItem="pcc-f7-yiI" firstAttribute="width" relation="lessThanOrEqual" secondItem="K7g-MO-5Ee" secondAttribute="width" id="phr-A9-iqE"/>
                                     <constraint firstItem="NpM-04-6BU" firstAttribute="trailing" secondItem="pcc-f7-yiI" secondAttribute="trailing" id="prm-ix-hxD"/>
+                                    <constraint firstItem="pJR-58-HbD" firstAttribute="top" secondItem="dES-Ne-joa" secondAttribute="top" id="rtH-lg-FaE"/>
+                                    <constraint firstItem="NpM-04-6BU" firstAttribute="trailing" secondItem="dES-Ne-joa" secondAttribute="trailing" constant="10" id="tBk-Gd-sLv"/>
                                     <constraint firstItem="NpM-04-6BU" firstAttribute="leading" secondItem="pcc-f7-yiI" secondAttribute="leading" id="vn2-f6-rU4"/>
                                     <constraint firstAttribute="centerY" secondItem="pcc-f7-yiI" secondAttribute="centerY" id="znG-ON-tcs"/>
                                 </constraints>
                                 <variation key="default">
                                     <mask key="constraints">
                                         <exclude reference="DJx-Ii-HfU"/>
+                                        <exclude reference="phr-A9-iqE"/>
                                         <exclude reference="znG-ON-tcs"/>
                                     </mask>
                                 </variation>
@@ -1403,6 +1449,7 @@
                         <color key="backgroundColor" red="0.0" green="0.58431372549019611" blue="0.90980392156862744" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="K7g-MO-5Ee" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Edb-lm-6TM"/>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" secondItem="pcc-f7-yiI" secondAttribute="width" id="IAs-ar-dCB"/>
                             <constraint firstAttribute="trailingMargin" secondItem="K7g-MO-5Ee" secondAttribute="trailing" id="PK3-Po-2mL"/>
                             <constraint firstItem="EkQ-L1-ecO" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="QQ9-r9-tux"/>
                             <constraint firstItem="EkQ-L1-ecO" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="aAV-xe-1Wi"/>
@@ -1410,6 +1457,8 @@
                             <constraint firstItem="K7g-MO-5Ee" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="frm-i0-Q9q"/>
                             <constraint firstAttribute="trailing" secondItem="EkQ-L1-ecO" secondAttribute="trailing" id="gWA-Y6-ji2"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="EkQ-L1-ecO" secondAttribute="bottom" id="h0G-B9-ine"/>
+                            <constraint firstItem="K7g-MO-5Ee" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="0.75" id="pja-4U-jVh"/>
+                            <constraint firstItem="K7g-MO-5Ee" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="ruu-uO-WFN"/>
                             <constraint firstItem="K7g-MO-5Ee" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" id="uLI-3f-DrL"/>
                             <constraint firstAttribute="bottomMargin" secondItem="K7g-MO-5Ee" secondAttribute="bottom" id="xjq-8K-AQA"/>
                         </constraints>
@@ -1417,6 +1466,8 @@
                             <mask key="constraints">
                                 <exclude reference="PK3-Po-2mL"/>
                                 <exclude reference="frm-i0-Q9q"/>
+                                <exclude reference="pja-4U-jVh"/>
+                                <exclude reference="uLI-3f-DrL"/>
                             </mask>
                         </variation>
                     </view>
@@ -1426,6 +1477,8 @@
                         <outlet property="blurBackground" destination="EkQ-L1-ecO" id="SPz-m2-cJ5"/>
                         <outlet property="buttonsSuperview" destination="pcc-f7-yiI" id="QOh-JT-Zy9"/>
                         <outlet property="panGestureRecognizer" destination="NXy-V6-ZJM" id="2IO-tl-FG4"/>
+                        <outlet property="userIcon" destination="pJR-58-HbD" id="BAR-N1-NIW"/>
+                        <outlet property="userName" destination="88F-Qs-GE7" id="ygE-D5-xzc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -1442,7 +1495,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="396" y="303"/>
+            <point key="canvasLocation" x="368" y="293"/>
         </scene>
         <!--Zoo View Controller-->
         <scene sceneID="c6A-rI-2HF">
@@ -2096,6 +2149,7 @@
         <image name="button-info" width="50" height="50"/>
         <image name="button-letter" width="50" height="50"/>
         <image name="button-list" width="50" height="50"/>
+        <image name="button-logout" width="50" height="50"/>
         <image name="button-question" width="50" height="50"/>
         <image name="button-repeat" width="50" height="50"/>
         <image name="button-zookeeper" width="50" height="50"/>

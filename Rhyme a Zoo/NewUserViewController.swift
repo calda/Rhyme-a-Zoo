@@ -20,6 +20,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
     
     var userInputName: String = ""
     var currentIconName: String = "Name"
+    var currentIconString: String = ""
     
     var availableIcons = ["angry", "Ate", "baby", "Steal", "cat", "calf", "climb", "clown", "dance", "skip",
         "dog", "dwarf", "Fall", "farmer", "fisherman", "grandfather", "grandmother", "happy", "hen", "proud",
@@ -27,10 +28,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
     
     override func viewWillAppear(animated: Bool) {
         continueButton.enabled = false
-        selectedIcon.layer.masksToBounds = true
-        selectedIcon.layer.cornerRadius = selectedIcon.frame.height / 6.0
-        selectedIcon.layer.borderColor = UIColor.whiteColor().CGColor
-        selectedIcon.layer.borderWidth = 2.0
+        decorateUserIcon(selectedIcon)
         
         finishEditingButton.alpha = 0.0
         
@@ -61,13 +59,14 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
                     //user tapped this cell
                     cell.animateSelection()
                     let iconName = availableIcons[indexPath.item]
+                    currentIconString = iconName + ".jpg"
                     let splitIndex = iconName.startIndex.successor()
                     currentIconName = iconName.substringToIndex(splitIndex).uppercaseString + iconName.substringFromIndex(splitIndex).lowercaseString
                     if userInputName == "" {
                         nameLabel.text = currentIconName
                         nameLabel.alpha = 0.5
                     }
-                    selectedIcon.image = UIImage(named: iconName + ".jpg")
+                    selectedIcon.image = UIImage(named: currentIconString)
                     
                     continueButton.enabled = true
                     
@@ -102,7 +101,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
             nameLabel.alpha = 0.5
         } else {
             nameLabel.text = userInputName
-            nameLabel.alpha = 0.85
+            nameLabel.alpha = 0.95
         }
     }
     
@@ -121,6 +120,19 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
     @IBAction func cancelPressed(sender: AnyObject) {
         self.dismissViewControllerAnimated(true, completion: nil)
     }
+    
+    @IBAction func continuePressed(sender: AnyObject) {
+        //create new user
+        let name = nameLabel.text!
+        let iconName = currentIconString
+        let user = User(name: name, iconName: iconName)
+        RZUserDatabase.addUser(user)
+        RZCurrentUser = user
+        
+        let mainMenu = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController() as! UIViewController
+        self.presentViewController(mainMenu, animated: true, completion: nil)
+    }
+    
 
 }
 
@@ -134,10 +146,7 @@ class UserIconCell : UICollectionViewCell {
         self.layer.rasterizationScale = UIScreen.mainScreen().scale
         self.layer.shouldRasterize = true
         
-        iconImage.layer.masksToBounds = true
-        iconImage.layer.cornerRadius = iconImage.frame.height / 6.0
-        iconImage.layer.borderColor = UIColor.whiteColor().CGColor
-        iconImage.layer.borderWidth = 2.0
+        decorateUserIcon(iconImage)
         iconImage.transform = CGAffineTransformMakeScale(0.95, 0.95)
     }
     
@@ -153,4 +162,11 @@ class UserIconCell : UICollectionViewCell {
         }, completion: nil)
     }
     
+}
+
+func decorateUserIcon(imageView: UIImageView) {
+    imageView.layer.masksToBounds = true
+    imageView.layer.cornerRadius = imageView.frame.height / 6.0
+    imageView.layer.borderColor = UIColor.whiteColor().CGColor
+    imageView.layer.borderWidth = 2.0
 }

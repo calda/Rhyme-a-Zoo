@@ -15,10 +15,11 @@
 		2E089A091B40B22E00693309 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E089A001B40B21A00693309 /* SQLite.framework */; };
 		2E089A0B1B40B24A00693309 /* SQLite.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2E089A001B40B21A00693309 /* SQLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2E0A820D1B589CD400E84E4E /* User.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2E0A820B1B589CD400E84E4E /* User.storyboard */; };
-		2E0A820F1B589D6B00E84E4E /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E0A820E1B589D6B00E84E4E /* InitialViewController.swift */; };
+		2E0A820F1B589D6B00E84E4E /* UsersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E0A820E1B589D6B00E84E4E /* UsersViewController.swift */; };
 		2E0A82111B589E8300E84E4E /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E0A82101B589E8300E84E4E /* WelcomeViewController.swift */; };
 		2E0A82161B58A78A00E84E4E /* welcome.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E0A82151B58A78A00E84E4E /* welcome.m4a */; };
 		2E0A82181B58B06900E84E4E /* NewUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E0A82171B58B06900E84E4E /* NewUserViewController.swift */; };
+		2E0A821A1B5A041900E84E4E /* UserDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E0A82191B5A041900E84E4E /* UserDatabase.swift */; };
 		2E11A70B1B49D56D00760C34 /* unknown1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2E11A7031B49D56D00760C34 /* unknown1.jpg */; };
 		2E11A70C1B49D56D00760C34 /* unknown2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2E11A7041B49D56D00760C34 /* unknown2.jpg */; };
 		2E11A70D1B49D56D00760C34 /* unknown3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2E11A7051B49D56D00760C34 /* unknown3.jpg */; };
@@ -2356,10 +2357,11 @@
 		2E08998C1B40A5D200693309 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		2E0899F71B40B21A00693309 /* SQLite.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SQLite.xcodeproj; path = SQLite.swift/SQLite.xcodeproj; sourceTree = "<group>"; };
 		2E0A820C1B589CD400E84E4E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/User.storyboard; sourceTree = "<group>"; };
-		2E0A820E1B589D6B00E84E4E /* InitialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InitialViewController.swift; path = ../InitialViewController.swift; sourceTree = "<group>"; };
+		2E0A820E1B589D6B00E84E4E /* UsersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UsersViewController.swift; path = ../UsersViewController.swift; sourceTree = "<group>"; };
 		2E0A82101B589E8300E84E4E /* WelcomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 		2E0A82151B58A78A00E84E4E /* welcome.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = welcome.m4a; path = "UI Audio/welcome.m4a"; sourceTree = "<group>"; };
 		2E0A82171B58B06900E84E4E /* NewUserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewUserViewController.swift; sourceTree = "<group>"; };
+		2E0A82191B5A041900E84E4E /* UserDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDatabase.swift; sourceTree = "<group>"; };
 		2E11A7031B49D56D00760C34 /* unknown1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = unknown1.jpg; path = "Quiz/word images/unknown1.jpg"; sourceTree = "<group>"; };
 		2E11A7041B49D56D00760C34 /* unknown2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = unknown2.jpg; path = "Quiz/word images/unknown2.jpg"; sourceTree = "<group>"; };
 		2E11A7051B49D56D00760C34 /* unknown3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = unknown3.jpg; path = "Quiz/word images/unknown3.jpg"; sourceTree = "<group>"; };
@@ -4684,7 +4686,8 @@
 				2E6F5C6D1B42347500E37B65 /* UniversalAudio.swift */,
 				2E489F101B575B8D0025E9C9 /* KeeperViewController.swift */,
 				2E0A820B1B589CD400E84E4E /* User.storyboard */,
-				2E0A820E1B589D6B00E84E4E /* InitialViewController.swift */,
+				2E0A82191B5A041900E84E4E /* UserDatabase.swift */,
+				2E0A820E1B589D6B00E84E4E /* UsersViewController.swift */,
 				2E0A82101B589E8300E84E4E /* WelcomeViewController.swift */,
 				2E0A82171B58B06900E84E4E /* NewUserViewController.swift */,
 				2E08997E1B40A5D200693309 /* Products */,
@@ -9455,7 +9458,7 @@
 				2ED9B2001B45087C007932C4 /* RhymeViewController.swift in Sources */,
 				2EBA6CB21B4691110047D1EA /* QuizViewController.swift in Sources */,
 				2E0899851B40A5D200693309 /* MainViewController.swift in Sources */,
-				2E0A820F1B589D6B00E84E4E /* InitialViewController.swift in Sources */,
+				2E0A820F1B589D6B00E84E4E /* UsersViewController.swift in Sources */,
 				2E489F111B575B8D0025E9C9 /* KeeperViewController.swift in Sources */,
 				2E6F5C6E1B42347500E37B65 /* UniversalAudio.swift in Sources */,
 				2E0A82181B58B06900E84E4E /* NewUserViewController.swift in Sources */,
@@ -9466,6 +9469,7 @@
 				2E0899831B40A5D200693309 /* AppDelegate.swift in Sources */,
 				2E0A82111B589E8300E84E4E /* WelcomeViewController.swift in Sources */,
 				2EECB8B41B4A45470086327E /* BankViewController.swift in Sources */,
+				2E0A821A1B5A041900E84E4E /* UserDatabase.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

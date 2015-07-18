@@ -18,9 +18,13 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
     var buttonFrames: [UIButton : CGRect] = [:]
     @IBOutlet var panGestureRecognizer: UIPanGestureRecognizer!
     @IBOutlet weak var blurBackground: UIImageView!
+    @IBOutlet weak var userIcon: UIImageView!
+    @IBOutlet weak var userName: UILabel!
     
     override func viewWillAppear(animated: Bool) {
-
+        userIcon.image = RZCurrentUser.icon
+        decorateUserIcon(userIcon)
+        userName.text = RZCurrentUser.name
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -65,6 +69,27 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
         }
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "touchDownNotificationRecieved:", name: RZMainMenuTouchDownNotification, object: nil)
+        
+        dispatch_async(RZAsyncQueue, {
+            //replace icon image with aliased version
+            let newSize = self.userIcon.frame.size
+            let screenScale = UIScreen.mainScreen().scale
+            let scaleSize = CGSizeMake(newSize.width * screenScale, newSize.height * screenScale)
+            
+            if let original = RZCurrentUser.icon where original.size.width > scaleSize.width {
+                UIGraphicsBeginImageContext(scaleSize)
+                let context = UIGraphicsGetCurrentContext()
+                CGContextSetInterpolationQuality(context, kCGInterpolationHigh)
+                CGContextSetShouldAntialias(context, true)
+                original.drawInRect(CGRect(origin: CGPointZero, size: scaleSize))
+                let newImage = UIGraphicsGetImageFromCurrentImageContext()
+                UIGraphicsEndImageContext()
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.userIcon.image = newImage
+                })
+            }
+        })
+        
     }
     
     func touchDownNotificationRecieved(notification: NSNotification) {
@@ -114,6 +139,10 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
     
     func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
+    }
+    
+    @IBAction func logoutPressed(sender: AnyObject) {
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
     
 }

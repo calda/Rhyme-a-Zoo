@@ -46,12 +46,9 @@ let RZZooLevelKey: NSString  = "com.hearatale.raz.animalLevel"
 let RZKeeperNumberKey: NSString  = "com.hearatale.raz.keeperNumber"
 let RZKeeperGenderKey: NSString  = "com.hearatale.raz.keeperGender"
 
-//managing the user
-var RZCurrentUser: String = "defaultUser"
-
-func userKey(key: NSString, forUser user: String) -> String {
+func userKey(key: NSString, forUser user: User) -> String {
     let originalKey = key as String
-    return "\(originalKey).\(user)"
+    return "\(originalKey).\(user.name)"
 }
 
 func userKey(key: NSString) -> String {
@@ -471,7 +468,6 @@ struct Option: Printable {
     }
     
 }
-
 
 extension Array {
     func shuffled() -> [T] {
