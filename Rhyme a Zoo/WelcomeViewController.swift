@@ -16,6 +16,7 @@ class WelcomeViewController : UIViewController {
     @IBOutlet weak var largeAreaContinueButton: UIButton!
     @IBOutlet weak var nextArrow: UIButton!
     var bounceTimer: NSTimer?
+    var welcomeTimer: NSTimer?
     @IBOutlet weak var nextArrowPosition: NSLayoutConstraint!
     @IBOutlet weak var teacherButtonPositon: NSLayoutConstraint!
     
@@ -32,17 +33,21 @@ class WelcomeViewController : UIViewController {
     }
     
     override func viewDidAppear(animated: Bool) {
-        if !animated { return }
-        
+        //play the welcome animation through a timer
+        //so it can be invalidated if the view is closed immediately
+        welcomeTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: "playWelcomeAnimation", userInfo: nil, repeats: false)
+    }
+    
+    func playWelcomeAnimation() {
         //play welcome animation
         UIView.animateWithDuration(1.5, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: nil, animations: {
             self.welcome.alpha = 1.0
             self.welcome.transform = CGAffineTransformMakeScale(1.0, 1.0)
-        }, completion: nil)
+            }, completion: nil)
         
         UAPlayer().play("welcome", ofType: "m4a", ifConcurrent: .Interrupt)
         
-        delay(1.0) { self.welcome.text = "Hey" }
+        delay(0.9) { self.welcome.text = "Hey" }
         delay(1.5) { self.welcome.text = "Hi" }
         delay(2.15) { self.welcome.text = "Welcome" }
         
@@ -55,12 +60,12 @@ class WelcomeViewController : UIViewController {
                 self.nextArrowPosition.constant = -45.0
                 self.teacherButtonPositon.constant = 5.0
                 self.view.layoutIfNeeded()
-            }, completion: { success in
-                self.largeAreaContinueButton.enabled = true
-                delay(1.0) {
-                    self.bounceNextArrow()
-                    self.bounceTimer = NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: "bounceNextArrow", userInfo: nil, repeats: true)
-                }
+                }, completion: { success in
+                    self.largeAreaContinueButton.enabled = true
+                    delay(1.0) {
+                        self.bounceNextArrow()
+                        self.bounceTimer = NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: "bounceNextArrow", userInfo: nil, repeats: true)
+                    }
             })
             
         }
@@ -68,6 +73,7 @@ class WelcomeViewController : UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         bounceTimer?.invalidate()
+        welcomeTimer?.invalidate()
     }
     
     func bounceNextArrow() {

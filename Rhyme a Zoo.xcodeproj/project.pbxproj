@@ -2086,6 +2086,7 @@
 		2E489F5C1B57755C0025E9C9 /* accessory4.png in Resources */ = {isa = PBXBuildFile; fileRef = 2E489F561B57755C0025E9C9 /* accessory4.png */; };
 		2E489F5D1B57755C0025E9C9 /* accessory5.png in Resources */ = {isa = PBXBuildFile; fileRef = 2E489F571B57755C0025E9C9 /* accessory5.png */; };
 		2E489F5E1B57755C0025E9C9 /* accessory6.png in Resources */ = {isa = PBXBuildFile; fileRef = 2E489F581B57755C0025E9C9 /* accessory6.png */; };
+		2E51F0811B5CAFC000007BDF /* create user.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E51F0801B5CAFC000007BDF /* create user.m4a */; };
 		2E6F5C0D1B4233AC00E37B65 /* alligator_1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2E6F5BAD1B4233AC00E37B65 /* alligator_1.mp3 */; };
 		2E6F5C0E1B4233AC00E37B65 /* alligator_2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2E6F5BAE1B4233AC00E37B65 /* alligator_2.mp3 */; };
 		2E6F5C0F1B4233AC00E37B65 /* alligator_3.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2E6F5BAF1B4233AC00E37B65 /* alligator_3.mp3 */; };
@@ -4428,6 +4429,7 @@
 		2E489F561B57755C0025E9C9 /* accessory4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = accessory4.png; sourceTree = "<group>"; };
 		2E489F571B57755C0025E9C9 /* accessory5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = accessory5.png; sourceTree = "<group>"; };
 		2E489F581B57755C0025E9C9 /* accessory6.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = accessory6.png; sourceTree = "<group>"; };
+		2E51F0801B5CAFC000007BDF /* create user.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = "create user.m4a"; path = "UI Audio/create user.m4a"; sourceTree = "<group>"; };
 		2E6F5BAD1B4233AC00E37B65 /* alligator_1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = alligator_1.mp3; path = "Zoo/animal audio/alligator_1.mp3"; sourceTree = "<group>"; };
 		2E6F5BAE1B4233AC00E37B65 /* alligator_2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = alligator_2.mp3; path = "Zoo/animal audio/alligator_2.mp3"; sourceTree = "<group>"; };
 		2E6F5BAF1B4233AC00E37B65 /* alligator_3.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = alligator_3.mp3; path = "Zoo/animal audio/alligator_3.mp3"; sourceTree = "<group>"; };
@@ -4722,6 +4724,7 @@
 			isa = PBXGroup;
 			children = (
 				2E0A82151B58A78A00E84E4E /* welcome.m4a */,
+				2E51F0801B5CAFC000007BDF /* create user.m4a */,
 			);
 			name = "UI Audio";
 			sourceTree = "<group>";
@@ -8337,6 +8340,7 @@
 				2E45F1931B42BCCD00A8A802 /* Etticoat.mp3 in Resources */,
 				2E45E81F1B42BBD900A8A802 /* thumbnail_157.jpg in Resources */,
 				2E45F57B1B42BD0D00A8A802 /* banana.jpg in Resources */,
+				2E51F0811B5CAFC000007BDF /* create user.m4a in Resources */,
 				2E45F2581B42BCCD00A8A802 /* Monday.mp3 in Resources */,
 				2E45F2111B42BCCD00A8A802 /* K.mp3 in Resources */,
 				2E45E5C11B42BB9700A8A802 /* question_348.mp3 in Resources */,

@@ -17,6 +17,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
     @IBOutlet weak var hiddenInput: UITextField!
     @IBOutlet weak var finishEditingButton: UIButton!
     @IBOutlet weak var continueButton: UIButton!
+    var instructionsTimer: NSTimer?
     
     var userInputName: String = ""
     var currentIconName: String = "Name"
@@ -70,6 +71,22 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
             let iconName = (iconFile as NSString).stringByReplacingOccurrencesOfString(".jpg", withString: "")
             self.availableIcons.append(iconName)
         }
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        UAHaltPlayback()
+        
+        if !editMode {
+            instructionsTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: "playInstructionAudio", userInfo: nil, repeats: false)
+        }
+    }
+    
+    func playInstructionAudio() {
+        UAPlayer().play("create user", ofType: "m4a", ifConcurrent: .Interrupt)
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        instructionsTimer?.invalidate()
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
