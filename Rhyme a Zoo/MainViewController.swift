@@ -17,14 +17,14 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var buttonsSuperview: UIView!
     var buttonFrames: [UIButton : CGRect] = [:]
     @IBOutlet var panGestureRecognizer: UIPanGestureRecognizer!
-    @IBOutlet weak var blurBackground: UIImageView!
-    @IBOutlet weak var userIcon: UIImageView!
-    @IBOutlet weak var userName: UILabel!
+    @IBOutlet weak var userIcon: UIButton!
+    @IBOutlet weak var userName: UIButton!
+    
     
     override func viewWillAppear(animated: Bool) {
-        userIcon.image = RZCurrentUser.icon
+        userIcon.setImage(RZCurrentUser.icon, forState: .Normal)
         decorateUserIcon(userIcon)
-        userName.text = RZCurrentUser.name
+        userName.setTitle(RZCurrentUser.name, forState: .Normal)
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -85,7 +85,7 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
                 let newImage = UIGraphicsGetImageFromCurrentImageContext()
                 UIGraphicsEndImageContext()
                 dispatch_async(dispatch_get_main_queue(), {
-                    self.userIcon.image = newImage
+                    self.userIcon.setImage(newImage, forState: .Normal)
                 })
             }
         })
@@ -141,8 +141,10 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
         return true
     }
     
-    @IBAction func logoutPressed(sender: AnyObject) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+    @IBAction func editUser(sender: UIButton) {
+        let editUserController = UIStoryboard(name: "User", bundle: nil).instantiateViewControllerWithIdentifier("newUser") as! NewUserViewController
+        editUserController.openInEditModeForUser(RZCurrentUser)
+        self.presentViewController(editUserController, animated: true, completion: nil)
     }
     
 }

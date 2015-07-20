@@ -40,30 +40,65 @@ struct UserDatabase {
         data.setValue(userStrings, forKey: RZUsersKey)
     }
     
+    func deleteUser(user: User) {
+        let userString = user.toString()
+        
+        if var userStrings = data.stringArrayForKey(RZUsersKey) as? [String] {
+            if let indexToRemove = find(userStrings, userString) {
+                userStrings.removeAtIndex(indexToRemove)
+                data.setValue(userStrings, forKey: RZUsersKey)
+            }
+        }
+    }
+    
+    func changeUserIcon(user immutableUser: User, newIcon: String) {
+        var user = immutableUser
+        let oldUserString = user.toString()
+        user.iconName = newIcon
+        user.icon = UIImage(named: newIcon)!
+        let newUserString = user.toString()
+        
+        if var userStrings = data.stringArrayForKey(RZUsersKey) as? [String] {
+            if let indexToSwitch = find(userStrings, oldUserString) {
+                userStrings[indexToSwitch] = newUserString
+                data.setValue(userStrings, forKey: RZUsersKey)
+            }
+        }
+    }
+    
 }
 
-struct User {
+class User {
     
     let name: String
-    let icon: UIImage?
-    let iconName: String
+    var icon: UIImage?
+    var iconName: String
+    let ID: String
     
+    ///creates a new user with a unique ID
     init(name: String, iconName: String) {
         self.name = name
         self.iconName = iconName
         self.icon = UIImage(named: iconName)!
+        ID = name + "\(arc4random_uniform(10000))"
     }
     
     init?(fromString string: String) {
         let splits = split(string){ $0 == "~" }
-        if splits.count != 2 { return nil }
+        if splits.count != 3 {
+            name = ""
+            iconName = ""
+            ID = ""
+            return nil
+        }
         name = splits[0]
-        iconName = splits[1]
+        ID = splits[1]
+        iconName = splits[2]
         icon = UIImage(named: iconName)
     }
     
     func toString() -> String {
-        return name + "~" + iconName
+        return name + "~" + ID + "~" + iconName
     }
     
 }

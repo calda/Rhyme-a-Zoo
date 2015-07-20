@@ -22,18 +22,54 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
     var currentIconName: String = "Name"
     var currentIconString: String = ""
     
+    //if the view was launched to edit a user instead of creating a user
+    var editMode = false
+    var editUser: User?
+    @IBOutlet weak var editModeBackButton: UIButton!
+    @IBOutlet weak var editModeDeleteButton: UIButton!
+    
     var availableIcons = ["angry", "Ate", "baby", "Steal", "cat", "calf", "climb", "clown", "dance", "skip",
         "dog", "dwarf", "Fall", "farmer", "fisherman", "grandfather", "grandmother", "happy", "hen", "proud",
         "horse", "hug", "hunter", "jump"]
     
     override func viewWillAppear(animated: Bool) {
+        editModeBackButton.alpha = 0.0
+        editModeDeleteButton.alpha = 0.0
         continueButton.enabled = false
         decorateUserIcon(selectedIcon)
         
         finishEditingButton.alpha = 0.0
         
         //remove unavailable icons and shuffle remaining
+        for user in RZUserDatabase.getUsers() {
+            let usedIcon = user.iconName
+            let iconCount = availableIcons.count
+            for i_forwards in 1 ... iconCount {
+                 //go backwards through the array so we can take out indecies as we go
+                let i = iconCount - i_forwards
+                if usedIcon.lowercaseString.hasPrefix(availableIcons[i].lowercaseString) {
+                    availableIcons.removeAtIndex(i)
+                }
+            }
+        }
         availableIcons = availableIcons.shuffled()
+        
+        if let user = editUser where editMode {
+            selectedIcon.image = user.icon
+            currentIconString = user.iconName
+            nameLabel.text = user.name
+            nameLabel.alpha = 0.95
+            userInputName = user.name
+            
+            editModeDeleteButton.alpha = 1.0
+            editModeBackButton.alpha = 1.0
+            
+            //add user's icon to the available icons
+            let iconFile = user.iconName
+            //remove .jpg
+            let iconName = (iconFile as NSString).stringByReplacingOccurrencesOfString(".jpg", withString: "")
+            self.availableIcons.append(iconName)
+        }
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -78,6 +114,8 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
     }
     
     @IBAction func editName(sender: AnyObject) {
+        if editMode { return } //can't edit the name in Edit Mode
+        
         hiddenInput.autocorrectionType = UITextAutocorrectionType.No
         hiddenInput.autocapitalizationType = UITextAutocapitalizationType.Words
         self.hiddenInput.becomeFirstResponder()
@@ -133,6 +171,49 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
         self.presentViewController(mainMenu, animated: true, completion: nil)
     }
     
+    //MARK: Edit Mode (launched from Home view)
+    
+    func openInEditModeForUser(user: User) {
+        self.editMode = true
+        self.editUser = user
+    }
+    
+    @IBAction func editModeDeletePressed(sender: AnyObject) {
+        if let user = editUser {
+            
+            let alert = UIAlertController(title: "Delete \(user.name)?", message: "You'll lose all of your progress. This cannot be undone.", preferredStyle: .Alert)
+            let nevermind = UIAlertAction(title: "Nevermind", style: .Default, handler: nil)
+            let delete = UIAlertAction(title: "Delete", style: .Destructive, handler: { action in
+                
+                RZUserDatabase.deleteUser(user)
+                
+                //present last alert
+                let okAlert = UIAlertController(title: "Deleted \(user.name)", message: nil, preferredStyle: .Alert)
+                let ok = UIAlertAction(title: "ok", style: .Default, handler: { action in
+                    self.editMode = false
+                    dismissController(self, untilMatch: { controller in
+                        return controller is UsersViewController
+                    })
+                })
+                okAlert.addAction(ok)
+                self.presentViewController(okAlert, animated: true, completion: nil)
+                
+            })
+            alert.addAction(nevermind)
+            alert.addAction(delete)
+            self.presentViewController(alert, animated: true, completion: nil)
+        }
+    }
+    
+    @IBAction func editModeBackPressed(sender: AnyObject) {
+        if let editUser = editUser {
+            //save edits to user
+            RZUserDatabase.changeUserIcon(user: editUser, newIcon: currentIconString)
+        }
+        
+        editMode = false
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
 
 }
 
@@ -164,9 +245,9 @@ class UserIconCell : UICollectionViewCell {
     
 }
 
-func decorateUserIcon(imageView: UIImageView) {
-    imageView.layer.masksToBounds = true
-    imageView.layer.cornerRadius = imageView.frame.height / 6.0
-    imageView.layer.borderColor = UIColor.whiteColor().CGColor
-    imageView.layer.borderWidth = 2.0
+func decorateUserIcon(view: UIView) {
+    view.layer.masksToBounds = true
+    view.layer.cornerRadius = view.frame.height / 6.0
+    view.layer.borderColor = UIColor.whiteColor().CGColor
+    view.layer.borderWidth = 2.0
 }

@@ -48,7 +48,7 @@ let RZKeeperGenderKey: NSString  = "com.hearatale.raz.keeperGender"
 
 func userKey(key: NSString, forUser user: User) -> String {
     let originalKey = key as String
-    return "\(originalKey).\(user.name)"
+    return "\(originalKey).\(user.ID)"
 }
 
 func userKey(key: NSString) -> String {

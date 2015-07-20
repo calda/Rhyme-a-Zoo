@@ -360,7 +360,11 @@ class QuizViewController : UIViewController {
                 silverCoins++
             }
             
+            //halt question audio if it is still playing
+            if UAIsAudioPlaying() { UAHaltPlayback() }
+            //play sound effect
             UAPlayer().play("correct", ofType: "mp3", ifConcurrent: .Interrupt)
+            
             //fade others
             for i in 0...3 {
                 if i != guess {

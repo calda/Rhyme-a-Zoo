@@ -32,6 +32,8 @@ class WelcomeViewController : UIViewController {
     }
     
     override func viewDidAppear(animated: Bool) {
+        if !animated { return }
+        
         //play welcome animation
         UIView.animateWithDuration(1.5, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: nil, animations: {
             self.welcome.alpha = 1.0
