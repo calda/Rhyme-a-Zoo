@@ -74,7 +74,9 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
     }
     
     override func viewDidAppear(animated: Bool) {
-        UAHaltPlayback()
+        if UAIsAudioPlaying() {
+            UAHaltPlayback()
+        }
         
         if !editMode {
             instructionsTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: "playInstructionAudio", userInfo: nil, repeats: false)

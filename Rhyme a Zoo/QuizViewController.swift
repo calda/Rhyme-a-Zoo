@@ -197,6 +197,8 @@ class QuizViewController : UIViewController {
     }
     
     func endQuiz() {
+        if goldCoins == 4 { goldCoins = 5 }
+        
         //update data
         if !quizPlayedBefore {
             quiz.saveQuizResult(gold: goldCoins, silver: silverCoins)
@@ -210,7 +212,6 @@ class QuizViewController : UIViewController {
             self.questionContainer.alpha = 0.0
         }
         
-        if goldCoins == 4 { goldCoins = 5 }
         setCoinsInImageViews(coins, gold: goldCoins, silver: silverCoins, big: true)
         
         //build coins string

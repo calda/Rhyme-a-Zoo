@@ -1371,7 +1371,7 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NpM-04-6BU" userLabel="touch view" customClass="TouchView" customModule="Rhyme_a_Zoo" customModuleProvider="target">
                                         <rect key="frame" x="24" y="60" width="520" height="260"/>
                                         <animations/>
-                                        <color key="backgroundColor" red="1" green="0.99994051456451416" blue="0.99998050928115845" alpha="0.01" colorSpace="calibratedRGB"/>
+                                        <color key="backgroundColor" red="1" green="0.99994051456451416" blue="0.99998050928115845" alpha="0.0" colorSpace="calibratedRGB"/>
                                         <connections>
                                             <outletCollection property="gestureRecognizers" destination="6rK-ZJ-D85" appends="YES" id="qOZ-Kd-5mn"/>
                                             <outletCollection property="gestureRecognizers" destination="NXy-V6-ZJM" appends="YES" id="SJ0-wa-FhK"/>
@@ -1511,6 +1511,10 @@
                         <outlet property="panGestureRecognizer" destination="NXy-V6-ZJM" id="2IO-tl-FG4"/>
                         <outlet property="userIcon" destination="2oi-YY-HNw" id="CLa-Jd-hm3"/>
                         <outlet property="userName" destination="LYu-8h-mXv" id="azk-eq-L7K"/>
+                        <outletCollection property="cards" destination="UXF-DJ-D0N" collectionClass="NSMutableArray" id="ARf-ea-Ebd"/>
+                        <outletCollection property="cards" destination="LBA-xO-xi7" collectionClass="NSMutableArray" id="3Eo-9y-eXP"/>
+                        <outletCollection property="cards" destination="BPx-rJ-wIT" collectionClass="NSMutableArray" id="495-fQ-ame"/>
+                        <outletCollection property="cards" destination="yqL-UY-VNQ" collectionClass="NSMutableArray" id="TPb-3d-aNt"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -1591,19 +1595,6 @@
                                     <action selector="zookeeperPressed:" destination="9Tk-MA-Oe9" eventType="touchUpInside" id="8mH-CW-7L9"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bJy-na-WTl" userLabel="question">
-                                <rect key="frame" x="70" y="260" width="50" height="50"/>
-                                <animations/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="50" id="Jck-xn-eMD"/>
-                                    <constraint firstAttribute="height" constant="50" id="TBs-Xt-Is0"/>
-                                </constraints>
-                                <state key="normal" image="button-question"/>
-                                <connections>
-                                    <action selector="infoPress:" destination="KMx-7H-Yxv" eventType="touchUpInside" id="PRd-Kg-ZSe"/>
-                                    <action selector="questionPressed:" destination="9Tk-MA-Oe9" eventType="touchUpInside" id="D6M-5Y-sHK"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZJq-ad-voN" userLabel="zookeeper">
                                 <rect key="frame" x="10" y="70" width="50" height="50"/>
                                 <animations/>
@@ -1616,7 +1607,7 @@
                                     <action selector="zookeeperPressed:" destination="9Tk-MA-Oe9" eventType="touchUpInside" id="Ywb-Vy-zEh"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QSf-je-SP0" userLabel="level">
+                            <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QSf-je-SP0" userLabel="level 1">
                                 <rect key="frame" x="10" y="260" width="50" height="50"/>
                                 <animations/>
                                 <constraints>
@@ -1625,7 +1616,104 @@
                                 </constraints>
                                 <state key="normal" image="button-1"/>
                                 <connections>
-                                    <action selector="levelButtonPressed:" destination="9Tk-MA-Oe9" eventType="touchUpInside" id="kC6-qb-PDJ"/>
+                                    <action selector="buildingNumberTapped:" destination="9Tk-MA-Oe9" eventType="touchUpInside" id="IBQ-tv-clu"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S2E-O6-da6" userLabel="level 2">
+                                <rect key="frame" x="70" y="260" width="50" height="50"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="91Z-zd-tDg"/>
+                                    <constraint firstAttribute="width" constant="50" id="T9m-I7-o8E"/>
+                                </constraints>
+                                <state key="normal" image="button-2"/>
+                                <connections>
+                                    <action selector="buildingNumberTapped:" destination="9Tk-MA-Oe9" eventType="touchUpInside" id="FuZ-72-NbS"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TYQ-aP-kBo" userLabel="level 3">
+                                <rect key="frame" x="130" y="260" width="50" height="50"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="BuN-Qh-fbc"/>
+                                    <constraint firstAttribute="width" constant="50" id="Zz4-Hw-8d2"/>
+                                </constraints>
+                                <state key="normal" image="button-3"/>
+                                <connections>
+                                    <action selector="buildingNumberTapped:" destination="9Tk-MA-Oe9" eventType="touchUpInside" id="fis-Fg-lyk"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" tag="4" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Kpk-aR-pea" userLabel="level 4">
+                                <rect key="frame" x="190" y="260" width="50" height="50"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="NRs-Lb-d2g"/>
+                                    <constraint firstAttribute="height" constant="50" id="hWi-Z5-kQj"/>
+                                </constraints>
+                                <state key="normal" image="button-4"/>
+                                <connections>
+                                    <action selector="buildingNumberTapped:" destination="9Tk-MA-Oe9" eventType="touchUpInside" id="bzN-48-dfC"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" tag="5" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tgu-rp-iXE" userLabel="level 5">
+                                <rect key="frame" x="250" y="260" width="50" height="50"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="Xk9-p8-b5S"/>
+                                    <constraint firstAttribute="height" constant="50" id="yjx-KR-iVg"/>
+                                </constraints>
+                                <state key="normal" image="button-5"/>
+                                <connections>
+                                    <action selector="buildingNumberTapped:" destination="9Tk-MA-Oe9" eventType="touchUpInside" id="bWi-NQ-aJ6"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" tag="6" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8w9-ej-y9Z" userLabel="level 6">
+                                <rect key="frame" x="310" y="260" width="50" height="50"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="jtX-7N-wWq"/>
+                                    <constraint firstAttribute="height" constant="50" id="tao-Vp-2J5"/>
+                                </constraints>
+                                <state key="normal" image="button-6"/>
+                                <connections>
+                                    <action selector="buildingNumberTapped:" destination="9Tk-MA-Oe9" eventType="touchUpInside" id="LRr-kG-WBo"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" tag="7" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T02-de-24h" userLabel="level 7">
+                                <rect key="frame" x="370" y="260" width="50" height="50"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="7B0-2L-mod"/>
+                                    <constraint firstAttribute="height" constant="50" id="eFg-SV-5lX"/>
+                                </constraints>
+                                <state key="normal" image="button-7"/>
+                                <connections>
+                                    <action selector="buildingNumberTapped:" destination="9Tk-MA-Oe9" eventType="touchUpInside" id="vRW-CW-MMZ"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bJy-na-WTl" userLabel="question">
+                                <rect key="frame" x="370" y="260" width="50" height="50"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="Jck-xn-eMD"/>
+                                    <constraint firstAttribute="height" constant="50" id="TBs-Xt-Is0"/>
+                                </constraints>
+                                <state key="normal" image="button-question"/>
+                                <connections>
+                                    <action selector="infoPress:" destination="KMx-7H-Yxv" eventType="touchUpInside" id="PRd-Kg-ZSe"/>
+                                    <action selector="questionPressed:" destination="9Tk-MA-Oe9" eventType="touchUpInside" id="D6M-5Y-sHK"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" tag="8" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ULV-iE-Zld" userLabel="level 8">
+                                <rect key="frame" x="430" y="260" width="50" height="50"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="eCb-mz-BSK"/>
+                                    <constraint firstAttribute="height" constant="50" id="quw-R2-h16"/>
+                                </constraints>
+                                <state key="normal" image="button-8"/>
+                                <connections>
+                                    <action selector="buildingNumberTapped:" destination="9Tk-MA-Oe9" eventType="touchUpInside" id="fTZ-DJ-6yJ"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -1633,14 +1721,23 @@
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstAttribute="centerY" secondItem="to9-Tf-oS9" secondAttribute="centerY" id="0nX-re-Sde"/>
+                            <constraint firstItem="TYQ-aP-kBo" firstAttribute="leading" secondItem="S2E-O6-da6" secondAttribute="trailing" constant="10" id="1dD-HY-k9w"/>
                             <constraint firstItem="1TO-ey-cQt" firstAttribute="top" secondItem="QSf-je-SP0" secondAttribute="bottom" constant="10" id="1gW-qJ-rNN"/>
+                            <constraint firstItem="1TO-ey-cQt" firstAttribute="top" secondItem="T02-de-24h" secondAttribute="bottom" constant="10" id="2iO-bQ-nXZ"/>
                             <constraint firstItem="ZJq-ad-voN" firstAttribute="top" secondItem="4o8-TH-nju" secondAttribute="bottom" constant="10" id="38b-No-Ycf"/>
+                            <constraint firstItem="1TO-ey-cQt" firstAttribute="top" secondItem="8w9-ej-y9Z" secondAttribute="bottom" constant="10" id="7jX-1a-3aY"/>
                             <constraint firstItem="3eW-Zl-dZB" firstAttribute="height" secondItem="KlK-pQ-gtf" secondAttribute="height" id="7pX-pD-zpb"/>
                             <constraint firstAttribute="centerX" secondItem="3eW-Zl-dZB" secondAttribute="centerX" id="8lh-A6-Snx"/>
+                            <constraint firstItem="ULV-iE-Zld" firstAttribute="leading" secondItem="T02-de-24h" secondAttribute="leading" constant="60" id="9kl-rf-vGS"/>
                             <constraint firstAttribute="centerX" secondItem="to9-Tf-oS9" secondAttribute="centerX" id="CGv-k8-ZfI"/>
                             <constraint firstItem="ZJq-ad-voN" firstAttribute="leading" secondItem="KlK-pQ-gtf" secondAttribute="leading" constant="10" id="D2e-ns-QUm"/>
+                            <constraint firstItem="1TO-ey-cQt" firstAttribute="top" secondItem="Tgu-rp-iXE" secondAttribute="bottom" constant="10" id="F0I-nv-e6P"/>
+                            <constraint firstItem="1TO-ey-cQt" firstAttribute="top" secondItem="S2E-O6-da6" secondAttribute="bottom" constant="10" id="HbQ-cR-Aeu"/>
                             <constraint firstItem="to9-Tf-oS9" firstAttribute="width" secondItem="KlK-pQ-gtf" secondAttribute="width" id="Hdv-Bo-UKB"/>
                             <constraint firstItem="KNy-cI-qEO" firstAttribute="top" secondItem="KlK-pQ-gtf" secondAttribute="top" constant="10" id="IE1-19-Rca"/>
+                            <constraint firstItem="1TO-ey-cQt" firstAttribute="top" secondItem="Kpk-aR-pea" secondAttribute="bottom" constant="10" id="K29-H5-vDX"/>
+                            <constraint firstItem="8w9-ej-y9Z" firstAttribute="leading" secondItem="Tgu-rp-iXE" secondAttribute="trailing" constant="10" id="LfS-Oh-CMO"/>
+                            <constraint firstItem="S2E-O6-da6" firstAttribute="leading" secondItem="QSf-je-SP0" secondAttribute="trailing" constant="10" id="N2P-x1-KJL"/>
                             <constraint firstItem="to9-Tf-oS9" firstAttribute="height" secondItem="KlK-pQ-gtf" secondAttribute="height" id="Opa-Xo-hPN"/>
                             <constraint firstItem="3eW-Zl-dZB" firstAttribute="width" secondItem="KlK-pQ-gtf" secondAttribute="width" id="PXa-tN-xcb"/>
                             <constraint firstItem="ZJq-ad-voN" firstAttribute="top" secondItem="bJy-na-WTl" secondAttribute="bottom" constant="10" id="TPR-JF-34H"/>
@@ -1648,14 +1745,24 @@
                             <constraint firstItem="4o8-TH-nju" firstAttribute="top" secondItem="KlK-pQ-gtf" secondAttribute="top" constant="10" id="UrV-2R-ED9"/>
                             <constraint firstItem="QSf-je-SP0" firstAttribute="top" secondItem="bJy-na-WTl" secondAttribute="bottom" constant="10" id="WIQ-4a-C92"/>
                             <constraint firstItem="KNy-cI-qEO" firstAttribute="leading" secondItem="KlK-pQ-gtf" secondAttribute="leading" constant="10" id="WeX-Wp-vRs"/>
+                            <constraint firstItem="bJy-na-WTl" firstAttribute="leading" secondItem="8w9-ej-y9Z" secondAttribute="trailing" constant="10" id="Xt2-T7-GO4"/>
                             <constraint firstItem="QSf-je-SP0" firstAttribute="top" secondItem="bJy-na-WTl" secondAttribute="bottom" constant="10" id="ah0-Pf-pFr"/>
+                            <constraint firstItem="bJy-na-WTl" firstAttribute="leading" secondItem="8w9-ej-y9Z" secondAttribute="trailing" constant="10" id="cNC-dv-whT"/>
                             <constraint firstItem="QSf-je-SP0" firstAttribute="leading" secondItem="KlK-pQ-gtf" secondAttribute="leading" constant="10" id="dOJ-VG-ucD"/>
-                            <constraint firstItem="bJy-na-WTl" firstAttribute="leading" secondItem="QSf-je-SP0" secondAttribute="trailing" constant="10" id="gdp-Tx-CsC"/>
+                            <constraint firstItem="1TO-ey-cQt" firstAttribute="top" secondItem="bJy-na-WTl" secondAttribute="bottom" constant="10" id="efT-vB-tWk"/>
+                            <constraint firstItem="1TO-ey-cQt" firstAttribute="top" secondItem="TYQ-aP-kBo" secondAttribute="bottom" constant="10" id="gJu-2u-vpb"/>
+                            <constraint firstItem="1TO-ey-cQt" firstAttribute="top" secondItem="ULV-iE-Zld" secondAttribute="bottom" constant="10" id="gSf-r9-Sk4"/>
+                            <constraint firstItem="bJy-na-WTl" firstAttribute="leading" secondItem="QSf-je-SP0" secondAttribute="trailing" constant="300" id="gdp-Tx-CsC"/>
                             <constraint firstItem="90v-Tw-c3k" firstAttribute="height" secondItem="KlK-pQ-gtf" secondAttribute="height" id="hbT-QJ-bYM"/>
                             <constraint firstAttribute="centerY" secondItem="90v-Tw-c3k" secondAttribute="centerY" id="lTq-EU-WdM"/>
+                            <constraint firstItem="1TO-ey-cQt" firstAttribute="top" secondItem="bJy-na-WTl" secondAttribute="bottom" constant="10" id="ldE-YO-CU8"/>
                             <constraint firstItem="bJy-na-WTl" firstAttribute="top" secondItem="4o8-TH-nju" secondAttribute="bottom" constant="10" id="nag-Wr-byE"/>
                             <constraint firstItem="1TO-ey-cQt" firstAttribute="top" secondItem="bJy-na-WTl" secondAttribute="bottom" constant="10" id="oS4-Rb-Vdf"/>
+                            <constraint firstItem="bJy-na-WTl" firstAttribute="leading" secondItem="TYQ-aP-kBo" secondAttribute="trailing" constant="8" symbolic="YES" id="r6n-8t-y7f"/>
+                            <constraint firstItem="T02-de-24h" firstAttribute="leading" secondItem="8w9-ej-y9Z" secondAttribute="trailing" constant="10" id="rOf-iR-YUb"/>
+                            <constraint firstItem="Tgu-rp-iXE" firstAttribute="leading" secondItem="Kpk-aR-pea" secondAttribute="trailing" constant="10" id="rfw-kF-jwh"/>
                             <constraint firstAttribute="centerY" secondItem="3eW-Zl-dZB" secondAttribute="centerY" id="sMx-1j-TLX"/>
+                            <constraint firstItem="Kpk-aR-pea" firstAttribute="leading" secondItem="TYQ-aP-kBo" secondAttribute="trailing" constant="10" id="ulF-jd-V1a"/>
                             <constraint firstItem="4o8-TH-nju" firstAttribute="top" secondItem="lbc-rY-3oh" secondAttribute="bottom" constant="10" id="wCg-zk-dOc"/>
                             <constraint firstItem="4o8-TH-nju" firstAttribute="leading" secondItem="KlK-pQ-gtf" secondAttribute="leading" constant="10" id="xhj-ev-BCN"/>
                             <constraint firstAttribute="centerX" secondItem="90v-Tw-c3k" secondAttribute="centerX" id="ylm-jO-yiS"/>
@@ -1666,8 +1773,13 @@
                                 <exclude reference="TPR-JF-34H"/>
                                 <exclude reference="WIQ-4a-C92"/>
                                 <exclude reference="ah0-Pf-pFr"/>
+                                <exclude reference="ldE-YO-CU8"/>
+                                <exclude reference="oS4-Rb-Vdf"/>
                                 <exclude reference="U5d-bM-h22"/>
+                                <exclude reference="cNC-dv-whT"/>
+                                <exclude reference="gdp-Tx-CsC"/>
                                 <exclude reference="nag-Wr-byE"/>
+                                <exclude reference="r6n-8t-y7f"/>
                             </mask>
                         </variation>
                         <connections>
@@ -1679,12 +1791,27 @@
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
                         <outlet property="backgroundImage" destination="90v-Tw-c3k" id="kGp-UQ-0Lb"/>
-                        <outlet property="levelIcon" destination="QSf-je-SP0" id="mEH-ft-esD"/>
+                        <outlet property="questionButtonLeading" destination="Xt2-T7-GO4" id="5fV-Pd-xvp"/>
                         <outlet property="quitZookeeperButton" destination="KNy-cI-qEO" id="o5S-kr-Wpj"/>
                         <outletCollection property="mainButtons" destination="4o8-TH-nju" collectionClass="NSMutableArray" id="Hmg-uW-0WW"/>
                         <outletCollection property="mainButtons" destination="ZJq-ad-voN" collectionClass="NSMutableArray" id="1E7-BH-SaQ"/>
                         <outletCollection property="mainButtons" destination="QSf-je-SP0" collectionClass="NSMutableArray" id="3ug-Td-aEG"/>
                         <outletCollection property="mainButtons" destination="bJy-na-WTl" collectionClass="NSMutableArray" id="9aY-vC-hTf"/>
+                        <outletCollection property="mainButtons" destination="8w9-ej-y9Z" collectionClass="NSMutableArray" id="Mjf-to-QQx"/>
+                        <outletCollection property="buildingButtons" destination="T02-de-24h" collectionClass="NSMutableArray" id="ey8-hQ-b2N"/>
+                        <outletCollection property="buildingButtons" destination="QSf-je-SP0" collectionClass="NSMutableArray" id="NKy-Yd-dgR"/>
+                        <outletCollection property="mainButtons" destination="S2E-O6-da6" collectionClass="NSMutableArray" id="Ify-Np-8yM"/>
+                        <outletCollection property="buildingButtons" destination="S2E-O6-da6" collectionClass="NSMutableArray" id="Z8U-0r-rO6"/>
+                        <outletCollection property="buildingButtons" destination="TYQ-aP-kBo" collectionClass="NSMutableArray" id="a1R-LI-YCT"/>
+                        <outletCollection property="mainButtons" destination="TYQ-aP-kBo" collectionClass="NSMutableArray" id="iIH-7W-IGf"/>
+                        <outletCollection property="buildingButtons" destination="Kpk-aR-pea" collectionClass="NSMutableArray" id="eCD-so-fgh"/>
+                        <outletCollection property="mainButtons" destination="Kpk-aR-pea" collectionClass="NSMutableArray" id="WX0-Ak-7cu"/>
+                        <outletCollection property="buildingButtons" destination="Tgu-rp-iXE" collectionClass="NSMutableArray" id="lFb-5i-WzM"/>
+                        <outletCollection property="buildingButtons" destination="8w9-ej-y9Z" collectionClass="NSMutableArray" id="Kvg-ss-55g"/>
+                        <outletCollection property="mainButtons" destination="T02-de-24h" collectionClass="NSMutableArray" id="Gpr-Bg-tZa"/>
+                        <outletCollection property="mainButtons" destination="ULV-iE-Zld" collectionClass="NSMutableArray" id="Nxx-PD-3BH"/>
+                        <outletCollection property="buildingButtons" destination="ULV-iE-Zld" collectionClass="NSMutableArray" id="a0R-cn-8zk"/>
+                        <outletCollection property="mainButtons" destination="Tgu-rp-iXE" collectionClass="NSMutableArray" id="Ze7-3c-ZEi"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7bg-aY-gS7" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1939,16 +2066,28 @@
                                     <action selector="homePressed:" destination="KMx-7H-Yxv" eventType="touchUpInside" id="nYe-oa-l9J"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kJT-zW-Xmh" userLabel="info">
+                            <button opaque="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g73-pP-pNf" userLabel="quit zookeeper">
+                                <rect key="frame" x="10" y="10" width="50" height="50"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="0RT-nD-MEN"/>
+                                    <constraint firstAttribute="height" constant="50" id="jyu-PY-zHc"/>
+                                </constraints>
+                                <state key="normal" image="button-cancel"/>
+                                <connections>
+                                    <action selector="zookeeperPressed:" destination="KMx-7H-Yxv" eventType="touchUpInside" id="aWm-bl-nRc"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kJT-zW-Xmh" userLabel="zookeeper">
                                 <rect key="frame" x="10" y="70" width="50" height="50"/>
                                 <animations/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="oZb-Pb-Rs0"/>
                                     <constraint firstAttribute="height" constant="50" id="sFE-rI-lua"/>
                                 </constraints>
-                                <state key="normal" image="button-info"/>
+                                <state key="normal" image="button-zookeeper"/>
                                 <connections>
-                                    <action selector="infoPress:" destination="KMx-7H-Yxv" eventType="touchUpInside" id="U7M-as-iB1"/>
+                                    <action selector="zookeeperPressed:" destination="KMx-7H-Yxv" eventType="touchUpInside" id="3ry-qy-kBg"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hYz-sE-0oL" userLabel="level">
@@ -1963,6 +2102,18 @@
                                     <action selector="infoPress:" destination="KMx-7H-Yxv" eventType="touchUpInside" id="A3U-SV-YBD"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oti-KD-CNR" userLabel="info">
+                                <rect key="frame" x="508" y="260" width="50" height="50"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="PUj-iK-GAd"/>
+                                    <constraint firstAttribute="height" constant="50" id="Tg5-ai-da6"/>
+                                </constraints>
+                                <state key="normal" image="button-info"/>
+                                <connections>
+                                    <action selector="infoPress:" destination="KMx-7H-Yxv" eventType="touchUpInside" id="Kn1-r4-LyU"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -1970,18 +2121,26 @@
                             <constraint firstAttribute="centerY" secondItem="DfR-hu-71e" secondAttribute="centerY" id="1E5-lM-QUV"/>
                             <constraint firstItem="hYz-sE-0oL" firstAttribute="top" secondItem="kJT-zW-Xmh" secondAttribute="bottom" constant="10" id="1iG-uK-lno"/>
                             <constraint firstItem="kJT-zW-Xmh" firstAttribute="leading" secondItem="Bd5-sn-8gV" secondAttribute="leading" constant="10" id="7Nb-oE-czE"/>
+                            <constraint firstItem="6zr-4g-M3p" firstAttribute="top" secondItem="oti-KD-CNR" secondAttribute="bottom" constant="10" id="9Lk-k3-mCl"/>
+                            <constraint firstItem="oti-KD-CNR" firstAttribute="top" secondItem="kJT-zW-Xmh" secondAttribute="bottom" constant="10" id="CqB-RY-tDI"/>
+                            <constraint firstItem="oti-KD-CNR" firstAttribute="leading" secondItem="Bd5-sn-8gV" secondAttribute="leading" constant="10" id="EGD-bt-c56"/>
                             <constraint firstItem="v8i-kg-Zmd" firstAttribute="leading" secondItem="Bd5-sn-8gV" secondAttribute="leading" constant="10" id="ENd-zG-35a"/>
                             <constraint firstAttribute="centerX" secondItem="DfR-hu-71e" secondAttribute="centerX" id="G4j-Fh-HUG"/>
                             <constraint firstAttribute="centerY" secondItem="c1c-PJ-2Re" secondAttribute="centerY" id="LeW-0C-8nf"/>
                             <constraint firstItem="tL8-I5-lsk" firstAttribute="height" secondItem="Bd5-sn-8gV" secondAttribute="height" id="Png-bO-6PW"/>
                             <constraint firstAttribute="centerX" secondItem="tL8-I5-lsk" secondAttribute="centerX" id="Qur-F0-ftB"/>
+                            <constraint firstAttribute="trailing" secondItem="oti-KD-CNR" secondAttribute="trailing" constant="10" id="Ye9-lc-Vza"/>
                             <constraint firstAttribute="centerY" secondItem="tL8-I5-lsk" secondAttribute="centerY" id="anE-bH-Ers"/>
+                            <constraint firstItem="g73-pP-pNf" firstAttribute="leading" secondItem="Bd5-sn-8gV" secondAttribute="leading" constant="10" id="cJv-wx-SHf"/>
                             <constraint firstItem="hYz-sE-0oL" firstAttribute="leading" secondItem="Bd5-sn-8gV" secondAttribute="leading" constant="10" id="cgL-2M-NEX"/>
+                            <constraint firstItem="g73-pP-pNf" firstAttribute="leading" secondItem="Bd5-sn-8gV" secondAttribute="leading" id="ewo-Lr-H7q"/>
                             <constraint firstItem="v8i-kg-Zmd" firstAttribute="top" secondItem="3db-Bq-qTh" secondAttribute="bottom" constant="10" id="gfx-5M-RTn"/>
                             <constraint firstAttribute="centerX" secondItem="c1c-PJ-2Re" secondAttribute="centerX" id="hwh-SC-OS8"/>
+                            <constraint firstItem="g73-pP-pNf" firstAttribute="top" secondItem="3db-Bq-qTh" secondAttribute="bottom" id="jio-Ee-PAs"/>
                             <constraint firstItem="v8i-kg-Zmd" firstAttribute="top" secondItem="Bd5-sn-8gV" secondAttribute="top" constant="10" id="kkI-Q2-L9V"/>
                             <constraint firstItem="tL8-I5-lsk" firstAttribute="width" secondItem="Bd5-sn-8gV" secondAttribute="width" id="oIH-WD-9dI"/>
                             <constraint firstItem="c1c-PJ-2Re" firstAttribute="height" secondItem="Bd5-sn-8gV" secondAttribute="height" id="p1c-Js-N5w"/>
+                            <constraint firstItem="g73-pP-pNf" firstAttribute="top" secondItem="Bd5-sn-8gV" secondAttribute="top" constant="10" id="paa-Mj-9iC"/>
                             <constraint firstItem="DfR-hu-71e" firstAttribute="width" secondItem="Bd5-sn-8gV" secondAttribute="width" id="qrs-Jj-6MK"/>
                             <constraint firstItem="DfR-hu-71e" firstAttribute="height" secondItem="Bd5-sn-8gV" secondAttribute="height" id="xsG-eJ-YHn"/>
                             <constraint firstItem="kJT-zW-Xmh" firstAttribute="top" secondItem="v8i-kg-Zmd" secondAttribute="bottom" constant="10" id="z4W-ps-oCF"/>
@@ -1989,10 +2148,18 @@
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
+                                <exclude reference="ewo-Lr-H7q"/>
+                                <exclude reference="jio-Ee-PAs"/>
                                 <exclude reference="gfx-5M-RTn"/>
                                 <exclude reference="1iG-uK-lno"/>
+                                <exclude reference="CqB-RY-tDI"/>
+                                <exclude reference="EGD-bt-c56"/>
                             </mask>
                         </variation>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="hJb-OK-I8m" appends="YES" id="JBx-ui-cKU"/>
+                            <outletCollection property="gestureRecognizers" destination="GV3-FL-SH0" appends="YES" id="Hjh-Eh-t2w"/>
+                        </connections>
                     </view>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
@@ -2000,7 +2167,12 @@
                         <outlet property="backgroundImage" destination="c1c-PJ-2Re" id="6aM-gq-RQ4"/>
                         <outlet property="blurredBackground" destination="tL8-I5-lsk" id="YZQ-CF-W2W"/>
                         <outlet property="buildingButton" destination="hYz-sE-0oL" id="JxR-f2-vGc"/>
-                        <outlet property="infoButton" destination="kJT-zW-Xmh" id="nlQ-5S-kHu"/>
+                        <outlet property="infoButton" destination="oti-KD-CNR" id="VA5-se-xhG"/>
+                        <outlet property="quitZookeeperButton" destination="g73-pP-pNf" id="91Y-29-KtK"/>
+                        <outletCollection property="mainButtons" destination="v8i-kg-Zmd" collectionClass="NSMutableArray" id="yad-Od-cfq"/>
+                        <outletCollection property="mainButtons" destination="kJT-zW-Xmh" collectionClass="NSMutableArray" id="v3F-uk-K4d"/>
+                        <outletCollection property="mainButtons" destination="hYz-sE-0oL" collectionClass="NSMutableArray" id="n6f-S1-7UX"/>
+                        <outletCollection property="mainButtons" destination="oti-KD-CNR" collectionClass="NSMutableArray" id="zJC-yg-hj9"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gxK-et-15d" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2009,6 +2181,18 @@
                         <action selector="tapDetected:" destination="KMx-7H-Yxv" id="eoH-lo-8l4"/>
                     </connections>
                 </tapGestureRecognizer>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="hJb-OK-I8m">
+                    <connections>
+                        <action selector="panDetected:" destination="KMx-7H-Yxv" id="ijy-Rp-rIZ"/>
+                        <outlet property="delegate" destination="KMx-7H-Yxv" id="q2f-oX-Ro4"/>
+                    </connections>
+                </panGestureRecognizer>
+                <pinchGestureRecognizer id="GV3-FL-SH0">
+                    <connections>
+                        <action selector="pinchDetected:" destination="KMx-7H-Yxv" id="7b0-CX-tG6"/>
+                        <outlet property="delegate" destination="KMx-7H-Yxv" id="hqh-Ji-4wa"/>
+                    </connections>
+                </pinchGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="396" y="1046"/>
         </scene>
@@ -2172,6 +2356,13 @@
         <image name="background1.jpg" width="2048" height="1321"/>
         <image name="building1.jpg" width="1656" height="1238"/>
         <image name="button-1" width="50" height="50"/>
+        <image name="button-2" width="50" height="50"/>
+        <image name="button-3" width="50" height="50"/>
+        <image name="button-4" width="50" height="50"/>
+        <image name="button-5" width="50" height="50"/>
+        <image name="button-6" width="50" height="50"/>
+        <image name="button-7" width="50" height="50"/>
+        <image name="button-8" width="50" height="50"/>
         <image name="button-back" width="50" height="50"/>
         <image name="button-boy" width="75" height="75"/>
         <image name="button-cancel" width="50" height="50"/>

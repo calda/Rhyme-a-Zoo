@@ -179,7 +179,7 @@ class QuizDatabase {
     }
     
     func canAffordAnimal() -> Bool {
-        return getPlayerBalance() > 20.0
+        return getPlayerBalance() >= 20.0
     }
     
     func purchaseAnimal(animal: String) {

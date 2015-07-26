@@ -16,12 +16,28 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
 
     @IBOutlet weak var buttonsSuperview: UIView!
     var buttonFrames: [UIButton : CGRect] = [:]
+    @IBOutlet var cards: [UIButton] = []
     @IBOutlet var panGestureRecognizer: UIPanGestureRecognizer!
     @IBOutlet weak var userIcon: UIButton!
     @IBOutlet weak var userName: UIButton!
     
     
     override func viewWillAppear(animated: Bool) {
+        if self.presentedViewController == nil {
+            
+            var delay = 0.0
+            
+            for card in cards {
+                let origin = card.frame.origin
+                card.frame.offset(dx: 0.0, dy: 500.0)
+                
+                UIView.animateWithDuration(0.7, delay: delay, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.AllowUserInteraction, animations: {
+                    card.frame.origin = origin
+                }, completion: nil)
+                
+                delay += 0.05
+            }
+        }
         userIcon.setImage(RZCurrentUser.icon, forState: .Normal)
         decorateUserIcon(userIcon)
         userName.setTitle(RZCurrentUser.name, forState: .Normal)

@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import UIKit.UIGestureRecognizerSubclass
 
-class BuildingViewController : UIViewController {
+class BuildingViewController : ZookeeperGameController {
     
     @IBOutlet weak var backgroundImage: UIImageView!
     @IBOutlet weak var blurredBackground: UIImageView!
@@ -95,10 +95,13 @@ class BuildingViewController : UIViewController {
     ]
     
     var animalButtons: [String : UIButton] = [:]
-    var buyButtons: [UIButton] = []
     var animalAudioNumber: [String : Int] = [:]
+    var buyButtons: [UIButton] = []
     var building: Int!
     var displaySize: CGSize!
+    var sceneSize: CGSize!
+    
+    //MARK: - Decorating the view with animals and buttons
     
     func decorate(#building: Int, displaySize: CGSize) {
         self.building = building
@@ -118,7 +121,7 @@ class BuildingViewController : UIViewController {
         let currentHeight = self.backgroundImage.frame.height
         let ratio = displayHeight / currentHeight
         let backgroundSize = self.backgroundImage.frame
-        let sceneSize = CGSizeMake(backgroundSize.width * ratio, backgroundSize.height * ratio)
+        sceneSize = CGSizeMake(backgroundSize.width * ratio, backgroundSize.height * ratio)
         
         for animal in buildingAnimals[building - 1] {
             let frame = percentageFrames[animal]!
@@ -149,28 +152,8 @@ class BuildingViewController : UIViewController {
             
             //add buy button if this is current level
             let currentLevel = RZQuizDatabase.currentZooLevel()
-            if currentLevel == building && !RZQuizDatabase.playerOwnsAnimal(animal) {
-                let size = CGSizeMake(50, 40)
-                let percentCenter = coinCenters[animal]!
-                let center = CGPointMake(percentCenter.x * sceneSize.width, percentCenter.y * sceneSize.height)
-                var buyFrame = CGRectMake(center.x - size.width/2, center.y - size.height/2, size.width, size.height)
-                //calculate the offset so that these buttons are in the main view instead
-                let screenWidth = UIScreen.mainScreen().bounds.width
-                let unusedWidth = screenWidth - sceneSize.width
-                let offset = unusedWidth / 2
-                buyFrame.offset(dx: offset, dy: 0)
-                
-                let buyButton = UIButton(frame: buyFrame)
-                buyButton.setImage(UIImage(named: "coin-stack"), forState: .Normal)
-                buyButton.imageView!.contentMode = UIViewContentMode.ScaleAspectFit
-                buyButton.addTarget(self, action: "purchasePressed:", forControlEvents: .TouchUpInside)
-                buyButton.restorationIdentifier = animal
-                self.view.addSubview(buyButton)
-                buyButtons.append(buyButton)
-                
-                if !RZQuizDatabase.canAffordAnimal() {
-                    buyButton.alpha = 0.75
-                }
+            if currentLevel == building {
+                addButtonForAnimal(animal, playerOwns: RZQuizDatabase.playerOwnsAnimal(animal))
             }
         }
         
@@ -184,10 +167,58 @@ class BuildingViewController : UIViewController {
             infoButton.hidden = false
         }
         
-        buildingButton.setImage(UIImage(named: "button-\(building)"), forState: .Normal)
+        let dark = (building > RZQuizDatabase.currentZooLevel() ? "-dark" : "")
+        buildingButton.setImage(UIImage(named: "button-\(building)\(dark)"), forState: .Normal)
     }
     
+    func addButtonForAnimal(animal: String, playerOwns owned: Bool) {
+        let size = (owned ? CGSizeMake(40, 40) : CGSizeMake(50, 40))
+        let percentCenter = coinCenters[animal]!
+        let center = CGPointMake(percentCenter.x * sceneSize.width, percentCenter.y * sceneSize.height)
+        var frame = CGRectMake(center.x - size.width/2, center.y - size.height/2, size.width, size.height)
+        //calculate the offset so that these buttons are in the main view instead
+        let screenWidth = UIScreen.mainScreen().bounds.width
+        let unusedWidth = screenWidth - sceneSize.width
+        let offset = unusedWidth / 2
+        frame.offset(dx: offset, dy: 0)
+        
+        let button = UIButton(frame: frame)
+        button.imageView!.contentMode = UIViewContentMode.ScaleAspectFit
+        
+        if !owned {
+            button.setImage(UIImage(named: "coin-stack"), forState: .Normal)
+            button.addTarget(self, action: "purchasePressed:", forControlEvents: .TouchUpInside)
+            
+            if !RZQuizDatabase.canAffordAnimal() {
+                button.alpha = 0.6
+            }
+            
+            buyButtons.append(button)
+            
+        } else {
+            button.setImage(UIImage(named: "button-play"), forState: .Normal)
+            button.addTarget(self, action: "playAnimalSound:", forControlEvents: .TouchUpInside)
+            
+            //fade button if file doesn't exist
+            if UALengthOfFile(animal, ofType: "m4a") <= 1.0 {
+                button.alpha = 0.5
+            }
+        }
+        
+        mainButtons.append(button)
+        button.restorationIdentifier = animal
+        self.view.addSubview(button)
+    }
+    
+    //MARK: - User Interaction
+    
     @IBAction func tapDetected(sender: UITapGestureRecognizer) {
+        if let zookeeperImage = self.zookeeperImage {
+            //is in zookeeper mode
+            zookeeperGameTap(event: sender)
+            return
+        }
+        
         if UAIsAudioPlaying() { return } //don't do visual effects if audio is already playing
         
         let touch = sender.locationInView(backgroundImage)
@@ -252,7 +283,6 @@ class BuildingViewController : UIViewController {
         }
         if let animal = sender.restorationIdentifier {
             RZQuizDatabase.purchaseAnimal(animal)
-            sender.removeFromSuperview()
             RZQuizDatabase.advanceCurrentLevelIfComplete(buildingAnimals[building - 1])
             
             //color in animal and play sound
@@ -264,10 +294,38 @@ class BuildingViewController : UIViewController {
             //disable buy buttons if the user can't afford another animal
             if !RZQuizDatabase.canAffordAnimal() {
                 for button in buyButtons {
-                    button.alpha = 0.75
+                    button.alpha = 0.6
                 }
             }
+            
+            //add Play Sound button
+            addButtonForAnimal(animal, playerOwns: true)
+            //remove current button from superview
+            sender.removeFromSuperview()
+            if let index = find(mainButtons, sender) {
+                mainButtons.removeAtIndex(index)
+            }
         }
+    }
+    
+    func playAnimalSound(sender: UIButton) {
+        if let animal = sender.restorationIdentifier {
+            if !UAIsAudioPlaying() {
+                UAPlayer().play(animal, ofType: "m4a", ifConcurrent: .Interrupt)
+            }
+        }
+    }
+    
+    @IBAction func zookeeperPressed(sender: UIButton) {
+        toggleZookeeper()
+    }
+    
+    @IBAction func panDetected(sender: UIPanGestureRecognizer) {
+        zookeeperGamePan(event: sender)
+    }
+    
+    @IBAction func pinchDetected(sender: UIPinchGestureRecognizer) {
+        zookeeperGamePinch(event: sender)
     }
     
 }
