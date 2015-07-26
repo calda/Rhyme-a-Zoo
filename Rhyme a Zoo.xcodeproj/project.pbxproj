@@ -15,7 +15,6 @@
 		2E089A091B40B22E00693309 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E089A001B40B21A00693309 /* SQLite.framework */; };
 		2E089A0B1B40B24A00693309 /* SQLite.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2E089A001B40B21A00693309 /* SQLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2E0A820D1B589CD400E84E4E /* User.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2E0A820B1B589CD400E84E4E /* User.storyboard */; };
-		2E0A820F1B589D6B00E84E4E /* UsersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E0A820E1B589D6B00E84E4E /* UsersViewController.swift */; };
 		2E0A82111B589E8300E84E4E /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E0A82101B589E8300E84E4E /* WelcomeViewController.swift */; };
 		2E0A82161B58A78A00E84E4E /* welcome.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E0A82151B58A78A00E84E4E /* welcome.m4a */; };
 		2E0A82181B58B06900E84E4E /* NewUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E0A82171B58B06900E84E4E /* NewUserViewController.swift */; };
@@ -2086,7 +2085,6 @@
 		2E489F5C1B57755C0025E9C9 /* accessory4.png in Resources */ = {isa = PBXBuildFile; fileRef = 2E489F561B57755C0025E9C9 /* accessory4.png */; };
 		2E489F5D1B57755C0025E9C9 /* accessory5.png in Resources */ = {isa = PBXBuildFile; fileRef = 2E489F571B57755C0025E9C9 /* accessory5.png */; };
 		2E489F5E1B57755C0025E9C9 /* accessory6.png in Resources */ = {isa = PBXBuildFile; fileRef = 2E489F581B57755C0025E9C9 /* accessory6.png */; };
-		2E50CE8E1B649262009AC7B0 /* ZookeeperGameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E50CE8D1B649262009AC7B0 /* ZookeeperGameController.swift */; };
 		2E51F0811B5CAFC000007BDF /* create user.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E51F0801B5CAFC000007BDF /* create user.m4a */; };
 		2E612DC21B6482750055CF08 /* alligator.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E612DAC1B6482750055CF08 /* alligator.m4a */; };
 		2E612DC31B6482750055CF08 /* baboon.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E612DAD1B6482750055CF08 /* baboon.m4a */; };
@@ -2293,6 +2291,8 @@
 		2ED9B1F91B44D16F007932C4 /* CatalogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ED9B1F81B44D16F007932C4 /* CatalogViewController.swift */; };
 		2ED9B1FE1B450705007932C4 /* illustration_shadow.png in Resources */ = {isa = PBXBuildFile; fileRef = 2ED9B1FD1B450705007932C4 /* illustration_shadow.png */; };
 		2ED9B2001B45087C007932C4 /* RhymeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ED9B1FF1B45087C007932C4 /* RhymeViewController.swift */; };
+		2EDF5F911B64A6A200199A95 /* ZookeeperGameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EDF5F901B64A6A200199A95 /* ZookeeperGameController.swift */; };
+		2EDF5F961B64A6AA00199A95 /* UsersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EDF5F951B64A6AA00199A95 /* UsersViewController.swift */; };
 		2EE4DB8C1B4A5B4800F9578C /* correct.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2EE4DB881B4A5B4800F9578C /* correct.mp3 */; };
 		2EE4DB8D1B4A5B4800F9578C /* incorrect.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2EE4DB891B4A5B4800F9578C /* incorrect.mp3 */; };
 		2EE4DB8E1B4A5B4800F9578C /* quiz-over-bad.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2EE4DB8A1B4A5B4800F9578C /* quiz-over-bad.mp3 */; };
@@ -2381,7 +2381,6 @@
 		2E08998C1B40A5D200693309 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		2E0899F71B40B21A00693309 /* SQLite.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SQLite.xcodeproj; path = SQLite.swift/SQLite.xcodeproj; sourceTree = "<group>"; };
 		2E0A820C1B589CD400E84E4E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/User.storyboard; sourceTree = "<group>"; };
-		2E0A820E1B589D6B00E84E4E /* UsersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UsersViewController.swift; path = ../UsersViewController.swift; sourceTree = "<group>"; };
 		2E0A82101B589E8300E84E4E /* WelcomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 		2E0A82151B58A78A00E84E4E /* welcome.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = welcome.m4a; path = "UI Audio/welcome.m4a"; sourceTree = "<group>"; };
 		2E0A82171B58B06900E84E4E /* NewUserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewUserViewController.swift; sourceTree = "<group>"; };
@@ -4452,7 +4451,6 @@
 		2E489F561B57755C0025E9C9 /* accessory4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = accessory4.png; sourceTree = "<group>"; };
 		2E489F571B57755C0025E9C9 /* accessory5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = accessory5.png; sourceTree = "<group>"; };
 		2E489F581B57755C0025E9C9 /* accessory6.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = accessory6.png; sourceTree = "<group>"; };
-		2E50CE8D1B649262009AC7B0 /* ZookeeperGameController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZookeeperGameController.swift; path = ../ZookeeperGameController.swift; sourceTree = "<group>"; };
 		2E51F0801B5CAFC000007BDF /* create user.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = "create user.m4a"; path = "UI Audio/create user.m4a"; sourceTree = "<group>"; };
 		2E612DAC1B6482750055CF08 /* alligator.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = alligator.m4a; path = "Zoo/animal sounds/alligator.m4a"; sourceTree = "<group>"; };
 		2E612DAD1B6482750055CF08 /* baboon.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = baboon.m4a; path = "Zoo/animal sounds/baboon.m4a"; sourceTree = "<group>"; };
@@ -4659,6 +4657,8 @@
 		2ED9B1F81B44D16F007932C4 /* CatalogViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CatalogViewController.swift; sourceTree = "<group>"; };
 		2ED9B1FD1B450705007932C4 /* illustration_shadow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = illustration_shadow.png; path = Quiz/illustrations/illustration_shadow.png; sourceTree = "<group>"; };
 		2ED9B1FF1B45087C007932C4 /* RhymeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RhymeViewController.swift; sourceTree = "<group>"; };
+		2EDF5F901B64A6A200199A95 /* ZookeeperGameController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZookeeperGameController.swift; sourceTree = "<group>"; };
+		2EDF5F951B64A6AA00199A95 /* UsersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersViewController.swift; sourceTree = "<group>"; };
 		2EE4DB881B4A5B4800F9578C /* correct.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = correct.mp3; path = "Quiz/sound effects/correct.mp3"; sourceTree = "<group>"; };
 		2EE4DB891B4A5B4800F9578C /* incorrect.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = incorrect.mp3; path = "Quiz/sound effects/incorrect.mp3"; sourceTree = "<group>"; };
 		2EE4DB8A1B4A5B4800F9578C /* quiz-over-bad.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "quiz-over-bad.mp3"; path = "Quiz/sound effects/quiz-over-bad.mp3"; sourceTree = "<group>"; };
@@ -4731,12 +4731,12 @@
 				2EECB8B31B4A45470086327E /* BankViewController.swift */,
 				2EBB787B1B41154100DEE989 /* ZooViewController.swift */,
 				2EBB788D1B41222500DEE989 /* BuildingViewController.swift */,
-				2E50CE8D1B649262009AC7B0 /* ZookeeperGameController.swift */,
+				2EDF5F901B64A6A200199A95 /* ZookeeperGameController.swift */,
 				2E6F5C6D1B42347500E37B65 /* UniversalAudio.swift */,
 				2E489F101B575B8D0025E9C9 /* KeeperViewController.swift */,
 				2E0A820B1B589CD400E84E4E /* User.storyboard */,
 				2E0A82191B5A041900E84E4E /* UserDatabase.swift */,
-				2E0A820E1B589D6B00E84E4E /* UsersViewController.swift */,
+				2EDF5F951B64A6AA00199A95 /* UsersViewController.swift */,
 				2E0A82101B589E8300E84E4E /* WelcomeViewController.swift */,
 				2E0A82171B58B06900E84E4E /* NewUserViewController.swift */,
 				2E08997E1B40A5D200693309 /* Products */,
@@ -9561,7 +9561,6 @@
 				2ED9B2001B45087C007932C4 /* RhymeViewController.swift in Sources */,
 				2EBA6CB21B4691110047D1EA /* QuizViewController.swift in Sources */,
 				2E0899851B40A5D200693309 /* MainViewController.swift in Sources */,
-				2E0A820F1B589D6B00E84E4E /* UsersViewController.swift in Sources */,
 				2E489F111B575B8D0025E9C9 /* KeeperViewController.swift in Sources */,
 				2E6F5C6E1B42347500E37B65 /* UniversalAudio.swift in Sources */,
 				2E0A82181B58B06900E84E4E /* NewUserViewController.swift in Sources */,
@@ -9569,8 +9568,9 @@
 				2EBB787C1B41154100DEE989 /* ZooViewController.swift in Sources */,
 				2ED9B1F91B44D16F007932C4 /* CatalogViewController.swift in Sources */,
 				2E6F5C721B42657100E37B65 /* QuizDatabase.swift in Sources */,
+				2EDF5F961B64A6AA00199A95 /* UsersViewController.swift in Sources */,
 				2E0899831B40A5D200693309 /* AppDelegate.swift in Sources */,
-				2E50CE8E1B649262009AC7B0 /* ZookeeperGameController.swift in Sources */,
+				2EDF5F911B64A6A200199A95 /* ZookeeperGameController.swift in Sources */,
 				2E0A82111B589E8300E84E4E /* WelcomeViewController.swift in Sources */,
 				2EECB8B41B4A45470086327E /* BankViewController.swift in Sources */,
 				2E0A821A1B5A041900E84E4E /* UserDatabase.swift in Sources */,
