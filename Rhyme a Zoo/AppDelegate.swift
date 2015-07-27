@@ -45,7 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     return viewController is UsersViewController
                 }
                 
-                let userCount = RZUserDatabase.getUsers().count
+                let userCount = RZUserDatabase.getLocalUsers().count
                 let controllerCheck: (UIViewController) -> Bool = (userCount == 1 ? controllerIsHome : controllerIsUser)
                 
                 //find the top controller
@@ -67,25 +67,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-}
-
-func dismissController(controller: UIViewController, untilMatch controllerCheck: (UIViewController) -> Bool) {
-    if controllerCheck(controller) {
-        return //we made it to our destination
-    }
-    
-    let superController = controller.presentingViewController
-    controller.dismissViewControllerAnimated(false, completion: {
-        if let superController = superController {
-            dismissController(superController, untilMatch: controllerCheck)
-        }
-    })
-}
-
-func playTransitionForView(view: UIView, #duration: Double, transition transitionName: String) {
-    let transition = CATransition()
-    transition.duration = duration
-    transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
-    transition.type = transitionName
-    view.layer.addAnimation(transition, forKey: nil)
 }

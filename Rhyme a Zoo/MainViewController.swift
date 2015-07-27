@@ -8,6 +8,7 @@
 
 import UIKit
 import SQLite
+import CoreLocation
 
 var data = NSUserDefaults.standardUserDefaults()
 let RZMainMenuTouchDownNotification = "com.hearatale.raz.main-menu-touch-down"
@@ -20,6 +21,9 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet var panGestureRecognizer: UIPanGestureRecognizer!
     @IBOutlet weak var userIcon: UIButton!
     @IBOutlet weak var userName: UIButton!
+    
+    
+    let manager = LocationManager(accuracy: kCLLocationAccuracyKilometer)
     
     
     override func viewWillAppear(animated: Bool) {
@@ -44,6 +48,8 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     
     override func viewDidAppear(animated: Bool) {
+        requestPasscode(1234, currentController: self)
+        
         //test the database because I'm dumb and deleted the Unit Tests
         /*    ALL OF THESE TESTS PASSED ON JUNE 30, 2015   */
         

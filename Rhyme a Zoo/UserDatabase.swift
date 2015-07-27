@@ -8,6 +8,8 @@
 
 import Foundation
 import UIKit
+import CoreLocation
+import CloudKit
 
 let RZUserDatabase = UserDatabase()
 var RZCurrentUser: User = User(name: "default", iconName: "angry.jpg")
@@ -15,7 +17,9 @@ let RZUsersKey = "com.hearatale.raz.users"
 
 struct UserDatabase {
     
-    func getUsers() -> [User] {
+    //MARK: - Local User Management
+    
+    func getLocalUsers() -> [User] {
         var users: [User] = []
         
         if let userStrings = data.stringArrayForKey(RZUsersKey) as? [String] {
@@ -29,8 +33,8 @@ struct UserDatabase {
         return users
     }
     
-    func addUser(user: User) {
-        var users = getUsers()
+    func addLocalUser(user: User) {
+        var users = getLocalUsers()
         var userStrings: [String] = []
         
         for user in users {
@@ -40,7 +44,7 @@ struct UserDatabase {
         data.setValue(userStrings, forKey: RZUsersKey)
     }
     
-    func deleteUser(user: User) {
+    func deleteLocalUser(user: User) {
         let userString = user.toString()
         
         if var userStrings = data.stringArrayForKey(RZUsersKey) as? [String] {
@@ -51,7 +55,7 @@ struct UserDatabase {
         }
     }
     
-    func changeUserIcon(user immutableUser: User, newIcon: String) {
+    func changeLocalUserIcon(user immutableUser: User, newIcon: String) {
         var user = immutableUser
         let oldUserString = user.toString()
         user.iconName = newIcon
@@ -64,6 +68,18 @@ struct UserDatabase {
                 data.setValue(userStrings, forKey: RZUsersKey)
             }
         }
+    }
+    
+    //MARK: - CloudKit School management
+    
+    let cloud = CKContainer.defaultContainer().publicCloudDatabase
+    
+    func createClassroomNamed(name: String, location: CLLocation, passcode: Int) {
+        let record = CKRecord(recordType: "Classroom")
+        record.setObject(name, forKey: "Name")
+        record.setObject(1234, forKey: "Passcode")
+        record.setObject(location, forKey: "Location")
+        cloud.saveRecord(record, completionHandler: nil)
     }
     
 }

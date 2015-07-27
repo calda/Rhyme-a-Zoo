@@ -19,7 +19,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     @IBOutlet weak var coverGradient: UIImageView!
     
     override func viewDidLoad() {
-        users = RZUserDatabase.getUsers()
+        users = RZUserDatabase.getLocalUsers()
         //present welcome view if there are no users
         //present main view if there is only one user
         if users.count == 0 || users.count == 1 {
@@ -30,7 +30,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     }
     
     override func viewWillAppear(animated: Bool) {
-        users = RZUserDatabase.getUsers()
+        users = RZUserDatabase.getLocalUsers()
         self.collectionView.reloadData()
         
         if users.count == 0 {
@@ -69,7 +69,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
                 self.presentViewController(welcome, animated: false, completion: nil)
             }
             else { //present main view if there is only one user
-                RZCurrentUser = RZUserDatabase.getUsers()[0]
+                RZCurrentUser = RZUserDatabase.getLocalUsers()[0]
                 let home = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController() as! UIViewController
                 self.presentViewController(home, animated: false, completion: nil)
             }

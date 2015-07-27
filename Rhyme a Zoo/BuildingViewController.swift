@@ -8,7 +8,6 @@
 
 import Foundation
 import UIKit
-import UIKit.UIGestureRecognizerSubclass
 
 class BuildingViewController : ZookeeperGameController {
     
@@ -152,7 +151,7 @@ class BuildingViewController : ZookeeperGameController {
             
             //add buy button if this is current level
             let currentLevel = RZQuizDatabase.currentZooLevel()
-            if currentLevel == building {
+            if currentLevel == building || RZQuizDatabase.playerOwnsAnimal(animal) {
                 addButtonForAnimal(animal, playerOwns: RZQuizDatabase.playerOwnsAnimal(animal))
             }
         }
@@ -326,25 +325,6 @@ class BuildingViewController : ZookeeperGameController {
     
     @IBAction func pinchDetected(sender: UIPinchGestureRecognizer) {
         zookeeperGamePinch(event: sender)
-    }
-    
-}
-
-class UITouchGestureRecognizer : UIGestureRecognizer {
-    
-    override func touchesBegan(touches: Set<NSObject>!, withEvent event: UIEvent!) {
-        super.touchesBegan(touches, withEvent: event)
-        self.state = .Began
-    }
-    
-    override func touchesMoved(touches: Set<NSObject>!, withEvent event: UIEvent!) {
-        super.touchesMoved(touches, withEvent: event)
-        self.state = .Began
-    }
-    
-    override func touchesEnded(touches: Set<NSObject>!, withEvent event: UIEvent!) {
-        super.touchesEnded(touches, withEvent: event)
-        self.state = .Ended
     }
     
 }

@@ -51,10 +51,10 @@ class QuizViewController : UIViewController {
         self.view.clipsToBounds = true
         //sort IB arrays
         let arrays: NSArray = [optionIcons, optionLabels, optionContainers, coins]
-        optionIcons = (optionIcons as NSArray).sortedArrayUsingDescriptors([NSSortDescriptor(key: "tag", ascending: true)]) as! [UIImageView]
-        optionLabels = (optionLabels as NSArray).sortedArrayUsingDescriptors([NSSortDescriptor(key: "tag", ascending: true)]) as! [UILabel]
-        optionContainers = (optionContainers as NSArray).sortedArrayUsingDescriptors([NSSortDescriptor(key: "tag", ascending: true)]) as! [UIView]
-        coins = (coins as NSArray).sortedArrayUsingDescriptors([NSSortDescriptor(key: "tag", ascending: true)]) as! [UIImageView]
+        sortOutletCollectionByTag(&optionIcons)
+        sortOutletCollectionByTag(&optionLabels)
+        sortOutletCollectionByTag(&optionContainers)
+        sortOutletCollectionByTag(&coins)
         
         quizOverView.backgroundColor = UIColor.clearColor()
         quizOverViewTop.constant = -UIScreen.mainScreen().bounds.height
@@ -410,21 +410,9 @@ class QuizViewController : UIViewController {
     @IBAction func replayQuestion(sender: AnyObject) {
         if timers.count == 0 { //is the question playback timers aren't active
             playQuizAudio()
-            shakeTitle()
+            shakeView(questionText)
         }
     }
-    
-    func shakeTitle() {
-        let animations : [CGFloat] = [20.0, -20.0, 10.0, -10.0, 3.0, -3.0, 0]
-        for i in 0 ..< animations.count {
-            let frameOrigin = CGPointMake(questionText.frame.origin.x + animations[i], questionText.frame.origin.y)
-            
-            UIView.animateWithDuration(0.1, delay: NSTimeInterval(0.1 * Double(i)), options: nil, animations: {
-                self.questionText.frame.origin = frameOrigin
-                }, completion: nil)
-        }
-    }
-    
     
     @IBAction func returnToRhyme(sender: AnyObject) {
         stopAllTimers()

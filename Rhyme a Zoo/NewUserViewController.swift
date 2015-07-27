@@ -42,7 +42,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
         finishEditingButton.alpha = 0.0
         
         //remove unavailable icons and shuffle remaining
-        for user in RZUserDatabase.getUsers() {
+        for user in RZUserDatabase.getLocalUsers() {
             let usedIcon = user.iconName
             let iconCount = availableIcons.count
             for i_forwards in 1 ... iconCount {
@@ -183,7 +183,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
         let name = nameLabel.text!
         let iconName = currentIconString
         let user = User(name: name, iconName: iconName)
-        RZUserDatabase.addUser(user)
+        RZUserDatabase.addLocalUser(user)
         RZCurrentUser = user
         
         let mainMenu = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController() as! UIViewController
@@ -204,7 +204,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
             let nevermind = UIAlertAction(title: "Nevermind", style: .Default, handler: nil)
             let delete = UIAlertAction(title: "Delete", style: .Destructive, handler: { action in
                 
-                RZUserDatabase.deleteUser(user)
+                RZUserDatabase.deleteLocalUser(user)
                 
                 //present last alert
                 let okAlert = UIAlertController(title: "Deleted \(user.name)", message: nil, preferredStyle: .Alert)
@@ -227,7 +227,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
     @IBAction func editModeBackPressed(sender: AnyObject) {
         if let editUser = editUser {
             //save edits to user
-            RZUserDatabase.changeUserIcon(user: editUser, newIcon: currentIconString)
+            RZUserDatabase.changeLocalUserIcon(user: editUser, newIcon: currentIconString)
         }
         
         editMode = false
