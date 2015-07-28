@@ -117,6 +117,14 @@ class QuizDatabase {
         return -1
     }
     
+    func getQuizData() -> [String : String] {
+        return data.dictionaryForKey(userKey(RZQuizResultsKey)) as? [String : String] ?? [:]
+    }
+    
+    func getFavorites() -> [Int] {
+        return data.arrayForKey(userKey(RZFavoritesKey)) as? [Int] ?? []
+    }
+    
     func isQuizFavorite(number: Int) -> Bool {
         if let favs = data.arrayForKey(userKey(RZFavoritesKey)) as? [Int] {
             return contains(favs, number)
@@ -165,7 +173,7 @@ class QuizDatabase {
     
     //zoo management
     
-    private func ownedAnimals() -> [String] {
+    func getOwnedAnimals() -> [String] {
         if let array = data.arrayForKey(userKey(RZAnimalsKey)) as? [String] {
             return array
         }
@@ -175,7 +183,7 @@ class QuizDatabase {
     }
     
     func playerOwnsAnimal(animal: String) -> Bool {
-        return contains(ownedAnimals(), animal)
+        return contains(getOwnedAnimals(), animal)
     }
     
     func canAffordAnimal() -> Bool {
@@ -186,7 +194,7 @@ class QuizDatabase {
         if !canAffordAnimal() { return }
         
         changePlayerBalanceBy(-20.0)
-        var animals = ownedAnimals()
+        var animals = getOwnedAnimals()
         animals.append(animal)
         data.setValue(animals, forKey: userKey(RZAnimalsKey))
     }
@@ -238,6 +246,19 @@ class QuizDatabase {
     
     func setKeeperNumber(number: Int) {
         data.setValue(number, forKey: userKey(RZKeeperNumberKey))
+    }
+    
+    func getKeeperString() -> String {
+        return "\(getKeeperGender())~\(getKeeperNumber())"
+    }
+    
+    func setKeeperWithString(string: String) {
+        let splits = split(string){ $0 == "~" }
+        let gender = splits[0]
+        setKeeperGender(gender)
+        if let number = splits[1].toInt() {
+            setKeeperNumber(number)
+        }
     }
     
 }

@@ -48,7 +48,13 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     
     override func viewDidAppear(animated: Bool) {
-        requestPasscode(1234, currentController: self)
+        self.manager.getCurrentLocation({ location in
+            RZUserDatabase.getNearbyClassrooms(location) { classrooms in
+                for classroom in classrooms {
+                    println(classroom.name)
+                }
+            }
+        })
         
         //test the database because I'm dumb and deleted the Unit Tests
         /*    ALL OF THESE TESTS PASSED ON JUNE 30, 2015   */

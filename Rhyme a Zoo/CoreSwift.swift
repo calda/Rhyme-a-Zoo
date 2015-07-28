@@ -42,10 +42,12 @@ func dismissController(controller: UIViewController, untilMatch controllerCheck:
     })
 }
 
+
 ///sorts any [UIView]! by view.tag
 func sortOutletCollectionByTag<T : UIView>(inout collection: [T]!) {
     collection = (collection as NSArray).sortedArrayUsingDescriptors([NSSortDescriptor(key: "tag", ascending: true)]) as! [T]
 }
+
 
 ///animates a back and forth shake
 func shakeView(view: UIView) {
@@ -57,6 +59,35 @@ func shakeView(view: UIView) {
            view.frame.origin = frameOrigin
         }, completion: nil)
     }
+}
+
+
+///converts a String dictionary to a String array
+func dictToArray(dict: [String : String]) -> [String] {
+    var array: [String] = []
+    
+    for item in dict {
+        let first = item.0.stringByReplacingOccurrencesOfString("~", withString: "|(#)|", options: nil, range: nil)
+        let second = item.1.stringByReplacingOccurrencesOfString("~", withString: "|(#)|", options: nil, range: nil)
+        let combined = "\(first)~\(second)"
+        array.append(combined)
+    }
+    
+    return array
+}
+
+///converts an array created by the dictToArray: function to the original dictionary
+func arrayToDict(array: [String]) -> [String : String] {
+    var dict: [String : String] = [:]
+    
+    for item in array {
+        let splits = split(item){ $0 == "~" }
+        let first = splits[0].stringByReplacingOccurrencesOfString("|(#)|", withString: "~", options: nil, range: nil)
+        let second = splits[1].stringByReplacingOccurrencesOfString("|(#)|", withString: "~", options: nil, range: nil)
+        dict.updateValue(second, forKey: first)
+    }
+    
+    return dict
 }
 
 //MARK: - Classes
@@ -84,14 +115,8 @@ class UITouchGestureRecognizer : UIGestureRecognizer {
 ///A basic class to manage Location access
 class LocationManager : NSObject, CLLocationManagerDelegate {
     
-    enum FailureReason {
-        case PermissionsDenied
-        case LocationServicesDisabled
-        case Error(NSError)
-    }
-    
-    var waitingForAuthorization: [(completion: (CLLocation) -> (), failure: ((FailureReason) -> ())?)] = []
-    var waitingForUpdate: [(completion: (CLLocation) -> (), failure: ((FailureReason) -> ())?)] = []
+    var waitingForAuthorization: [(completion: (CLLocation) -> (), failure: LocationFailureReason -> ())] = []
+    var waitingForUpdate: [(completion: (CLLocation) -> (), failure: LocationFailureReason -> ())] = []
     var manager = CLLocationManager()
     
     ///Manager must be kept as a strong reference at the class-level.
@@ -101,10 +126,10 @@ class LocationManager : NSObject, CLLocationManagerDelegate {
         manager.desiredAccuracy = accuracy
     }
     
-    func getCurrentLocation(completion: (CLLocation) -> (), failure: ((FailureReason) -> ())? ) {
+    func getCurrentLocation(completion: (CLLocation) -> (), failure: LocationFailureReason -> () ) {
         let auth = CLLocationManager.authorizationStatus()
         if auth == .Restricted || auth == .Denied {
-            failure?(.PermissionsDenied)
+            failure(.PermissionsDenied)
             return
         }
         
@@ -119,7 +144,7 @@ class LocationManager : NSObject, CLLocationManagerDelegate {
     }
     
     func getCurrentLocation(completion: (CLLocation) -> ()) {
-        getCurrentLocation(completion, failure: nil)
+        getCurrentLocation(completion, failure: { error in })
     }
     
     func locationManager(manager: CLLocationManager!, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
@@ -128,15 +153,15 @@ class LocationManager : NSObject, CLLocationManagerDelegate {
                 updateLocationIfEnabled(completion, failure: failure)
             }
             else {
-                failure?(.PermissionsDenied)
+                failure(.PermissionsDenied)
             }
         }
         waitingForAuthorization = []
     }
     
-    private func updateLocationIfEnabled(completion: (CLLocation) -> (), failure: ((FailureReason) -> ())?) {
+    private func updateLocationIfEnabled(completion: (CLLocation) -> (), failure: LocationFailureReason -> ()) {
         if !CLLocationManager.locationServicesEnabled() {
-            failure?(.LocationServicesDisabled)
+            failure(.LocationServicesDisabled)
             return
         }
         
@@ -156,12 +181,18 @@ class LocationManager : NSObject, CLLocationManagerDelegate {
     
     func locationManager(manager: CLLocationManager!, didFailWithError error: NSError!) {
         for (_, failure) in waitingForUpdate {
-            failure?(.Error(error))
+            failure(.Error(error))
         }
         waitingForUpdate = []
         manager.stopUpdatingLocation()
     }
     
+}
+
+enum LocationFailureReason {
+    case PermissionsDenied
+    case LocationServicesDisabled
+    case Error(NSError)
 }
 
 

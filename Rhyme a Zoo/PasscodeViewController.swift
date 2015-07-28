@@ -15,18 +15,40 @@ class PasscodeViewController : UIViewController {
     @IBOutlet var outputButtons: [UIImageView]!
     @IBOutlet weak var buttonView: UIView!
     @IBOutlet weak var displayView: UIView!
+    @IBOutlet weak var descriptionLabel: UILabel!
     
     var input: NSString = ""
-    var correctPasscode: Int = 1234
+    var correctPasscode: String = "1234"
+    var descriptionString: String = ""
     var completion: (Bool) -> () = { _ in }
     
     override func viewWillAppear(animated: Bool) {
+        self.displayView.alpha = 0.0
+        descriptionLabel.text = descriptionString
         sortOutletCollectionByTag(&inputButtons)
         sortOutletCollectionByTag(&outputButtons)
         
         for button in outputButtons {
             button.transform = CGAffineTransformMakeScale(0.5, 0.5)
         }
+    }
+    
+    func showDescription() {
+        delay(0.7) {
+            if self.input == "" {
+                UIView.animateWithDuration(0.5, delay: 0.0, options: nil, animations: {
+                    self.descriptionLabel.alpha = 1.0
+                    self.displayView.alpha = 0.0
+                }, completion: nil)
+            }
+        }
+    }
+    
+    func hideDescription() {
+        UIView.animateWithDuration(0.2, delay: 0.0, options: nil, animations: {
+            self.descriptionLabel.alpha = 0.0
+            self.displayView.alpha = 1.0
+        }, completion: nil)
     }
     
     @IBAction func touchDetected(sender: UITouchGestureRecognizer) {
@@ -66,8 +88,12 @@ class PasscodeViewController : UIViewController {
             if input.length != 0 {
                 input = input.substringToIndex(input.length - 1)
             }
+            if input.length == 0 {
+                showDescription()
+            }
         } else {
             input = "\(input)\(tag)"
+            hideDescription()
         }
         
         //display the new screen
@@ -80,7 +106,7 @@ class PasscodeViewController : UIViewController {
         }
         
         if input.length == 4 {
-            if "\(input)".toInt() == correctPasscode {
+            if input == correctPasscode {
                 self.view.userInteractionEnabled = false
                 delay(0.3) {
                     self.completion(true)
@@ -94,6 +120,9 @@ class PasscodeViewController : UIViewController {
                     }
                 })
                 input = ""
+                delay(1.0) {
+                    self.showDescription()
+                }
             }
         }
     }
@@ -104,8 +133,10 @@ class PasscodeViewController : UIViewController {
     
 }
 
-func requestPasscode(passcode: Int, currentController current: UIViewController, completion: (() -> ())? = nil) {
+func requestPasscode(correctPasscode: String, description: String, currentController current: UIViewController, completion: (() -> ())? = nil) {
     let passcode = UIStoryboard(name: "User", bundle: nil).instantiateViewControllerWithIdentifier("passcode") as! PasscodeViewController
+    passcode.correctPasscode = correctPasscode
+    passcode.descriptionString = description
     passcode.view.frame = current.view.frame
     current.view.addSubview(passcode.view)
 

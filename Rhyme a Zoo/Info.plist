@@ -43,7 +43,7 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Rhyme a Zoo needs access to your location to set up your school.</string>
+	<string>Rhyme a Zoo uses your location to set up your classroom. It is only accessed one time.</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>

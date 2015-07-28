@@ -27,6 +27,7 @@
 		2E11A7101B49D56D00760C34 /* unknown6.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2E11A7081B49D56D00760C34 /* unknown6.jpg */; };
 		2E11A7111B49D56D00760C34 /* unknown7.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2E11A7091B49D56D00760C34 /* unknown7.jpg */; };
 		2E11A7121B49D56D00760C34 /* unknown8.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2E11A70A1B49D56D00760C34 /* unknown8.jpg */; };
+		2E2E2A5A1B67396C0005D563 /* ClassroomsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E2E2A591B67396C0005D563 /* ClassroomsViewController.swift */; };
 		2E45E2151B42BB7F00A8A802 /* illustration_001.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2E45E19D1B42BB7E00A8A802 /* illustration_001.jpg */; };
 		2E45E2161B42BB7F00A8A802 /* illustration_002.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2E45E19E1B42BB7E00A8A802 /* illustration_002.jpg */; };
 		2E45E2171B42BB7F00A8A802 /* illustration_004.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2E45E19F1B42BB7E00A8A802 /* illustration_004.jpg */; };
@@ -2396,6 +2397,7 @@
 		2E11A7081B49D56D00760C34 /* unknown6.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = unknown6.jpg; path = "Quiz/word images/unknown6.jpg"; sourceTree = "<group>"; };
 		2E11A7091B49D56D00760C34 /* unknown7.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = unknown7.jpg; path = "Quiz/word images/unknown7.jpg"; sourceTree = "<group>"; };
 		2E11A70A1B49D56D00760C34 /* unknown8.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = unknown8.jpg; path = "Quiz/word images/unknown8.jpg"; sourceTree = "<group>"; };
+		2E2E2A591B67396C0005D563 /* ClassroomsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClassroomsViewController.swift; sourceTree = "<group>"; };
 		2E45E19D1B42BB7E00A8A802 /* illustration_001.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = illustration_001.jpg; path = Quiz/illustrations/illustration_001.jpg; sourceTree = "<group>"; };
 		2E45E19E1B42BB7E00A8A802 /* illustration_002.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = illustration_002.jpg; path = Quiz/illustrations/illustration_002.jpg; sourceTree = "<group>"; };
 		2E45E19F1B42BB7E00A8A802 /* illustration_004.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = illustration_004.jpg; path = Quiz/illustrations/illustration_004.jpg; sourceTree = "<group>"; };
@@ -4748,9 +4750,10 @@
 				2E0A820B1B589CD400E84E4E /* User.storyboard */,
 				2E0A82191B5A041900E84E4E /* UserDatabase.swift */,
 				2EDF5F951B64A6AA00199A95 /* UsersViewController.swift */,
+				2ED14F921B6606E0004285A3 /* PasscodeViewController.swift */,
 				2E0A82101B589E8300E84E4E /* WelcomeViewController.swift */,
 				2E0A82171B58B06900E84E4E /* NewUserViewController.swift */,
-				2ED14F921B6606E0004285A3 /* PasscodeViewController.swift */,
+				2E2E2A591B67396C0005D563 /* ClassroomsViewController.swift */,
 				2E08997E1B40A5D200693309 /* Products */,
 				2E0899891B40A5D200693309 /* Images.xcassets */,
 				2E0A82141B58A77E00E84E4E /* UI Audio */,
@@ -9586,6 +9589,7 @@
 				2EBB787C1B41154100DEE989 /* ZooViewController.swift in Sources */,
 				2ED9B1F91B44D16F007932C4 /* CatalogViewController.swift in Sources */,
 				2E6F5C721B42657100E37B65 /* QuizDatabase.swift in Sources */,
+				2E2E2A5A1B67396C0005D563 /* ClassroomsViewController.swift in Sources */,
 				2EDF5F961B64A6AA00199A95 /* UsersViewController.swift in Sources */,
 				2E0899831B40A5D200693309 /* AppDelegate.swift in Sources */,
 				2E7FDD8B1B65ECCE00C58FC9 /* CoreSwift.swift in Sources */,

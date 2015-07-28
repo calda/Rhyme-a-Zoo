@@ -64,7 +64,8 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     
     override func viewDidAppear(animated: Bool) {
         if coverGradient.alpha == 1.0 {
-            if users.count == 0 { //present welcome view if there are no users
+            //FIXME: change == 1 to == 0
+            if users.count == 1 { //present welcome view if there are no users
                 let welcome = UIStoryboard(name: "User", bundle: nil).instantiateViewControllerWithIdentifier("welcome") as! UIViewController
                 self.presentViewController(welcome, animated: false, completion: nil)
             }

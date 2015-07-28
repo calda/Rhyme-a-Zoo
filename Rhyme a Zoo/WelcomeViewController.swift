@@ -86,11 +86,4 @@ class WelcomeViewController : UIViewController {
         })
     }
     
-    @IBAction func launchUserCreation(sender: AnyObject) {
-        
-    }
-    
-    @IBAction func launchTeacherView(sender: AnyObject) {
-    }
-    
 }
