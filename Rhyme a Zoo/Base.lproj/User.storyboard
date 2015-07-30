@@ -989,11 +989,31 @@
                                 <color key="shadowColor" red="0.0" green="0.0" blue="0.0" alpha="0.1048251065" colorSpace="calibratedRGB"/>
                                 <size key="shadowOffset" width="2" height="2"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumScaleFactor="0.10000000149011612" translatesAutoresizingMaskIntoConstraints="NO" id="kd3-fT-0Nu" userLabel="Search nearby or">
-                                <rect key="frame" x="100" y="289" width="368" height="21"/>
+                            <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vE4-eP-W74">
+                                <rect key="frame" x="0.0" y="285" width="568" height="35"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="nqN-V6-ltv">
+                                    <rect key="frame" x="0.0" y="0.0" width="568" height="35"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <animations/>
+                                </view>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="35" id="AnE-pQ-Imk"/>
+                                </constraints>
+                                <blurEffect style="light"/>
+                            </visualEffectView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.10000000149011612" translatesAutoresizingMaskIntoConstraints="NO" id="kd3-fT-0Nu" userLabel="Search nearby or">
+                                <rect key="frame" x="100" y="292" width="368" height="21"/>
                                 <animations/>
                                 <attributedString key="attributedText">
-                                    <fragment content="Search by name ">
+                                    <fragment content="Search by name">
+                                        <attributes>
+                                            <color key="NSColor" red="0.82060790061950684" green="0.16272361576557159" blue="0.80541598796844482" alpha="1" colorSpace="calibratedRGB"/>
+                                            <font key="NSFont" size="16" name="HelveticaNeue-Bold"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="truncatingTail" baseWritingDirection="natural"/>
+                                        </attributes>
+                                    </fragment>
+                                    <fragment content=" ">
                                         <attributes>
                                             <color key="NSColor" red="0.62745098040000002" green="0.2156862745" blue="0.61176470589999998" alpha="1" colorSpace="calibratedRGB"/>
                                             <font key="NSFont" size="16" name="HelveticaNeue-Bold"/>
@@ -1145,6 +1165,7 @@
                             <constraint firstItem="Lel-Pb-ik5" firstAttribute="top" secondItem="kd3-fT-0Nu" secondAttribute="bottom" constant="10" id="Dwl-S1-SY9"/>
                             <constraint firstAttribute="centerX" secondItem="3Wo-Vu-eCC" secondAttribute="centerX" id="FPb-0O-SJo"/>
                             <constraint firstAttribute="centerX" secondItem="QAm-uQ-wfZ" secondAttribute="centerX" id="GvM-Ff-5cL"/>
+                            <constraint firstItem="vE4-eP-W74" firstAttribute="leading" secondItem="D1k-ma-wkt" secondAttribute="leading" id="INk-wg-BhS"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="QAm-uQ-wfZ" secondAttribute="trailing" constant="48" id="IyH-NF-gjm"/>
                             <constraint firstItem="kd3-fT-0Nu" firstAttribute="leading" secondItem="f5N-Wy-OZV" secondAttribute="trailing" constant="40" id="JOG-XY-NDe"/>
                             <constraint firstItem="0Sb-Pa-SLL" firstAttribute="top" secondItem="D1k-ma-wkt" secondAttribute="top" constant="10" id="JeN-JS-f1O"/>
@@ -1161,11 +1182,14 @@
                             <constraint firstAttribute="trailingMargin" secondItem="Adn-BA-Rh9" secondAttribute="trailing" id="gjs-wd-lu4"/>
                             <constraint firstItem="Lel-Pb-ik5" firstAttribute="leading" secondItem="kd3-fT-0Nu" secondAttribute="trailing" constant="10" id="hqJ-gZ-PoW"/>
                             <constraint firstAttribute="centerY" secondItem="QAm-uQ-wfZ" secondAttribute="centerY" id="nOD-nD-nES"/>
+                            <constraint firstItem="kd3-fT-0Nu" firstAttribute="centerY" secondItem="vE4-eP-W74" secondAttribute="centerY" id="nti-6y-tmj"/>
                             <constraint firstAttribute="trailing" secondItem="l8r-na-DUA" secondAttribute="trailing" id="opt-bh-F9x"/>
                             <constraint firstItem="yY7-dx-YbG" firstAttribute="width" secondItem="D1k-ma-wkt" secondAttribute="width" id="oq3-2Y-5sb"/>
                             <constraint firstItem="8sH-V0-WvI" firstAttribute="top" secondItem="Lel-Pb-ik5" secondAttribute="bottom" constant="10" id="rWK-h6-7jI"/>
+                            <constraint firstAttribute="trailing" secondItem="vE4-eP-W74" secondAttribute="trailing" id="rgc-Av-7Hq"/>
                             <constraint firstItem="gmb-aG-CLJ" firstAttribute="top" secondItem="D1k-ma-wkt" secondAttribute="top" constant="10" id="stP-es-5vq"/>
                             <constraint firstItem="f5N-Wy-OZV" firstAttribute="leading" secondItem="D1k-ma-wkt" secondAttribute="leading" constant="10" id="tMl-ya-9au"/>
+                            <constraint firstItem="8sH-V0-WvI" firstAttribute="top" secondItem="vE4-eP-W74" secondAttribute="bottom" id="ubs-zR-zYP"/>
                             <constraint firstItem="Adn-BA-Rh9" firstAttribute="top" secondItem="D1k-ma-wkt" secondAttribute="topMargin" id="ui1-8K-qH2"/>
                             <constraint firstItem="enV-t2-pKU" firstAttribute="leading" secondItem="D1k-ma-wkt" secondAttribute="leading" constant="10" id="wpP-lo-kJa"/>
                             <constraint firstItem="enV-t2-pKU" firstAttribute="top" secondItem="D1k-ma-wkt" secondAttribute="top" constant="10" id="zZo-22-s3O"/>
@@ -1175,6 +1199,7 @@
                                 <exclude reference="du1-vp-5Hx"/>
                                 <exclude reference="fNx-yX-BVP"/>
                                 <exclude reference="gjs-wd-lu4"/>
+                                <exclude reference="32b-pY-r2r"/>
                                 <exclude reference="Dwl-S1-SY9"/>
                             </mask>
                         </variation>

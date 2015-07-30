@@ -75,12 +75,19 @@ struct UserDatabase {
     
     let cloud = CKContainer.defaultContainer().publicCloudDatabase
     
-    func createClassroomNamed(name: String, location: CLLocation, passcode: String) {
+    func createClassroomNamed(name: String, location: CLLocation, passcode: String, completion: ((Classroom?) -> ())?) {
         let record = CKRecord(recordType: "Classroom")
         record.setObject(name, forKey: "Name")
         record.setObject(passcode, forKey: "Passcode")
         record.setObject(location, forKey: "Location")
-        cloud.saveRecord(record, completionHandler: nil)
+        cloud.saveRecord(record, completionHandler: { record, error in
+            if record == nil {
+                completion?(nil)
+                return
+            }
+            let classroom = Classroom(record: record)
+            completion?(classroom)
+        })
     }
     
     func linkToClassroom(classroom: Classroom) {
@@ -99,6 +106,8 @@ struct UserDatabase {
         let query = CKQuery(recordType: "Classroom", predicate: predicate)
         if let location = location {
             query.sortDescriptors = [CKLocationSortDescriptor(key: "Location", relativeLocation: location)]
+        } else {
+            query.sortDescriptors = [NSSortDescriptor(key: "Name", ascending: true)]
         }
         cloud.performQuery(query, inZoneWithID: nil, completionHandler: classroomQueryCompletionHandler(completion))
     }

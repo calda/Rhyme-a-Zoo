@@ -174,7 +174,9 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
     }
     
     func openPasscodeForClassroom(classroom: Classroom) {
-        requestPasscode(classroom.passcode, "Passcode for \"\(classroom.name)\"", currentController: self, completion: nil)
+        requestPasscode(classroom.passcode, "Passcode for \"\(classroom.name)\"", currentController: self, completion: {
+            self.joinClassroom(classroom)
+        })
     }
     
     @IBAction func back(sender: AnyObject) {
@@ -187,17 +189,20 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
         }
     }
     
+    //MARK: - Creating a Classroom
+    
     @IBAction func createClassroomButtonPressed(sender: AnyObject?) {
         if let location = currentLocation {
-            launchCreateClassroom(location)
+            requestNewClassroomName(location)
         }
         
         else {
             activityIndicator.alpha = 1.0
             locationManager.getCurrentLocation({ location in
                 self.currentLocation = location
-                self.launchCreateClassroom(location)
+                self.requestNewClassroomName(location)
             }, failure: { error in
+                activityIndicator.alpha = 0.0
                 
                 //show alert
                 let alert = UIAlertController(title: "Could not determine location", message: "A location is required to create a new classroom. Make sure you have Location Services enabled.", preferredStyle: .Alert)
@@ -213,8 +218,101 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
         }
     }
     
-    func launchCreateClassroom(location: CLLocation) {
+    func requestNewClassroomName(location: CLLocation, previousNameAttempt: String? = nil) {
+        var message: String? = nil
+        if let previousName = previousNameAttempt {
+            if (previousName as NSString).length <= 4 {
+                message = "\"\(previousName)\" is too short. Your classroom's name must be at least four letters long."
+            } else {
+                message = "There is already a classroom named \"\(previousName)\""
+            }
+        }
         
+        let alert = UIAlertController(title: "Name your Classroom", message: message, preferredStyle: .Alert)
+        var nameTextField: UITextField!
+        alert.addTextFieldWithConfigurationHandler({ textField in
+            nameTextField = textField
+            nameTextField.placeholder = "Classroom Name"
+            textField.autocapitalizationType = .Sentences
+            textField.autocorrectionType = .No
+        })
+        
+        let next = UIAlertAction(title: "Next", style: .Default, handler: { _ in
+        
+            let name = nameTextField.text
+            
+            //name must be longer than four letters long
+            if (name as NSString).length <= 4 {
+                self.requestNewClassroomName(location, previousNameAttempt: name)
+                return
+            }
+            
+            //check name is unique
+            RZUserDatabase.getClassroomsMatchingText(name, location: nil, completion: { classrooms in
+                for classroom in classrooms {
+                    if classroom.name == name {
+                        self.requestNewClassroomName(location, previousNameAttempt: name)
+                        return
+                    }
+                }
+                
+                //name is unique
+                dispatch_sync(dispatch_get_main_queue(), {
+                    self.requestClassroomPasscode(location, name: name)
+                })
+                
+            })
+            
+        })
+        
+        let cancel = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
+        alert.addAction(cancel)
+        alert.addAction(next)
+        self.presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    func requestClassroomPasscode(location: CLLocation, name: String) {
+        createPasscode("Create a passcode for \"\(name)\"", currentController: self, { possiblePasscode in
+            
+            if let passcode = possiblePasscode where count(passcode) == 4 {
+                self.createClassroom(location, name: name, passcode: passcode)
+            }
+            else {
+                let alert = UIAlertController(title: nil, message: "You must create a passcode for your classroom.", preferredStyle: .Alert)
+                let cancel = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Destructive, handler: nil)
+                let tryAgain = UIAlertAction(title: "Try Again", style: UIAlertActionStyle.Default, handler: { _ in
+                    self.requestClassroomPasscode(location, name: name)
+                })
+                alert.addAction(cancel)
+                alert.addAction(tryAgain)
+                self.presentViewController(alert, animated: true, completion: nil)
+            }
+            
+        })
+    }
+    
+    func createClassroom(location: CLLocation, name: String, passcode: String) {
+        RZUserDatabase.createClassroomNamed(name, location: location, passcode: passcode, completion: { classroom in
+            dispatch_sync(dispatch_get_main_queue()) {
+                if let classroom = classroom {
+                    self.joinClassroom(classroom)
+                }
+                else {
+                    let alert = UIAlertController(title: "Could not create your classroom.", message: "There was a problem saving your classroom. Make sure you are connected to the internet and logged into an iCloud account on this device.", preferredStyle: .Alert)
+                    let cancel = UIAlertAction(title: "Cancel", style: .Destructive, handler: nil)
+                    let settings = UIAlertAction(title: "Settings", style: .Default, handler: { _ in
+                        UIApplication.sharedApplication().openURL(NSURL(string: UIApplicationOpenSettingsURLString)!)
+                    })
+                    let tryAgain = UIAlertAction(title: "Try Again", style: .Default, handler: { _ in
+                        self.createClassroom(location, name: name, passcode: passcode)
+                    })
+                    alert.addAction(tryAgain)
+                    alert.addAction(settings)
+                    alert.addAction(cancel)
+                    self.presentViewController(alert, animated: true, completion: nil)
+                }
+            }
+        })
     }
     
     //MARK: - Searching by name
@@ -309,6 +407,11 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
         noNearbyLabel.text = "No nearby classrooms."
     }
     
+    //MARK: - Join a classroom
+    
+    func joinClassroom(classroom: Classroom) {
+        println("Joining \(classroom.name)")
+    }
     
 }
 

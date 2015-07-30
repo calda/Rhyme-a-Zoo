@@ -22,6 +22,11 @@ class PasscodeViewController : UIViewController {
     var descriptionString: String = ""
     var completion: (Bool) -> () = { _ in }
     
+    //passcode creation
+    var creationMode = false
+    var entryOne: String?
+    var creationComplation: (String?) -> () = { _ in }
+    
     override func viewWillAppear(animated: Bool) {
         self.displayView.alpha = 0.0
         descriptionLabel.text = descriptionString
@@ -36,12 +41,16 @@ class PasscodeViewController : UIViewController {
     func showDescription() {
         delay(0.7) {
             if self.input == "" {
-                UIView.animateWithDuration(0.5, delay: 0.0, options: nil, animations: {
-                    self.descriptionLabel.alpha = 1.0
-                    self.displayView.alpha = 0.0
-                }, completion: nil)
+                self.showDescriptionNow()
             }
         }
+    }
+    
+    func showDescriptionNow() {
+        UIView.animateWithDuration(0.5, delay: 0.0, options: nil, animations: {
+            self.descriptionLabel.alpha = 1.0
+            self.displayView.alpha = 0.0
+        }, completion: nil)
     }
     
     func hideDescription() {
@@ -96,7 +105,7 @@ class PasscodeViewController : UIViewController {
             hideDescription()
         }
         
-        //display the new screen
+        //display the new input in the screen
         for button in outputButtons {
             button.alpha = (button.tag <= input.length ? 1.0 : 0.5)
             let scale = button.alpha
@@ -106,28 +115,71 @@ class PasscodeViewController : UIViewController {
         }
         
         if input.length == 4 {
+            
+            //creation of a new passcode
+            if creationMode {
+                //confirmed passcode
+                if let entryOne = entryOne {
+                    if input == entryOne {
+                        delay(0.3) {
+                            self.creationComplation(self.input as String)
+                        }
+                        return
+                    } else {
+                        descriptionLabel.text = "Passcodes did not match. Try again."
+                        self.entryOne = nil
+                        clearInput(shake: true, waitForDescription: false)
+                        return
+                    }
+                }
+                //first entry
+                entryOne = input as String
+                descriptionLabel.text = "Verify your passcode."
+                clearInput(shake: false, waitForDescription: false)
+                return
+            }
+            
             if input == correctPasscode {
                 self.view.userInteractionEnabled = false
                 delay(0.3) {
                     self.completion(true)
                 }
             } else {
-                shakeView(displayView)
-                UIView.animateWithDuration(0.3, animations: {
-                    for button in self.outputButtons {
-                        button.alpha = 0.5
-                        button.transform = CGAffineTransformMakeScale(0.5, 0.5)
-                    }
-                })
-                input = ""
-                delay(1.0) {
+                clearInput(shake: true, waitForDescription: true)
+            }
+        }
+    }
+    
+    func clearInput(#shake: Bool, waitForDescription: Bool) {
+        if shake { shakeView(displayView) }
+        UIView.animateWithDuration(0.3, animations: {
+            for button in self.outputButtons {
+                button.alpha = 0.5
+                button.transform = CGAffineTransformMakeScale(0.5, 0.5)
+            }
+        })
+        input = ""
+        
+        if shake {
+            delay(waitForDescription ? 1.0 : 0.0) {
+                if waitForDescription {
                     self.showDescription()
+                } else {
+                    self.showDescriptionNow()
                 }
             }
+        } else {
+            showDescriptionNow()
         }
     }
 
     @IBAction func cancelPasscode(sender: AnyObject) {
+        
+        if creationMode {
+            creationComplation(nil)
+            return
+        }
+        
         completion(false)
     }
     
@@ -160,6 +212,27 @@ func requestPasscode(correctPasscode: String, description: String, currentContro
     }
 }
 
-
-
-
+func createPasscode(description: String, currentController current: UIViewController, completion: (String?) -> ()) {
+    let passcode = UIStoryboard(name: "User", bundle: nil).instantiateViewControllerWithIdentifier("passcode") as! PasscodeViewController
+    passcode.creationMode = true
+    passcode.descriptionString = description
+    passcode.view.frame = current.view.frame
+    current.view.addSubview(passcode.view)
+    
+    //animate
+    let offscreenOrigin = CGPointMake(0, current.view.frame.height * 1.2)
+    passcode.view.frame.origin = offscreenOrigin
+    
+    UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+        passcode.view.frame.origin = CGPointZero
+        }, completion: nil)
+    
+    passcode.creationComplation = { newPasscode in
+        UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+            passcode.view.frame.origin = offscreenOrigin
+            }, completion: { _ in
+                passcode.view.removeFromSuperview()
+                completion(newPasscode)
+        })
+    }
+}
