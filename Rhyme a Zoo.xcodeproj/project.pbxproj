@@ -2087,7 +2087,6 @@
 		2E489F5D1B57755C0025E9C9 /* accessory5.png in Resources */ = {isa = PBXBuildFile; fileRef = 2E489F571B57755C0025E9C9 /* accessory5.png */; };
 		2E489F5E1B57755C0025E9C9 /* accessory6.png in Resources */ = {isa = PBXBuildFile; fileRef = 2E489F581B57755C0025E9C9 /* accessory6.png */; };
 		2E51F0811B5CAFC000007BDF /* create user.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E51F0801B5CAFC000007BDF /* create user.m4a */; };
-		2E5845DB1B65E2B1005080B5 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E5845DA1B65E2B1005080B5 /* CloudKit.framework */; };
 		2E612DC21B6482750055CF08 /* alligator.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E612DAC1B6482750055CF08 /* alligator.m4a */; };
 		2E612DC31B6482750055CF08 /* baboon.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E612DAD1B6482750055CF08 /* baboon.m4a */; };
 		2E612DC41B6482750055CF08 /* chimp.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E612DAE1B6482750055CF08 /* chimp.m4a */; };
@@ -2322,6 +2321,7 @@
 		2EE4DBB61B4A5B5700F9578C /* encouragement_19.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2EE4DBA21B4A5B5700F9578C /* encouragement_19.mp3 */; };
 		2EE4DBB71B4A5B5700F9578C /* encouragement_20.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2EE4DBA31B4A5B5700F9578C /* encouragement_20.mp3 */; };
 		2EECB8B41B4A45470086327E /* BankViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EECB8B31B4A45470086327E /* BankViewController.swift */; };
+		2EF9CBB31B6B5ED300EFD040 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EF9CBB21B6B5ED300EFD040 /* CloudKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -4458,7 +4458,6 @@
 		2E489F581B57755C0025E9C9 /* accessory6.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = accessory6.png; sourceTree = "<group>"; };
 		2E51F0801B5CAFC000007BDF /* create user.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = "create user.m4a"; path = "UI Audio/create user.m4a"; sourceTree = "<group>"; };
 		2E5845D91B65E2A8005080B5 /* Rhyme a Zoo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Rhyme a Zoo.entitlements"; sourceTree = "<group>"; };
-		2E5845DA1B65E2B1005080B5 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		2E612DAC1B6482750055CF08 /* alligator.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = alligator.m4a; path = "Zoo/animal sounds/alligator.m4a"; sourceTree = "<group>"; };
 		2E612DAD1B6482750055CF08 /* baboon.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = baboon.m4a; path = "Zoo/animal sounds/baboon.m4a"; sourceTree = "<group>"; };
 		2E612DAE1B6482750055CF08 /* chimp.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = chimp.m4a; path = "Zoo/animal sounds/chimp.m4a"; sourceTree = "<group>"; };
@@ -4693,6 +4692,7 @@
 		2EE4DBA21B4A5B5700F9578C /* encouragement_19.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = encouragement_19.mp3; path = "Quiz/sound effects/encouragement_19.mp3"; sourceTree = "<group>"; };
 		2EE4DBA31B4A5B5700F9578C /* encouragement_20.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = encouragement_20.mp3; path = "Quiz/sound effects/encouragement_20.mp3"; sourceTree = "<group>"; };
 		2EECB8B31B4A45470086327E /* BankViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BankViewController.swift; sourceTree = "<group>"; };
+		2EF9CBB21B6B5ED300EFD040 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -4701,7 +4701,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2E089A091B40B22E00693309 /* SQLite.framework in Frameworks */,
-				2E5845DB1B65E2B1005080B5 /* CloudKit.framework in Frameworks */,
+				2EF9CBB31B6B5ED300EFD040 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4711,7 +4711,7 @@
 		2E0899741B40A5D200693309 = {
 			isa = PBXGroup;
 			children = (
-				2E5845DA1B65E2B1005080B5 /* CloudKit.framework */,
+				2EF9CBB21B6B5ED300EFD040 /* CloudKit.framework */,
 				2E08997F1B40A5D200693309 /* Rhyme a Zoo */,
 				2E0899F71B40B21A00693309 /* SQLite.xcodeproj */,
 			);

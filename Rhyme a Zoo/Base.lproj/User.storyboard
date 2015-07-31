@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="15A226f" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Qgm-wT-fy6">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="15A226f" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="J3e-ZR-gCp">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
@@ -157,6 +157,28 @@
                                     <outletCollection property="gestureRecognizers" destination="0I6-YI-pBC" appends="YES" id="91s-dE-Sbq"/>
                                 </connections>
                             </view>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cYU-r8-hIU">
+                                <rect key="frame" x="10" y="270" width="40" height="40"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="WOW-K5-Byj"/>
+                                    <constraint firstAttribute="width" constant="40" id="yQe-ue-KHh"/>
+                                </constraints>
+                                <state key="normal" title="I'm a Teacher" image="button-teacher"/>
+                            </button>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e4p-lw-iAV">
+                                <rect key="frame" x="55" y="271" width="201" height="38"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" type="italicSystem" pointSize="21"/>
+                                <state key="normal" title="Rhyme a Zoo Institute">
+                                    <color key="titleColor" red="1" green="0.9999405146" blue="0.99998050930000004" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="yu9-tx-muY">
+                                <rect key="frame" x="266" y="142" width="37" height="37"/>
+                                <animations/>
+                            </activityIndicatorView>
                             <imageView userInteractionEnabled="NO" alpha="0.0" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gradient" translatesAutoresizingMaskIntoConstraints="NO" id="ttz-y3-gXB" userLabel="cover gradient">
                                 <rect key="frame" x="0.0" y="0.0" width="568" height="320"/>
                                 <animations/>
@@ -167,20 +189,26 @@
                         <constraints>
                             <constraint firstAttribute="height" secondItem="t9b-Rb-Asp" secondAttribute="height" multiplier="0.2" id="2Tg-xl-GgR"/>
                             <constraint firstItem="RtX-VW-dC4" firstAttribute="trailing" secondItem="ttz-y3-gXB" secondAttribute="trailing" id="6LA-Vv-gWD"/>
+                            <constraint firstItem="cpv-mf-IJk" firstAttribute="top" secondItem="cYU-r8-hIU" secondAttribute="bottom" constant="10" id="BVT-Yv-0gn"/>
                             <constraint firstItem="cNM-18-cKE" firstAttribute="top" secondItem="t9b-Rb-Asp" secondAttribute="bottom" constant="10" id="CrF-WS-Aoi"/>
                             <constraint firstItem="RtX-VW-dC4" firstAttribute="width" secondItem="Ai6-qL-j0H" secondAttribute="width" id="Kch-SZ-xWI"/>
+                            <constraint firstAttribute="centerX" secondItem="yu9-tx-muY" secondAttribute="centerX" id="M6I-AC-hwQ"/>
                             <constraint firstAttribute="trailing" secondItem="t9b-Rb-Asp" secondAttribute="trailing" constant="5" id="PnY-6D-jxl"/>
                             <constraint firstAttribute="centerX" secondItem="RtX-VW-dC4" secondAttribute="centerX" id="Urg-Il-ZMg"/>
                             <constraint firstAttribute="trailing" secondItem="cNM-18-cKE" secondAttribute="trailing" id="VtJ-mM-nkd"/>
                             <constraint firstAttribute="height" secondItem="t9b-Rb-Asp" secondAttribute="height" multiplier="4.5" id="c5f-rY-6sa"/>
                             <constraint firstAttribute="trailing" secondItem="t9b-Rb-Asp" secondAttribute="trailing" constant="5" id="fLE-Ve-dxi"/>
+                            <constraint firstItem="e4p-lw-iAV" firstAttribute="centerY" secondItem="cYU-r8-hIU" secondAttribute="centerY" id="l07-zV-Cbu"/>
                             <constraint firstItem="RtX-VW-dC4" firstAttribute="height" secondItem="Ai6-qL-j0H" secondAttribute="height" id="ldd-H5-XJc"/>
                             <constraint firstItem="RtX-VW-dC4" firstAttribute="top" secondItem="ttz-y3-gXB" secondAttribute="top" id="nNN-DM-7XI"/>
                             <constraint firstItem="cNM-18-cKE" firstAttribute="leading" secondItem="Ai6-qL-j0H" secondAttribute="leading" id="q1H-eO-wfT"/>
                             <constraint firstItem="t9b-Rb-Asp" firstAttribute="leading" secondItem="Ai6-qL-j0H" secondAttribute="leading" constant="10" id="rn6-S2-dTw"/>
+                            <constraint firstItem="e4p-lw-iAV" firstAttribute="leading" secondItem="cYU-r8-hIU" secondAttribute="trailing" constant="5" id="s1H-GF-LIQ"/>
                             <constraint firstItem="RtX-VW-dC4" firstAttribute="bottom" secondItem="ttz-y3-gXB" secondAttribute="bottom" id="sKq-9E-uUg"/>
                             <constraint firstItem="cpv-mf-IJk" firstAttribute="top" secondItem="cNM-18-cKE" secondAttribute="bottom" id="txo-h5-6Ok"/>
+                            <constraint firstAttribute="centerY" secondItem="yu9-tx-muY" secondAttribute="centerY" id="vM3-El-LRv"/>
                             <constraint firstItem="RtX-VW-dC4" firstAttribute="leading" secondItem="ttz-y3-gXB" secondAttribute="leading" id="vUP-Mh-CZ5"/>
+                            <constraint firstItem="cYU-r8-hIU" firstAttribute="leading" secondItem="Ai6-qL-j0H" secondAttribute="leading" constant="10" id="vnd-g9-MJS"/>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" secondItem="t9b-Rb-Asp" secondAttribute="width" multiplier="1.5" id="xMj-O7-8Eb"/>
                             <constraint firstAttribute="centerY" secondItem="RtX-VW-dC4" secondAttribute="centerY" id="yMx-vd-9il"/>
                             <constraint firstItem="t9b-Rb-Asp" firstAttribute="top" secondItem="Ai6-qL-j0H" secondAttribute="top" constant="10" id="ym1-wy-Zf9"/>
@@ -196,7 +224,11 @@
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
+                        <outlet property="activityIndicator" destination="yu9-tx-muY" id="dZM-lE-2wi"/>
+                        <outlet property="classroomIcon" destination="cYU-r8-hIU" id="AfS-Hr-Msi"/>
+                        <outlet property="classroomLabel" destination="e4p-lw-iAV" id="UbR-qh-paw"/>
                         <outlet property="collectionView" destination="Or6-RQ-Fmi" id="Ybd-yW-FfT"/>
+                        <outlet property="collectionViewPosition" destination="kQP-ml-jgw" id="i6Q-ZM-kYu"/>
                         <outlet property="collectionWidth" destination="Lod-FR-oMM" id="v8S-FL-sNz"/>
                         <outlet property="coverGradient" destination="ttz-y3-gXB" id="Vkr-8K-sEN"/>
                     </connections>
@@ -209,7 +241,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="1066" y="256"/>
+            <point key="canvasLocation" x="1066" y="232"/>
         </scene>
         <!--New User View Controller-->
         <scene sceneID="vAj-c6-ekP">
@@ -761,7 +793,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="421" y="232"/>
+            <point key="canvasLocation" x="499" y="232"/>
         </scene>
         <!--Welcome View Controller-->
         <scene sceneID="ENX-vq-OCT">
@@ -919,8 +951,10 @@
                                 <color key="sectionIndexBackgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>
                                 <prototypes>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="blank" id="rmG-36-jXF" customClass="ClassroomCell" customModule="Rhyme_a_Zoo" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="22" width="568" height="49"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="rmG-36-jXF" id="19u-FG-nCa">
+                                            <rect key="frame" x="0.0" y="0.0" width="535" height="48"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <animations/>
                                             <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>
@@ -929,8 +963,10 @@
                                         <color key="backgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" restorationIdentifier="classroom" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="classroom" id="HHJ-jm-eCm" customClass="ClassroomCell" customModule="Rhyme_a_Zoo" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="71" width="568" height="49"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="HHJ-jm-eCm" id="tkY-ct-PYj">
+                                            <rect key="frame" x="0.0" y="0.0" width="535" height="48"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Classroom Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="83J-09-d1a">
@@ -1010,28 +1046,28 @@
                                         <attributes>
                                             <color key="NSColor" red="0.82060790061950684" green="0.16272361576557159" blue="0.80541598796844482" alpha="1" colorSpace="calibratedRGB"/>
                                             <font key="NSFont" size="16" name="HelveticaNeue-Bold"/>
-                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="truncatingTail" baseWritingDirection="natural"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="truncatingTail" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                         </attributes>
                                     </fragment>
                                     <fragment content=" ">
                                         <attributes>
                                             <color key="NSColor" red="0.62745098040000002" green="0.2156862745" blue="0.61176470589999998" alpha="1" colorSpace="calibratedRGB"/>
                                             <font key="NSFont" size="16" name="HelveticaNeue-Bold"/>
-                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="truncatingTail" baseWritingDirection="natural"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="truncatingTail" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                         </attributes>
                                     </fragment>
                                     <fragment content="or ">
                                         <attributes>
                                             <color key="NSColor" red="1" green="0.99997437" blue="0.99999129769999995" alpha="1" colorSpace="calibratedRGB"/>
                                             <font key="NSFont" size="16" name="HelveticaNeue-Bold"/>
-                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="truncatingTail" baseWritingDirection="natural"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="truncatingTail" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                         </attributes>
                                     </fragment>
                                     <fragment content="create a new classroom">
                                         <attributes>
                                             <color key="NSColor" red="0.13786458969116211" green="0.49627631902694702" blue="0.13926970958709717" alpha="1" colorSpace="calibratedRGB"/>
                                             <font key="NSFont" size="16" name="HelveticaNeue-Bold"/>
-                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="truncatingTail" baseWritingDirection="natural"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="truncatingTail" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                         </attributes>
                                     </fragment>
                                 </attributedString>
@@ -1254,7 +1290,7 @@
         <image name="happy.jpg" width="256" height="256"/>
     </resources>
     <inferredMetricsTieBreakers>
+        <segue reference="InO-fJ-gRJ"/>
         <segue reference="hJB-u5-nFD"/>
-        <segue reference="IXF-a0-qaD"/>
     </inferredMetricsTieBreakers>
 </document>

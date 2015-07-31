@@ -9,6 +9,8 @@
 import Foundation
 import UIKit
 
+var RZWelcomeAnimationPlayed = false
+
 class WelcomeViewController : UIViewController {
     
     @IBOutlet weak var welcome: UILabel!
@@ -21,6 +23,8 @@ class WelcomeViewController : UIViewController {
     @IBOutlet weak var teacherButtonPositon: NSLayoutConstraint!
     
     override func viewWillAppear(animated: Bool) {
+        
+        if RZWelcomeAnimationPlayed { return }
         //prepare for animations
         welcome.text = "Hello"
         welcome.alpha = 0.0
@@ -33,6 +37,7 @@ class WelcomeViewController : UIViewController {
     }
     
     override func viewDidAppear(animated: Bool) {
+        if RZWelcomeAnimationPlayed { return }
         //play the welcome animation through a timer
         //so it can be invalidated if the view is closed immediately
         welcomeTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: "playWelcomeAnimation", userInfo: nil, repeats: false)
@@ -55,6 +60,8 @@ class WelcomeViewController : UIViewController {
         //show buttons
         delay(3.0) {
             
+            RZWelcomeAnimationPlayed = true
+            
             UIView.animateWithDuration(0.8, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.0, options: nil, animations: {
                 self.welcomePosition.constant = 45.0
                 self.nextArrowPosition.constant = -45.0
@@ -62,10 +69,7 @@ class WelcomeViewController : UIViewController {
                 self.view.layoutIfNeeded()
                 }, completion: { success in
                     self.largeAreaContinueButton.enabled = true
-                    delay(1.0) {
-                        self.bounceNextArrow()
-                        self.bounceTimer = NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: "bounceNextArrow", userInfo: nil, repeats: true)
-                    }
+                    self.bounceTimer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: "startArrowBounce", userInfo: nil, repeats: false)
             })
             
         }
@@ -74,6 +78,11 @@ class WelcomeViewController : UIViewController {
     override func viewWillDisappear(animated: Bool) {
         bounceTimer?.invalidate()
         welcomeTimer?.invalidate()
+    }
+    
+    func startArrowBounce() {
+        self.bounceNextArrow()
+        self.bounceTimer = NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: "bounceNextArrow", userInfo: nil, repeats: true)
     }
     
     func bounceNextArrow() {

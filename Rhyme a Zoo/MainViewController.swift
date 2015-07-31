@@ -22,10 +22,6 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var userIcon: UIButton!
     @IBOutlet weak var userName: UIButton!
     
-    
-    let manager = LocationManager(accuracy: kCLLocationAccuracyKilometer)
-    
-    
     override func viewWillAppear(animated: Bool) {
         if self.presentedViewController == nil {
             
@@ -48,14 +44,6 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     
     override func viewDidAppear(animated: Bool) {
-        self.manager.getCurrentLocation({ location in
-            RZUserDatabase.getNearbyClassrooms(location) { classrooms in
-                for classroom in classrooms {
-                    println(classroom.name)
-                }
-            }
-        })
-        
         //test the database because I'm dumb and deleted the Unit Tests
         /*    ALL OF THESE TESTS PASSED ON JUNE 30, 2015   */
         

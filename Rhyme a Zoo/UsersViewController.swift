@@ -14,26 +14,85 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     //MARK: Setting up the View Controller
     
     var users: [User] = []
+    var cloudUsers: Bool = false
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var collectionWidth: NSLayoutConstraint!
     @IBOutlet weak var coverGradient: UIImageView!
     
-    override func viewDidLoad() {
-        users = RZUserDatabase.getLocalUsers()
+    @IBOutlet weak var classroomIcon: UIButton!
+    @IBOutlet weak var classroomLabel: UIButton!
+    @IBOutlet weak var collectionViewPosition: NSLayoutConstraint!
+    var viewAppeared = false
+    var classroomLinked = false
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    
+    
+    override func viewWillAppear(animated: Bool) {
+        decorateForLoadedUsers()
+        classroomLabel.hidden = true
+        classroomIcon.hidden = true
+        activityIndicator.hidden = false
+        
         //present welcome view if there are no users
         //present main view if there is only one user
-        if users.count == 0 || users.count == 1 {
-            coverGradient.alpha = 1.0
-        } else {
-            coverGradient.alpha = 0.0
+        //but stay on this view if there is a linked classroom
+        RZUserDatabase.getLinkedClassroom() { classroom in
+            if let classroom = classroom {
+                self.classroomLabel.hidden = false
+                self.classroomLabel.titleLabel!.text = classroom.name
+                self.classroomLabel.setTitle(classroom.name, forState: .Normal)
+                self.classroomLabel.alpha = 0.0
+                self.classroomIcon.alpha = 0.0
+                self.classroomIcon.hidden = false
+                self.coverGradient.alpha = 0.0
+                self.collectionViewPosition.constant = 30.0
+                UIView.animateWithDuration(0.5, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+                    self.view.layoutIfNeeded()
+                    self.classroomLabel.alpha = 1.0
+                    self.classroomIcon.alpha = 1.0
+                }, completion: nil)
+                self.cloudUsers = true
+                
+                //get users
+                RZUserDatabase.getUsersForClassroom(classroom, completion: { users in
+                
+                    self.users = users
+                    self.activityIndicator.hidden = true
+                    self.decorateForLoadedUsers()
+                    self.collectionView.reloadData()
+                    
+                })
+                
+                return
+            }
+            
+            else {
+                
+                //fall back to local users if there isn't a classroom
+                self.users = RZUserDatabase.getLocalUsers()
+                self.collectionView.reloadData()
+                self.activityIndicator.hidden = true
+                
+                if self.users.count == 0 || self.users.count == 1 {
+                    self.coverGradient.alpha = 1.0
+                } else {
+                    self.coverGradient.alpha = 0.0
+                }
+                
+                self.classroomLinked = true
+                if self.viewAppeared {
+                    self.readyToChangeViews()
+                }
+                
+                self.decorateForLoadedUsers()
+                
+            }
+            
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
-        users = RZUserDatabase.getLocalUsers()
-        self.collectionView.reloadData()
-        
-        if users.count == 0 {
+    func decorateForLoadedUsers() {
+        if users.count == 0 && !cloudUsers {
             coverGradient.alpha = 1.0
         }
         
@@ -55,6 +114,8 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
             collectionView.contentInset = UIEdgeInsetsZero
         } else {
             collectionView.scrollEnabled = true
+            collectionWidth.constant = 0
+            self.view.layoutIfNeeded()
             collectionView.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
         }
         
@@ -63,9 +124,15 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     }
     
     override func viewDidAppear(animated: Bool) {
+        viewAppeared = true
+        if classroomLinked {
+            readyToChangeViews()
+        }
+    }
+    
+    func readyToChangeViews() {
         if coverGradient.alpha == 1.0 {
-            //FIXME: change == 1 to == 0
-            if users.count == 1 { //present welcome view if there are no users
+            if users.count == 0 { //present welcome view if there are no users
                 let welcome = UIStoryboard(name: "User", bundle: nil).instantiateViewControllerWithIdentifier("welcome") as! UIViewController
                 self.presentViewController(welcome, animated: false, completion: nil)
             }
@@ -110,7 +177,11 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
             return
         }
         let user = users[indexPath.item]
+        
+        //will eventually have user authentication here
+        
         RZCurrentUser = user
+        user.pullDataFromCloud()
         let mainMenu = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController() as! UIViewController
         self.presentViewController(mainMenu, animated: true, completion: nil)
     }

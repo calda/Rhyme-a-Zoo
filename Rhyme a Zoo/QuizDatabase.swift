@@ -121,8 +121,16 @@ class QuizDatabase {
         return data.dictionaryForKey(userKey(RZQuizResultsKey)) as? [String : String] ?? [:]
     }
     
+    func setQuizData(quizData: [String : String]) {
+        data.setValue(quizData, forKey: userKey(RZQuizResultsKey))
+    }
+    
     func getFavorites() -> [Int] {
         return data.arrayForKey(userKey(RZFavoritesKey)) as? [Int] ?? []
+    }
+    
+    func setFavorites(favs: [Int]) {
+        data.setValue(favs, forKey: userKey(RZFavoritesKey))
     }
     
     func isQuizFavorite(number: Int) -> Bool {
@@ -148,6 +156,10 @@ class QuizDatabase {
         return level
     }
     
+    func setQuizLevel(level: Int) {
+        data.setInteger(level, forKey: userKey(RZQuizLevelKey))
+    }
+    
     func advanceLevelIfCurrentIsComplete() -> Bool {
         let current = currentLevel()
         let complete = quizesInLevel(currentLevel()).filter{ $0.quizHasBeenPlayed() }.count == 5
@@ -169,6 +181,11 @@ class QuizDatabase {
         let current = getPlayerBalance()
         let new = current + amount
         data.setDouble(new, forKey: userKey(RZPlayerBalanceKey))
+        RZUserDatabase.saveCurrentUserToLinkedClassroom()
+    }
+    
+    func setPlayerBalance(value: Double) {
+        data.setDouble(value, forKey: userKey(RZPlayerBalanceKey))
     }
     
     //zoo management
@@ -180,6 +197,10 @@ class QuizDatabase {
         //array doesn't exist
         data.setValue([], forKey: userKey(RZAnimalsKey))
         return []
+    }
+    
+    func setOwnedAnimals(animals: [String]) {
+        data.setValue(animals, forKey: userKey(RZAnimalsKey))
     }
     
     func playerOwnsAnimal(animal: String) -> Bool {
@@ -197,6 +218,7 @@ class QuizDatabase {
         var animals = getOwnedAnimals()
         animals.append(animal)
         data.setValue(animals, forKey: userKey(RZAnimalsKey))
+        RZUserDatabase.saveCurrentUserToLinkedClassroom()
     }
     
     func currentZooLevel() -> Int {
@@ -217,7 +239,12 @@ class QuizDatabase {
             let currentLevel = currentZooLevel()
             data.setInteger(currentLevel + 1, forKey: userKey(RZZooLevelKey))
         }
+        RZUserDatabase.saveCurrentUserToLinkedClassroom()
         return complete
+    }
+    
+    func setZooLevel(level: Int) {
+        data.setInteger(level, forKey: userKey(RZZooLevelKey))
     }
     
     //zookeeper
@@ -332,6 +359,8 @@ struct Quiz : Printable {
             let favs = [number]
             data.setValue(favs, forKey: userKey(RZFavoritesKey))
         }
+        
+        RZUserDatabase.saveCurrentUserToLinkedClassroom()
     }
     
     func isFavorite() -> Bool {
@@ -352,6 +381,8 @@ struct Quiz : Printable {
         //also update player balance
         let cashInflux = Double(gold) + (Double(silver) * 0.5)
         RZQuizDatabase.changePlayerBalanceBy(cashInflux)
+        
+        RZUserDatabase.saveCurrentUserToLinkedClassroom()
     }
     
     func quizHasBeenPlayed() -> Bool {

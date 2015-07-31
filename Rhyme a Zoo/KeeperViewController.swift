@@ -80,6 +80,7 @@ class KeeperViewController : UIViewController {
     }
     
     @IBAction func goHome(sender: AnyObject) {
+        RZUserDatabase.saveCurrentUserToLinkedClassroom()
         self.dismissViewControllerAnimated(true, completion: nil)
     }
     

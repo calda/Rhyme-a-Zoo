@@ -175,6 +175,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
     }
     
     @IBAction func cancelPressed(sender: AnyObject) {
+        UAHaltPlayback()
         self.dismissViewControllerAnimated(true, completion: nil)
     }
     

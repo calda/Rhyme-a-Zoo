@@ -90,6 +90,24 @@ func arrayToDict(array: [String]) -> [String : String] {
     return dict
 }
 
+
+///short-form function to run a block synchronously on the main queue
+func sync(closure: () -> ()) {
+    dispatch_sync(dispatch_get_main_queue(), closure)
+}
+
+///short-form function to run a block asynchronously on the main queue
+func async(closure: () -> ()) {
+    dispatch_async(dispatch_get_main_queue(), closure)
+}
+
+
+///open to this app's iOS Settings
+func openSettings() {
+    UIApplication.sharedApplication().openURL(NSURL(string:UIApplicationOpenSettingsURLString)!)
+}
+
+
 //MARK: - Classes
 
 ///A touch gesture recognizer that sends events on both .Began (down) and .Ended (up)

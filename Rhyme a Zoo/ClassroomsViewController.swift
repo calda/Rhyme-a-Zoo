@@ -30,7 +30,41 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
     
     override func viewWillAppear(animated: Bool) {
         tableView.contentInset = UIEdgeInsets(top: 70.0, left: 0.0, bottom: 70.0, right: 0.0)
-        searchForNearbyClassrooms()
+        checkUserLoggedIn()
+    }
+    
+    func checkUserLoggedIn(delayAlertPresentation: Bool = false) {
+        RZUserDatabase.userLoggedIn({ loggedIn in
+            if !loggedIn {
+                
+                let alert = UIAlertController(title: "Cannot join Classroom", message: "You must be logged in to an iCloud account on this device to join or create a classroom.", preferredStyle: .Alert)
+                alert.addAction(UIAlertAction(title: "Try Again", style: .Default, handler: { _ in
+                    //recursively repeat this function
+                    self.checkUserLoggedIn()
+                }))
+                alert.addAction(UIAlertAction(title: "Settings", style: .Default, handler: { _ in
+                    self.activityIndicator.alpha = 0.0
+                    openSettings()
+                    delay(1.0) {
+                        self.presentViewController(alert, animated: true, completion: nil)
+                    }
+                    
+                }))
+                alert.addAction(UIAlertAction(title: "Cancel", style: .Destructive, handler: { _ in
+                    self.dismissViewControllerAnimated(true, completion: nil)
+                }))
+                
+                delay(delayAlertPresentation ? 0.5 : 0.0) {
+                    self.presentViewController(alert, animated: true, completion: nil)
+                }
+                
+            }
+                
+            else {
+                self.searchForNearbyClassrooms()
+            }
+            
+        })
     }
     
     func searchForNearbyClassrooms() {
@@ -49,9 +83,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
             self.currentLocation = location
             RZUserDatabase.getNearbyClassrooms(location, completion: { nearby in
                 self.nearbyClassrooms = nearby
-                dispatch_sync(dispatch_get_main_queue(), {
-                    self.dataLoaded()
-                })
+                self.dataLoaded()
             })
             }, failure: { error in
                 //failed to access location
@@ -60,12 +92,11 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
                 let alert = UIAlertController(title: "Could not determine location", message: "Enable Location Services or search for your classroom by name.", preferredStyle: .Alert)
                 let ok = UIAlertAction(title: "OK", style: .Default, handler: nil)
                 let settings = UIAlertAction(title: "Settings", style: .Default, handler: { alert in
-                    UIApplication.sharedApplication().openURL(NSURL(string:UIApplicationOpenSettingsURLString)!)
+                    openSettings()
                 })
                 alert.addAction(ok)
                 alert.addAction(settings)
                 self.presentViewController(alert, animated: true, completion: nil)
-                
         })
     }
     
@@ -185,7 +216,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
     
     @IBAction func repeatSearch(sender: AnyObject) {
         if !searching {
-            searchForNearbyClassrooms()
+            checkUserLoggedIn(delayAlertPresentation: false)
         }
     }
     
@@ -202,13 +233,13 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
                 self.currentLocation = location
                 self.requestNewClassroomName(location)
             }, failure: { error in
-                activityIndicator.alpha = 0.0
+                self.activityIndicator.alpha = 0.0
                 
                 //show alert
                 let alert = UIAlertController(title: "Could not determine location", message: "A location is required to create a new classroom. Make sure you have Location Services enabled.", preferredStyle: .Alert)
                 let cancel = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
                 let settings = UIAlertAction(title: "Settings", style: .Default, handler: { alert in
-                    UIApplication.sharedApplication().openURL(NSURL(string:UIApplicationOpenSettingsURLString)!)
+                    openSettings()
                 })
                 alert.addAction(cancel)
                 alert.addAction(settings)
@@ -257,9 +288,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
                 }
                 
                 //name is unique
-                dispatch_sync(dispatch_get_main_queue(), {
-                    self.requestClassroomPasscode(location, name: name)
-                })
+                self.requestClassroomPasscode(location, name: name)
                 
             })
             
@@ -293,24 +322,22 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
     
     func createClassroom(location: CLLocation, name: String, passcode: String) {
         RZUserDatabase.createClassroomNamed(name, location: location, passcode: passcode, completion: { classroom in
-            dispatch_sync(dispatch_get_main_queue()) {
-                if let classroom = classroom {
-                    self.joinClassroom(classroom)
-                }
-                else {
-                    let alert = UIAlertController(title: "Could not create your classroom.", message: "There was a problem saving your classroom. Make sure you are connected to the internet and logged into an iCloud account on this device.", preferredStyle: .Alert)
-                    let cancel = UIAlertAction(title: "Cancel", style: .Destructive, handler: nil)
-                    let settings = UIAlertAction(title: "Settings", style: .Default, handler: { _ in
-                        UIApplication.sharedApplication().openURL(NSURL(string: UIApplicationOpenSettingsURLString)!)
-                    })
-                    let tryAgain = UIAlertAction(title: "Try Again", style: .Default, handler: { _ in
-                        self.createClassroom(location, name: name, passcode: passcode)
-                    })
-                    alert.addAction(tryAgain)
-                    alert.addAction(settings)
-                    alert.addAction(cancel)
-                    self.presentViewController(alert, animated: true, completion: nil)
-                }
+            if let classroom = classroom {
+                self.joinClassroom(classroom)
+            }
+            else {
+                let alert = UIAlertController(title: "Could not create your classroom.", message: "There was a problem saving your classroom. Make sure you are connected to the internet and logged into an iCloud account on this device.", preferredStyle: .Alert)
+                let cancel = UIAlertAction(title: "Cancel", style: .Destructive, handler: nil)
+                let settings = UIAlertAction(title: "Settings", style: .Default, handler: { _ in
+                    openSettings()
+                })
+                let tryAgain = UIAlertAction(title: "Try Again", style: .Default, handler: { _ in
+                    self.createClassroom(location, name: name, passcode: passcode)
+                })
+                alert.addAction(tryAgain)
+                alert.addAction(settings)
+                alert.addAction(cancel)
+                self.presentViewController(alert, animated: true, completion: nil)
             }
         })
     }
@@ -363,9 +390,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
         
         RZUserDatabase.getClassroomsMatchingText(text, location: currentLocation, completion: { classrooms in
             self.nearbyClassrooms = classrooms
-            dispatch_sync(dispatch_get_main_queue(), {
-                self.dataLoaded()
-            })
+            self.dataLoaded()
         })
         
         //animate
@@ -410,7 +435,18 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
     //MARK: - Join a classroom
     
     func joinClassroom(classroom: Classroom) {
-        println("Joining \(classroom.name)")
+        RZUserDatabase.linkToClassroom(classroom)
+        //switch to users view
+        let alert = UIAlertController(title: classroom.name, message: "You're signed in to your classroom!", preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: { _ in
+        
+            //return to Select a User screen
+            dismissController(self, untilMatch: { $0 is UsersViewController })
+            
+        }))
+        
+        self.presentViewController(alert, animated: true, completion: nil)
+        
     }
     
 }
@@ -422,6 +458,7 @@ class ClassroomCell : UITableViewCell {
     
     func decorate(#name: String, distance: Double?) {
         nameLabel.text = name
+        self.backgroundColor = UIColor.clearColor()
         if let distance = distance {
             distanceLabel.alpha = 1.0
             let meterToMile = 0.000621371

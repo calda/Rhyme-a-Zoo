@@ -25,9 +25,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //save the time that the app was closed
         let time = NSDate()
         data.setValue(time, forKey: RZAppClosedTimeKey)
+        
+        RZUserDatabase.saveCurrentUserToLinkedClassroom()
     }
 
     func applicationDidBecomeActive(application: UIApplication) {
+        RZCurrentUser.pullDataFromCloud()
+        
         //check if more than five minutes have passed since the app was closed
         if let closedTime = data.valueForKey(RZAppClosedTimeKey) as? NSDate {
             let currentTime = NSDate()
