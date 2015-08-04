@@ -108,6 +108,11 @@ func openSettings() {
 }
 
 
+func iPad() -> Bool {
+    return UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad
+}
+
+
 //MARK: - Classes
 
 ///A touch gesture recognizer that sends events on both .Began (down) and .Ended (up)

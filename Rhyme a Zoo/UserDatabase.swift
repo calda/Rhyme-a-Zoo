@@ -12,9 +12,10 @@ import CoreLocation
 import CloudKit
 
 let RZUserDatabase = UserDatabase()
-var RZCurrentUser: User = User(emptyUserWithName: "default user", iconName: "angry.jpg")
+var RZCurrentUser: User = User(emptyUserWithName: "DEFAULT USER // YOU SHOULD NEVER SEE THIS", iconName: "angry.jpg")
 let RZUsersKey = "com.hearatale.raz.users"
 let RZClassroomIDKey = "com.hearatale.raz.classroom"
+let RZClassroomPasscodeKey = "com.hearatale.raz.classroom.passcode"
 
 class UserDatabase {
     
@@ -45,7 +46,7 @@ class UserDatabase {
         data.setValue(userStrings, forKey: RZUsersKey)
     }
     
-    func deleteLocalUser(user: User) {
+    func deleteLocalUser(user: User, deleteFromClassroom: Bool) {
         let userString = user.toUserString()
         
         if var userStrings = data.stringArrayForKey(RZUsersKey) as? [String] {
@@ -54,6 +55,23 @@ class UserDatabase {
                 data.setValue(userStrings, forKey: RZUsersKey)
             }
         }
+        
+        if !deleteFromClassroom { return }
+        
+        //also delete from the cloud if applicable
+        getLinkedClassroom({ classroom in
+            
+            if let classroom = classroom, record = user.record {
+                let operation = CKModifyRecordsOperation(recordsToSave: nil, recordIDsToDelete: [record.recordID])
+                operation.modifyRecordsCompletionBlock = { _, _, error in
+                    if error != nil {
+                        println(error)
+                    }
+                }
+                self.cloud.addOperation(operation)
+            }
+        
+        })
     }
     
     func changeLocalUserIcon(user immutableUser: User, newIcon: String) {
@@ -102,28 +120,58 @@ class UserDatabase {
     func linkToClassroom(classroom: Classroom) {
         let name = classroom.record.recordID.recordName
         data.setValue(name, forKey: RZClassroomIDKey)
+        data.setValue(classroom.passcode, forKey: RZClassroomPasscodeKey)
         self.currentClassroom = classroom
     }
     
+    func hasLinkedClassroom() -> Bool {
+        return data.valueForKey(RZClassroomIDKey) != nil
+    }
+    
     func unlinkClassroom() {
+        //remove all classroom users
+        let users = RZUserDatabase.getLocalUsers()
+        for user in users {
+            RZUserDatabase.deleteLocalUser(user, deleteFromClassroom: false)
+        }
+        
         data.setValue(nil, forKey: RZClassroomIDKey)
+        data.setValue(nil, forKey: RZClassroomPasscodeKey)
         currentClassroom = nil
     }
     
     func getLinkedClassroom(completion: (Classroom?) -> ()) {
         if let classroom = currentClassroom {
             completion(classroom)
+            return
         }
+        
+        getLinkedClassroomFromCloud(completion)
+    }
+    
+    func getLinkedClassroomPasscode() -> String? {
+        return data.stringForKey(RZClassroomPasscodeKey)
+    }
+    
+    func getLinkedClassroomFromCloud(completion: (Classroom?) -> ()) {
         if let classroomName = data.stringForKey(RZClassroomIDKey) {
             let recordID = CKRecordID(recordName: classroomName)
             cloud.fetchRecordWithID(recordID, completionHandler: { record, error in
                 println(error)
                 if record != nil {
                     let classroom = Classroom(record: record)
+                    self.currentClassroom = classroom
                     sync() {
                         completion(classroom)
                     }
                 } else {
+                    
+                    if error != nil && error.code == 11 {
+                        //11 = "Unknown Item" (11/2003)
+                        //classroom was not in cloud, meaning the classroom was deleted on another device
+                        RZUserDatabase.unlinkClassroom()
+                    }
+                    
                     sync() {
                         completion(nil)
                     }
@@ -133,7 +181,6 @@ class UserDatabase {
         else {
             completion(nil)
         }
-        
     }
     
     func userLoggedIn(completion: Bool -> ()) {
@@ -166,6 +213,10 @@ class UserDatabase {
         
         func classroomQueryCompletionHandler(results: [AnyObject]!, error: NSError!) {
             
+            if error != nil {
+                println(error)
+            }
+            
             if let records = results as? [CKRecord] {
                 var classrooms: [Classroom] = []
                 for record in records {
@@ -186,6 +237,28 @@ class UserDatabase {
         }
         
         return classroomQueryCompletionHandler
+    }
+    
+    func saveClassroom(classroom: Classroom) {
+        let record = classroom.getUpdatedRecord()
+        let operation = CKModifyRecordsOperation(recordsToSave: [record], recordIDsToDelete: nil)
+        operation.modifyRecordsCompletionBlock = { _, _, error in
+            if error != nil {
+                println(error)
+            }
+        }
+        self.cloud.addOperation(operation)
+    }
+    
+    func deleteClassroom(classroom: Classroom) {
+        let record = classroom.getUpdatedRecord()
+        let operation = CKModifyRecordsOperation(recordsToSave: nil, recordIDsToDelete: [record.recordID])
+        operation.modifyRecordsCompletionBlock = { _, _, error in
+            if error != nil {
+                println(error)
+            }
+        }
+        self.cloud.addOperation(operation)
     }
     
     //MARK: - CloudKit User Management
@@ -222,9 +295,36 @@ class UserDatabase {
         getLinkedClassroom({ classroom in
             if let classroom = classroom {
                 if let record = user.getUpdatedRecord(classroom) {
-                    let saveOperation = CKModifyRecordsOperation(recordsToSave: [record], recordIDsToDelete: nil)
-                    self.cloud.addOperation(saveOperation)
+                    let operation = CKModifyRecordsOperation(recordsToSave: [record], recordIDsToDelete: nil)
+                    operation.modifyRecordsCompletionBlock = { _, _, error in
+                        if error != nil {
+                            println(error)
+                        }
+                    }
+                    self.cloud.addOperation(operation)
                 }
+            }
+        })
+    }
+    
+    func saveNewUserToLinkedClassroom(newUser: User) {
+        //make sure the user doesn't already exist
+        RZUserDatabase.getLinkedClassroom({ classroom in
+            if let classroom = classroom {
+                RZUserDatabase.getUsersForClassroom(classroom, completion: { users in
+                    
+                    for user in users {
+                        if user.ID == newUser.ID {
+                            //the user already exists in the classroom
+                            //make sure the record doesn't get duplicated
+                            newUser.record = user.record
+                            break
+                        }
+                    }
+                    
+                    RZUserDatabase.saveUserToLinkedClassroom(newUser)
+                    
+                })
             }
         })
     }
@@ -253,7 +353,7 @@ class User {
         self.iconName = iconName
         self.icon = UIImage(named: iconName)!
         ID = name + "\(arc4random_uniform(10000))"
-        RZUserDatabase.saveUserToLinkedClassroom(self)
+        RZUserDatabase.saveNewUserToLinkedClassroom(self)
     }
     
     init?(fromString string: String) {
@@ -281,20 +381,27 @@ class User {
     }
     
     func getUpdatedRecord(classroom: Classroom) -> CKRecord? {
+        //keep the default user from propegating up into the cloud
+        if self.name == "DEFAULT USER // YOU SHOULD NEVER SEE THIS" { return nil }
+        
         let actualUser = RZCurrentUser
         RZCurrentUser = self
         
-        if let record = self.record {
-            record.setObject(toUserString(), forKey: "UserString")
-            record.setObject(dictToArray(RZQuizDatabase.getQuizData()), forKey: "QuizData")
-            record.setObject(CKReference(record: classroom.record, action: CKReferenceAction.DeleteSelf), forKey: "Classroom")
-            record.setObject(RZQuizDatabase.getFavorites(), forKey: "Favorites")
-            record.setObject(RZQuizDatabase.getPlayerBalance(), forKey: "Balance")
-            record.setObject(RZQuizDatabase.getOwnedAnimals(), forKey: "OwnedAnimals")
-            record.setObject(RZQuizDatabase.currentZooLevel(), forKey: "ZooLevel")
-            record.setObject(RZQuizDatabase.currentLevel(), forKey: "QuizLevel")
-            record.setObject(RZQuizDatabase.getKeeperString(), forKey: "Zookeeper")
+        let record: CKRecord
+        if let selfRecord = self.record {
+            record = selfRecord
+        } else {
+            record = CKRecord(recordType: "User")
         }
+        record.setObject(toUserString(), forKey: "UserString")
+        record.setObject(dictToArray(RZQuizDatabase.getQuizData()), forKey: "QuizData")
+        record.setObject(CKReference(record: classroom.record, action: CKReferenceAction.DeleteSelf), forKey: "Classroom")
+        record.setObject(RZQuizDatabase.getFavorites(), forKey: "Favorites")
+        record.setObject(RZQuizDatabase.getPlayerBalance(), forKey: "Balance")
+        record.setObject(RZQuizDatabase.getOwnedAnimals(), forKey: "OwnedAnimals")
+        record.setObject(RZQuizDatabase.currentZooLevel(), forKey: "ZooLevel")
+        record.setObject(RZQuizDatabase.currentLevel(), forKey: "QuizLevel")
+        record.setObject(RZQuizDatabase.getKeeperString(), forKey: "Zookeeper")
         
         RZCurrentUser = actualUser
         return record
@@ -339,13 +446,18 @@ class Classroom {
     let record: CKRecord
     let name: String
     let location: CLLocation
-    let passcode: String
+    var passcode: String
     
     init(record: CKRecord) {
         self.record = record
         name = record.valueForKey("Name") as! String
         location = record.valueForKey("Location") as! CLLocation
         passcode = record.valueForKey("Passcode") as! String
+    }
+    
+    func getUpdatedRecord() -> CKRecord {
+        record.setObject(passcode, forKey: "Passcode")
+        return record
     }
     
 }

@@ -134,7 +134,7 @@ class PasscodeViewController : UIViewController {
                 }
                 //first entry
                 entryOne = input as String
-                descriptionLabel.text = "Verify your passcode."
+                descriptionLabel.text = "Verify (repeat) your passcode."
                 clearInput(shake: false, waitForDescription: false)
                 return
             }
@@ -210,6 +210,32 @@ func requestPasscode(correctPasscode: String, description: String, currentContro
             }
         })
     }
+}
+
+func requestPasscdoe(correctPasscode: String, description: String, currentController current: UIViewController, successCompletion: ((Bool) -> ())?) {
+    let passcode = UIStoryboard(name: "User", bundle: nil).instantiateViewControllerWithIdentifier("passcode") as! PasscodeViewController
+    passcode.correctPasscode = correctPasscode
+    passcode.descriptionString = description
+    passcode.view.frame = current.view.frame
+    current.view.addSubview(passcode.view)
+    
+    //animate
+    let offscreenOrigin = CGPointMake(0, current.view.frame.height * 1.2)
+    passcode.view.frame.origin = offscreenOrigin
+    
+    UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+        passcode.view.frame.origin = CGPointZero
+        }, completion: nil)
+    
+    passcode.completion = { success in
+        UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+            passcode.view.frame.origin = offscreenOrigin
+            }, completion: { _ in
+                passcode.view.removeFromSuperview()
+                successCompletion?(success)
+        })
+    }
+
 }
 
 func createPasscode(description: String, currentController current: UIViewController, completion: (String?) -> ()) {

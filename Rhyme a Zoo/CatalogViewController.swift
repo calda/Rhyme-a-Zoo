@@ -41,7 +41,9 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
         if RZShowingFavorites {
             return RZQuizDatabase.numberOfFavories()
         }
-        return RZQuizDatabase.currentLevel() * 5
+        //FIXME: switch to the commented out line
+        return RZQuizDatabase.levelCount * 5
+        //return RZQuizDatabase.currentLevel() * 5
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {

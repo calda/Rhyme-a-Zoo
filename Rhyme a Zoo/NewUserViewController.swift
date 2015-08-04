@@ -22,16 +22,20 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
     var userInputName: String = ""
     var currentIconName: String = "Name"
     var currentIconString: String = ""
+    var requireName = false
     
     //if the view was launched to edit a user instead of creating a user
     var editMode = false
     var editUser: User?
     @IBOutlet weak var editModeBackButton: UIButton!
     @IBOutlet weak var editModeDeleteButton: UIButton!
+    @IBOutlet weak var typeNameButton: UIButton!
+    @IBOutlet weak var doneButton: UIButton!
     
-    var availableIcons = ["angry", "Ate", "baby", "Steal", "cat", "calf", "climb", "clown", "dance", "skip",
-        "dog", "dwarf", "Fall", "farmer", "fisherman", "grandfather", "grandmother", "happy", "hen", "proud",
-        "horse", "hug", "hunter", "jump"]
+    
+    var availableIcons = ["bat", "Birds", "bunny", "calf", "cat", "cow", "dog", "duck", "ducks", "elephant", "fish",
+        "fly", "flying squirrel", "fox", "frog", "goat", "goose", "hen", "hog", "horse", "lion", "mouse", "pig",
+        "robin", "sheep", "puppy", "turtle", "wolf"]
     
     override func viewWillAppear(animated: Bool) {
         editModeBackButton.alpha = 0.0
@@ -42,18 +46,18 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
         finishEditingButton.alpha = 0.0
         
         //remove unavailable icons and shuffle remaining
-        for user in RZUserDatabase.getLocalUsers() {
-            let usedIcon = user.iconName
-            let iconCount = availableIcons.count
-            for i_forwards in 1 ... iconCount {
-                 //go backwards through the array so we can take out indecies as we go
-                let i = iconCount - i_forwards
-                if usedIcon.lowercaseString.hasPrefix(availableIcons[i].lowercaseString) {
-                    availableIcons.removeAtIndex(i)
-                }
-            }
-        }
         availableIcons = availableIcons.shuffled()
+        setAvailableIconsForUsers(RZUserDatabase.getLocalUsers())
+        
+        RZUserDatabase.getLinkedClassroom({ classroom in
+            if let classroom = classroom {
+                self.requireName = true
+                RZUserDatabase.getUsersForClassroom(classroom, completion: { users in
+                    self.setAvailableIconsForUsers(users)
+                    self.collectionView.reloadData()
+                })
+            }
+        })
         
         if let user = editUser where editMode {
             selectedIcon.image = user.icon
@@ -64,12 +68,28 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
             
             editModeDeleteButton.alpha = 1.0
             editModeBackButton.alpha = 1.0
+            doneButton.alpha = 0.0
+            typeNameButton.alpha = 0.0
             
             //add user's icon to the available icons
             let iconFile = user.iconName
             //remove .jpg
             let iconName = (iconFile as NSString).stringByReplacingOccurrencesOfString(".jpg", withString: "")
             self.availableIcons.append(iconName)
+        }
+    }
+    
+    func setAvailableIconsForUsers(users: [User]) {
+        for user in users {
+            let usedIcon = user.iconName
+            let iconCount = availableIcons.count
+            for i_forwards in 1 ... iconCount {
+                //go backwards through the array so we can take out indecies as we go
+                let i = iconCount - i_forwards
+                if usedIcon.lowercaseString.hasPrefix(availableIcons[i].lowercaseString) {
+                    availableIcons.removeAtIndex(i)
+                }
+            }
         }
     }
     
@@ -87,7 +107,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
         UAPlayer().play("create user", ofType: "m4a", ifConcurrent: .Interrupt)
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewWillDisappear(animated: Bool) {
         instructionsTimer?.invalidate()
     }
     
@@ -102,7 +122,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        let height = collectionView.frame.height / 2.0
+        let height = collectionView.frame.height / (iPad() ? 3.0 : 2.0)
         return CGSizeMake(height, height)
     }
     
@@ -113,23 +133,30 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
                     
                     //user tapped this cell
                     cell.animateSelection()
+                    //dismiss keyboard if it is presented
+                    quitEditing(collectionView)
+                    
                     let iconName = availableIcons[indexPath.item]
                     currentIconString = iconName + ".jpg"
                     let splitIndex = iconName.startIndex.successor()
                     currentIconName = iconName.substringToIndex(splitIndex).uppercaseString + iconName.substringFromIndex(splitIndex).lowercaseString
-                    if userInputName == "" {
+                    if userInputName == "" && !requireName {
                         nameLabel.text = currentIconName
                         nameLabel.alpha = 0.5
                     }
                     selectedIcon.image = UIImage(named: currentIconString)
                     
-                    continueButton.enabled = true
+                    checkIfComplete()
                     
                 } else {
                     cell.animateDeselection()
                 }
             }
         }
+    }
+    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        quitEditing(scrollView)
     }
     
     @IBAction func editName(sender: AnyObject) {
@@ -154,16 +181,18 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
         }
         
         if userInputName == "" {
-            nameLabel.text = currentIconName
+            nameLabel.text = requireName ? "Name" : currentIconName
             nameLabel.alpha = 0.5
         } else {
             nameLabel.text = userInputName
             nameLabel.alpha = 0.95
         }
+        checkIfComplete()
     }
     
     @IBAction func quitEditing(sender: AnyObject) {
         self.hiddenInput.resignFirstResponder()
+        checkIfComplete()
     }
 
     
@@ -172,6 +201,13 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
             self.finishEditingButton.alpha = 0.0
             self.finishEditingButton.transform = CGAffineTransformMakeScale(0.5, 0.5)
         }, completion: nil)
+        checkIfComplete()
+    }
+    
+    func checkIfComplete() {
+        let icon = currentIconString != ""
+        let name = !requireName || userInputName != ""
+        self.continueButton.enabled = icon && name
     }
     
     @IBAction func cancelPressed(sender: AnyObject) {
@@ -205,7 +241,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
             let nevermind = UIAlertAction(title: "Nevermind", style: .Default, handler: nil)
             let delete = UIAlertAction(title: "Delete", style: .Destructive, handler: { action in
                 
-                RZUserDatabase.deleteLocalUser(user)
+                RZUserDatabase.deleteLocalUser(user, deleteFromClassroom: true)
                 
                 //present last alert
                 let okAlert = UIAlertController(title: "Deleted \(user.name)", message: nil, preferredStyle: .Alert)
@@ -266,8 +302,12 @@ class UserIconCell : UICollectionViewCell {
 }
 
 func decorateUserIcon(view: UIView) {
+    decorateUserIcon(view, view.frame.height)
+}
+
+func decorateUserIcon(view: UIView, height: CGFloat) {
     view.layer.masksToBounds = true
-    view.layer.cornerRadius = view.frame.height / 6.0
+    view.layer.cornerRadius = height / 6.0
     view.layer.borderColor = UIColor.whiteColor().CGColor
     view.layer.borderWidth = 2.0
 }

@@ -171,7 +171,7 @@ class BuildingViewController : ZookeeperGameController {
     }
     
     func addButtonForAnimal(animal: String, playerOwns owned: Bool) {
-        let size = (owned ? CGSizeMake(40, 40) : CGSizeMake(50, 40))
+        let size = (owned ? (iPad() ? CGSizeMake(60, 60) : CGSizeMake(40, 40)) : (iPad() ? CGSizeMake(100, 80) : CGSizeMake(50, 40)))
         let percentCenter = coinCenters[animal]!
         let center = CGPointMake(percentCenter.x * sceneSize.width, percentCenter.y * sceneSize.height)
         var frame = CGRectMake(center.x - size.width/2, center.y - size.height/2, size.width, size.height)

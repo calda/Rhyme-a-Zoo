@@ -82,7 +82,7 @@ class RhymeViewController : UIViewController {
         
         //mask the rhyme page
         let height = UIScreen.mainScreen().bounds.height
-        let maskHeight = height - 20.0
+        let maskHeight = height - 20.0 - (iPad() ? 60.0 : 0.0)
         let maskWidth = (rhymePage.frame.width / rhymePage.frame.height) * maskHeight
         let maskRect = CGRectMake(10.0, 10.0, maskWidth, maskHeight)
         

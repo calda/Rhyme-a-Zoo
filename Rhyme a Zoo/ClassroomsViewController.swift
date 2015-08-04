@@ -250,7 +250,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
     }
     
     func requestNewClassroomName(location: CLLocation, previousNameAttempt: String? = nil) {
-        var message: String? = nil
+        var message: String = "Your classroom can have any name, but it should be easy to identify as yours. "
         if let previousName = previousNameAttempt {
             if (previousName as NSString).length <= 4 {
                 message = "\"\(previousName)\" is too short. Your classroom's name must be at least four letters long."
@@ -263,7 +263,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
         var nameTextField: UITextField!
         alert.addTextFieldWithConfigurationHandler({ textField in
             nameTextField = textField
-            nameTextField.placeholder = "Classroom Name"
+            nameTextField.placeholder = "Mr. Evan's 3rd Graders"
             textField.autocapitalizationType = .Sentences
             textField.autocorrectionType = .No
         })
@@ -301,13 +301,13 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
     }
     
     func requestClassroomPasscode(location: CLLocation, name: String) {
-        createPasscode("Create a passcode for \"\(name)\"", currentController: self, { possiblePasscode in
+        createPasscode("Create a 4-digit passcode for \"\(name)\"", currentController: self, { possiblePasscode in
             
             if let passcode = possiblePasscode where count(passcode) == 4 {
                 self.createClassroom(location, name: name, passcode: passcode)
             }
             else {
-                let alert = UIAlertController(title: nil, message: "You must create a passcode for your classroom.", preferredStyle: .Alert)
+                let alert = UIAlertController(title: nil, message: "You must create a 4-digit passcode for your classroom.", preferredStyle: .Alert)
                 let cancel = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Destructive, handler: nil)
                 let tryAgain = UIAlertAction(title: "Try Again", style: UIAlertActionStyle.Default, handler: { _ in
                     self.requestClassroomPasscode(location, name: name)
