@@ -14,16 +14,32 @@ class SettingsViewController : UIViewController, UITableViewDataSource, UITableV
     var classroom: Classroom!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet var touchRecognizer: UITouchGestureRecognizer!
+    var updateTimer: NSTimer?
     
     override func viewWillAppear(animated: Bool) {
         tableView.contentInset = UIEdgeInsets(top: 70.0, left: 0.0, bottom: 0.0, right: 0.0)
+        updateTimer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: "updateSettings", userInfo: nil, repeats: true)
+    }
+    
+    func updateSettings() {
+        RZUserDatabase.refreshLinkedClassroomData({ classroom, dataChanged in
+            if dataChanged {
+                self.classroom = classroom
+                self.tableView.reloadData()
+            }
+        })
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        updateTimer?.invalidate()
     }
     
     //MARK: - Table View Data Source
     
     enum CellType {
         case Function(function: ((SettingsViewController) -> ())?)
-        case Toggle(key: String)
+        case Toggle(setting: ClassroomSetting)
+        case Title
         
         func getFunction() -> ((SettingsViewController) -> ())? {
             switch self {
@@ -32,10 +48,22 @@ class SettingsViewController : UIViewController, UITableViewDataSource, UITableV
                 default: return nil
             }
         }
+        
+        func getSetting() -> ClassroomSetting? {
+            switch self {
+                case .Toggle(let setting):
+                    return setting
+                default:
+                    return nil
+            }
+        }
     }
     
     let cells: [(identifier: String, type: CellType)] = [
         ("statistics", .Function(function: nil)),
+        ("toggle", .Toggle(setting: RZSettingRequirePasscode)),
+        ("toggle", .Toggle(setting: RZSettingUserCreation)),
+        ("toggle", .Toggle(setting: RZSettingPhoneticsOnly)),
         ("passcode", .Function(function: { controller in
             controller.changePasscode()
         })),
@@ -56,11 +84,22 @@ class SettingsViewController : UIViewController, UITableViewDataSource, UITableV
         let cell = cells[index]
         
         if cell.identifier == "toggle" {
-            let cell = tableView.dequeueReusableCellWithIdentifier(cell.identifier, forIndexPath: indexPath) as! UITableViewCell
-            return cell
+            let row = tableView.dequeueReusableCellWithIdentifier(cell.identifier, forIndexPath: indexPath) as! ToggleCell
+            if let setting = cell.type.getSetting() {
+                row.decorateForSetting(setting)
+            }
+            return row
         }
         
         return tableView.dequeueReusableCellWithIdentifier(cell.identifier, forIndexPath: indexPath) as! UITableViewCell
+    }
+    
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        let cell = cells[indexPath.item]
+        if cell.identifier == "statistics" {
+            return 75.0
+        }
+        return 50.0
     }
     
     //MARK: - User Interaction
@@ -145,15 +184,28 @@ class SettingsViewController : UIViewController, UITableViewDataSource, UITableV
     
     func removeDeviceFromClassroom() {
         
-        let classroomName = self.classroom.name
-        RZUserDatabase.unlinkClassroom()
+        //prompt with alert
+        let alert = UIAlertController(title: "Remove this device from your classroom?", message: "You can rejoin at any time.", preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: "Nevermind", style: .Default, handler: nil))
+        alert.addAction(UIAlertAction(title: "Leave", style: .Destructive, handler: { _ in
         
-        //show alert first
-        let alert = UIAlertController(title: "This device has been removed from \"\(classroomName)\"", message: "", preferredStyle: .Alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: { _ in
-            self.dismissViewControllerAnimated(true, completion: nil)
+            let classroomName = self.classroom.name
+            RZUserDatabase.unlinkClassroom()
+            
+            //give the server a sec to catch up
+            self.view.userInteractionEnabled = false
+            delay(2.0) {
+                //show alert then dismiss
+                let alert = UIAlertController(title: "This device has been removed from \"\(classroomName)\"", message: "", preferredStyle: .Alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: { _ in
+                    self.dismissViewControllerAnimated(true, completion: nil)
+                }))
+                self.presentViewController(alert, animated: true, completion: nil)
+            }
+        
         }))
         self.presentViewController(alert, animated: true, completion: nil)
+        
     }
     
     
@@ -169,11 +221,15 @@ class SettingsViewController : UIViewController, UITableViewDataSource, UITableV
                 RZUserDatabase.deleteClassroom(self.classroom)
                 RZUserDatabase.unlinkClassroom()
                 
-                let deletedAlert = UIAlertController(title: "Deleted \"\(classroomName)\"", message: nil, preferredStyle: .Alert)
-                deletedAlert.addAction(UIAlertAction(title: "OK", style: .Default, handler: { _ in
-                    self.dismissViewControllerAnimated(true, completion: nil)
-                }))
-                self.presentViewController(deletedAlert, animated: true, completion: nil)
+                //give the server a sec to catch up
+                self.view.userInteractionEnabled = false
+                delay(2.0) {
+                    let deletedAlert = UIAlertController(title: "Deleted \"\(classroomName)\"", message: nil, preferredStyle: .Alert)
+                    deletedAlert.addAction(UIAlertAction(title: "OK", style: .Default, handler: { _ in
+                        self.dismissViewControllerAnimated(true, completion: nil)
+                    }))
+                    self.presentViewController(deletedAlert, animated: true, completion: nil)
+                }
             })
         
         }))
@@ -184,8 +240,31 @@ class SettingsViewController : UIViewController, UITableViewDataSource, UITableV
     
 }
 
+//MARK: - Toggle Cell
 
-
+class ToggleCell : UITableViewCell {
+    
+    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var descriptionLabel: UILabel!
+    @IBOutlet weak var toggleSwitch: UISwitch!
+    
+    var setting: ClassroomSetting?
+    
+    func decorateForSetting(setting: ClassroomSetting) {
+        self.setting = setting
+        
+        nameLabel.text = setting.name
+        descriptionLabel.text = setting.description
+        if let current = setting.currentSetting() {
+            toggleSwitch.on = current
+        }
+    }
+    
+    @IBAction func switchToggled(sender: UISwitch) {
+        setting?.updateSetting(sender.on)
+    }
+    
+}
 
 
 

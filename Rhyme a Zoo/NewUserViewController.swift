@@ -216,10 +216,24 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
     }
     
     @IBAction func continuePressed(sender: AnyObject) {
+        if RZSettingRequirePasscode.currentSetting() == true {
+            createPasscode("Create a passcode for \(nameLabel.text!)", currentController: self, { passcode in
+                if let passcode = passcode {
+                    self.createNewUser(passcode)
+                }
+            })
+        }
+        else {
+            createNewUser(nil)
+        }
+    }
+    
+    func createNewUser(passcode: String?) {
         //create new user
         let name = nameLabel.text!
         let iconName = currentIconString
         let user = User(name: name, iconName: iconName)
+        user.passcode = passcode
         RZUserDatabase.addLocalUser(user)
         RZCurrentUser = user
         

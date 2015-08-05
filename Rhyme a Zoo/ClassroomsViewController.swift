@@ -250,9 +250,9 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
     }
     
     func requestNewClassroomName(location: CLLocation, previousNameAttempt: String? = nil) {
-        var message: String = "Your classroom can have any name, but it should be easy to identify as yours. "
+        var message: String = "Your classroom can have any name, but it should be easy to identify."
         if let previousName = previousNameAttempt {
-            if (previousName as NSString).length <= 4 {
+            if (previousName as NSString).length < 4 {
                 message = "\"\(previousName)\" is too short. Your classroom's name must be at least four letters long."
             } else {
                 message = "There is already a classroom named \"\(previousName)\""

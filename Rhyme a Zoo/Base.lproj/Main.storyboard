@@ -2061,18 +2061,18 @@
                                 <exclude reference="rVb-Eb-pDF"/>
                                 <exclude reference="SPZ-71-4dZ"/>
                                 <exclude reference="crJ-0a-Epo"/>
-                                <exclude reference="hFb-CO-LOa"/>
                                 <exclude reference="IU8-FN-l9Z"/>
                                 <exclude reference="ZF8-YU-gbO"/>
                                 <exclude reference="hqQ-Ba-dXZ"/>
+                                <exclude reference="hFb-CO-LOa"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=regular">
                             <mask key="constraints">
                                 <exclude reference="bAV-oX-SIs"/>
-                                <include reference="hFb-CO-LOa"/>
                                 <include reference="hqQ-Ba-dXZ"/>
                                 <exclude reference="knB-EH-u5b"/>
+                                <include reference="hFb-CO-LOa"/>
                                 <exclude reference="CeN-X9-96P"/>
                             </mask>
                         </variation>

@@ -157,7 +157,7 @@ class UserDatabase {
         if let classroomName = data.stringForKey(RZClassroomIDKey) {
             let recordID = CKRecordID(recordName: classroomName)
             cloud.fetchRecordWithID(recordID, completionHandler: { record, error in
-                println(error)
+                if error != nil { println(error) }
                 if record != nil {
                     let classroom = Classroom(record: record)
                     self.currentClassroom = classroom
@@ -250,6 +250,18 @@ class UserDatabase {
         self.cloud.addOperation(operation)
     }
     
+    func refreshLinkedClassroomData(completion: ((classroom: Classroom, changesFound: Bool) -> ())?) {
+        if let currentClassroom = self.currentClassroom {
+            getLinkedClassroomFromCloud({ classroom in
+                if let classroom = classroom {
+                    let previousModified = currentClassroom.record.modificationDate.timeIntervalSince1970
+                    let currentModified = classroom.record.modificationDate.timeIntervalSince1970
+                    completion?(classroom: classroom, changesFound: currentModified > previousModified)
+                }
+            })
+        }
+    }
+    
     func deleteClassroom(classroom: Classroom) {
         let record = classroom.getUpdatedRecord()
         let operation = CKModifyRecordsOperation(recordsToSave: nil, recordIDsToDelete: [record.recordID])
@@ -329,6 +341,21 @@ class UserDatabase {
         })
     }
     
+    func refreshUser(user: User) {
+        if let currentRecord = user.record {
+            cloud.fetchRecordWithID(currentRecord.recordID, completionHandler: { record, error in
+                if record != nil {
+                    let previousModified = currentRecord.modificationDate.timeIntervalSince1970
+                    let currentModified = record.modificationDate.timeIntervalSince1970
+                    if currentModified > previousModified {
+                        user.record = record
+                        user.pullDataFromCloud()
+                    }
+                }
+            })
+        }
+    }
+    
 }
 
 class User {
@@ -337,7 +364,8 @@ class User {
     var icon: UIImage?
     var iconName: String
     let ID: String
-    
+    var passcode: String?
+
     var record: CKRecord?
     
     init(emptyUserWithName name: String, iconName: String) {
@@ -373,6 +401,7 @@ class User {
     convenience init?(record: CKRecord) {
         let userString = record.valueForKey("UserString") as! String
         self.init(fromString: userString)
+        self.passcode = record.valueForKey("Passcode") as? String
         self.record = record
     }
     
@@ -394,6 +423,7 @@ class User {
             record = CKRecord(recordType: "User")
         }
         record.setObject(toUserString(), forKey: "UserString")
+        record.setObject(self.passcode, forKey: "Passcode")
         record.setObject(dictToArray(RZQuizDatabase.getQuizData()), forKey: "QuizData")
         record.setObject(CKReference(record: classroom.record, action: CKReferenceAction.DeleteSelf), forKey: "Classroom")
         record.setObject(RZQuizDatabase.getFavorites(), forKey: "Favorites")
@@ -411,12 +441,12 @@ class User {
         if let record = record {
             
             let quizData = record.valueForKey("QuizData") as! [String]
-            let favorites = record.valueForKey("Favorites") as! [Int]
-            let balance = record.valueForKey("Balance") as! Double
-            let ownedAnimals = record.valueForKey("OwnedAnimals") as! [String]
-            let zooLevel = record.valueForKey("ZooLevel") as! Int
-            let quizLevel = record.valueForKey("QuizLevel") as! Int
-            let keeperString = record.valueForKey("Zookeeper") as! String
+            let favorites = record.valueForKey("Favorites") as? [Int] ?? []
+            let balance = record.valueForKey("Balance") as? Double ?? 0
+            let ownedAnimals = record.valueForKey("OwnedAnimals") as? [String] ?? []
+            let zooLevel = record.valueForKey("ZooLevel") as? Int ?? 1
+            let quizLevel = record.valueForKey("QuizLevel") as? Int ?? 1
+            let keeperString = record.valueForKey("Zookeeper") as? String ?? "boy~1"
             
             let actualUser = RZCurrentUser
             RZCurrentUser = self
@@ -441,6 +471,57 @@ class User {
     
 }
 
+//MARK: - Classroom Settings
+
+let RZSettingPhoneticsOnly = ClassroomSetting("Only Show Phonetics Questions", "Students will not be quizzed on rhyme comprehension.", false)
+let RZSettingRequirePasscode = ClassroomSetting("Require Student Passcodes", "Students will have to type their passcode to play.", true)
+let RZSettingUserCreation = ClassroomSetting("Allow students to create new Users", "Students will be able to create new user accounts.", false)
+
+let RZClassroomSettings = [RZSettingRequirePasscode, RZSettingUserCreation, RZSettingPhoneticsOnly]
+
+struct ClassroomSetting {
+    
+    let name: String
+    var key: String {
+        return name
+    }
+    let description: String
+    let byDefault: Bool
+    
+    init(_ name: String, _ description: String, _ byDefault: Bool) {
+        self.name = name
+        self.description = description
+        self.byDefault = byDefault
+    }
+    
+    func currentSetting() -> Bool? {
+        //settings are only relevant if there is a connected classroom
+        if !RZUserDatabase.hasLinkedClassroom() { return nil }
+        
+        if let setting = data.stringForKey(self.key) {
+            return setting == "true"
+        }
+        
+        //return default if there is nothing set
+        return byDefault
+    }
+    
+    func updateSetting(new: Bool) {
+        data.setValue("\(new)", forKey: self.key)
+        
+        RZUserDatabase.getLinkedClassroom({ classroom in
+            if let classroom = classroom {
+                RZUserDatabase.saveClassroom(classroom)
+            }
+        })
+    }
+    
+    func updateSettingFromCloud(newString: String) {
+        data.setValue(newString, forKey: self.key)
+    }
+    
+}
+
 class Classroom {
     
     let record: CKRecord
@@ -453,10 +534,33 @@ class Classroom {
         name = record.valueForKey("Name") as! String
         location = record.valueForKey("Location") as! CLLocation
         passcode = record.valueForKey("Passcode") as! String
+        
+        //load settings
+        if let settingsArray = record.valueForKey("Settings") as? [String] {
+            let cloudSettings = arrayToDict(settingsArray)
+            for setting in RZClassroomSettings {
+                if let userInput = cloudSettings[setting.name] {
+                    setting.updateSettingFromCloud(userInput)
+                }
+            }
+        }
+        
     }
     
     func getUpdatedRecord() -> CKRecord {
         record.setObject(passcode, forKey: "Passcode")
+        
+        //create settings dictionary
+        var cloudSettings: [String : String] = [:]
+        for setting in RZClassroomSettings {
+            if let current = setting.currentSetting() {
+                cloudSettings.updateValue("\(current)", forKey: setting.name)
+            }
+        }
+        
+        let settingsArray = dictToArray(cloudSettings)
+        record.setObject(settingsArray, forKey: "Settings")
+        
         return record
     }
     

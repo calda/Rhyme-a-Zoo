@@ -42,6 +42,7 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
         decorateUserIcon(userIcon)
         userName.setTitle(RZCurrentUser.name, forState: .Normal)
         
+        RZUserDatabase.refreshUser(RZCurrentUser)
     }
     
     override func viewDidAppear(animated: Bool) {

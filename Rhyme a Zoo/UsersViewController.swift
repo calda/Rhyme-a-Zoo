@@ -12,6 +12,7 @@ import UIKit
 class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UIGestureRecognizerDelegate {
     
     var users: [User] = []
+    var allowUserCreation = true
     var cloudUsers: Bool = false
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var collectionWidth: NSLayoutConstraint!
@@ -36,6 +37,10 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
         activityIndicator.hidden = animated
         
         loadUsers()
+        
+        if let allowUserCreation = RZSettingUserCreation.currentSetting() {
+            self.allowUserCreation = allowUserCreation
+        }
         
         //load users again just in case it took a bit to save to the cloud
         if animated {
@@ -177,7 +182,8 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
         let collectionHeight = (notCollection * 0.75) / (iPad() ? 2.0 : 1.0)
         let iconHeight = collectionHeight - 29
         let cellWidth = iconHeight + 15
-        let widthInUse = cellWidth * CGFloat(ceil(CGFloat(users.count + 1) / (iPad() ? 2.0 : 1.0)))
+        let userCount = CGFloat(users.count + (allowUserCreation ? 1 : 0))
+        let widthInUse = cellWidth * CGFloat(ceil(userCount) / (iPad() ? 2.0 : 1.0))
         
         //center collection view if full width is not used
         let screenWidth = UIScreen.mainScreen().bounds.width
@@ -240,7 +246,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return users.count + 1
+        return users.count + (allowUserCreation ? 1 : 0)
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -267,9 +273,21 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
             return
         }
         let user = users[indexPath.item]
-        
-        //will eventually have user authentication here
-        
+        checkUserPasscode(user)
+    }
+    
+    func checkUserPasscode(user: User) {
+        if let passcode = user.passcode where RZSettingRequirePasscode.currentSetting() == true {
+            requestPasscode(passcode, "Enter the passcode for \(user.name)", currentController: self, completion: {
+                self.logInToUser(user)
+            })
+        }
+        else {
+            logInToUser(user)
+        }
+    }
+    
+    func logInToUser(user: User) {
         RZCurrentUser = user
         user.pullDataFromCloud()
         let mainMenu = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController() as! UIViewController
@@ -289,7 +307,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
                     }))
                     mainMenu.presentViewController(alert, animated: true, completion: nil)
                 }
-                
+                    
                 else {
                     //other option is that the internet is no longer available
                     mainMenu.dismissViewControllerAnimated(true, completion: {

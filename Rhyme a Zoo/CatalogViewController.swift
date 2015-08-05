@@ -99,6 +99,11 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
     }
     
     override func viewWillAppear(animated: Bool) {
+        
+        if RZShowingFavorites && RZQuizDatabase.numberOfFavories() == 0 {
+            RZShowingFavorites = false
+        }
+        
         collectionView.reloadData()
             
         if animatingFromHome {
@@ -162,7 +167,7 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
                 self.view.layoutIfNeeded()
             }
         }
-        playTransitionForView(collectionView, duration: 1.0, transition: "rippleEffect")
+        playTransitionForView(collectionView, duration: 0.3, transition: "rotate")
     }
 }
 
