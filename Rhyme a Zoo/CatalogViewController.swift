@@ -83,7 +83,7 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
         }
         
         
-        let height = (collectionView.frame.height - (5.0 * (heightDivisor + 1))) / heightDivisor
+        var height = (collectionView.frame.height - (5.0 * (heightDivisor + 1))) / heightDivisor
         let width = collectionView.frame.width / widthDivisor
         return CGSizeMake(width, height)
     }
@@ -92,9 +92,6 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
         if !canHideButtonGradient { return }
         if self.buttonGradientLeading.constant != -70.0 {
             self.buttonGradientLeading.constant = -70.0
-            UIView.animateWithDuration(0.5, animations: {
-                self.view.layoutIfNeeded()
-            })
         }
     }
     

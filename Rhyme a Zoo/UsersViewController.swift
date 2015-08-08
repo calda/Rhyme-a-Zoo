@@ -15,6 +15,10 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     var allowUserCreation = true
     var cloudUsers: Bool = false
     @IBOutlet weak var collectionView: UICollectionView!
+    var numberOfCells: Int {
+        return collectionView(collectionView, numberOfItemsInSection: 0)
+    }
+    @IBOutlet weak var collectionViewArea: UIView!
     @IBOutlet weak var collectionWidth: NSLayoutConstraint!
     @IBOutlet weak var coverGradient: UIImageView!
     
@@ -25,6 +29,10 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     var classroomLinked = false
     var viewAppearingAnimated: Bool = true
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    
+    var displayOffset: CGFloat {
+        return iPad() && numberOfCells > 2 ? 2.0 : 1.0
+    }
     
     //MARK: - Loading Users with fail-safes
     
@@ -56,6 +64,10 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
         //but stay on this view if there is a linked classroom
         RZUserDatabase.getLinkedClassroom() { classroom in
             if let classroom = classroom {
+                if let allowUserCreation = RZSettingUserCreation.currentSetting() {
+                    self.allowUserCreation = allowUserCreation
+                }
+                
                 self.classroomLabel.hidden = false
                 self.classroomLabel.titleLabel!.text = classroom.name
                 self.classroomLabel.setTitle(classroom.name, forState: .Normal)
@@ -176,14 +188,20 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
             coverGradient.alpha = 1.0
         }
         
+        if iPad() && displayOffset == 1.0 {
+            collectionViewArea.transform = CGAffineTransformMakeScale(0.75, 0.75)
+        } else {
+            collectionViewArea.transform = CGAffineTransformMakeScale(1.0, 1.0)
+        }
+        
         //calculate height of collectionView and width of cells
         let screenHeight = UIScreen.mainScreen().bounds.height
         let notCollection = screenHeight - (10 + (screenHeight / 4.5) + 10)
-        let collectionHeight = (notCollection * 0.75) / (iPad() ? 2.0 : 1.0)
+        let collectionHeight = (notCollection * 0.75) / displayOffset
         let iconHeight = collectionHeight - 29
         let cellWidth = iconHeight + 15
         let userCount = CGFloat(users.count + (allowUserCreation ? 1 : 0))
-        let widthInUse = cellWidth * CGFloat(ceil(userCount) / (iPad() ? 2.0 : 1.0))
+        let widthInUse = cellWidth * CGFloat(ceil(userCount / displayOffset))
         
         //center collection view if full width is not used
         let screenWidth = UIScreen.mainScreen().bounds.width
@@ -192,12 +210,12 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
             collectionWidth.constant = -diff
             self.view.layoutIfNeeded()
             collectionView.scrollEnabled = false
-            collectionView.contentInset = UIEdgeInsetsZero
+            collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         } else {
             collectionView.scrollEnabled = true
             collectionWidth.constant = 0
             self.view.layoutIfNeeded()
-            collectionView.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+            collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         }
         
         //turn off clipping on the collection view
@@ -208,7 +226,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
             collectionView.transform = CGAffineTransformMakeScale(0.5, 0.5)
             UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: nil, animations: {
                 self.collectionView.transform = CGAffineTransformMakeScale(1.0, 1.0)
-                }, completion: nil)
+            }, completion: nil)
             
             UIView.animateWithDuration(0.3) {
                 self.collectionView.alpha = 1.0
@@ -255,12 +273,12 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
         }
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("user", forIndexPath: indexPath) as! UserCell
         let user = users[indexPath.item]
-        cell.decorate(user, height: collectionView.frame.height  / (iPad() ? 2.0 : 1.0))
+        cell.decorate(user, height: collectionView.frame.height  / displayOffset)
         return cell
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        let height = collectionView.frame.height / (iPad() ? 2.0 : 1.0)
+        let height = collectionView.frame.height / displayOffset
         let iconHeight = height - 29
         let width = iconHeight + 15
         return CGSizeMake(width, height)
@@ -269,11 +287,12 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     //MARK: - Selection of Cells
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        if indexPath.item == users.count { //add user button is last
-            return
-        }
-        let user = users[indexPath.item]
-        checkUserPasscode(user)
+        println(indexPath.item)
+        //if indexPath.item == users.count { //add user button is last
+        //    return
+        //}
+        //let user = users[indexPath.item]
+        //checkUserPasscode(user)
     }
     
     func checkUserPasscode(user: User) {
@@ -322,20 +341,36 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
         })
     }
     
+    var pannedDuringTouch = false
+    
     @IBAction func touchRecognized(sender: UITouchGestureRecognizer) {
         let touch = sender.locationInView(self.view)
+        
+        if sender.state == .Began {
+            pannedDuringTouch = false
+        }
         
         for visible in collectionView.visibleCells() {
             if let cell = visible as? UICollectionViewCell {
                 
-                if sender.state == .Ended {
-                    deselectCell(cell)
-                    continue
-                }
-                
                 let screenFrame = cell.superview!.convertRect(cell.frame, toView: self.view)
-                if screenFrame.contains(touch) {
-                   selectCell(cell)
+                if screenFrame.contains(touch) && !pannedDuringTouch {
+                    if sender.state == .Ended {
+                        //select the cell
+                        deselectCell(cell)
+                        if let cell = cell as? UserCell {
+                            if let user = cell.user where !pannedDuringTouch {
+                                checkUserPasscode(user)
+                            }
+                        }
+                        else {
+                            //is Add User cell
+                            let newUser = UIStoryboard(name: "User", bundle: nil).instantiateViewControllerWithIdentifier("newUser") as! NewUserViewController
+                            self.presentViewController(newUser, animated: true, completion: nil)
+                        }
+                    } else {
+                        selectCell(cell)
+                    }
                 } else {
                     deselectCell(cell)
                 }
@@ -348,7 +383,10 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     }
     
     //deselect all cells when the view scrolls
+    
     func scrollViewDidScroll(scrollView: UIScrollView) {
+        pannedDuringTouch = true
+        
         for visible in collectionView.visibleCells() {
             if let cell = visible as? UICollectionViewCell {
                 deselectCell(cell)
@@ -399,8 +437,10 @@ class UserCell : UICollectionViewCell {
     
     @IBOutlet weak var icon: UIImageView!
     @IBOutlet weak var name: UILabel!
+    var user: User?
     
     func decorate(user: User, height: CGFloat) {
+        self.user = user
         name.text = user.name
         icon.image = user.icon
         decorateUserIcon(icon, height)

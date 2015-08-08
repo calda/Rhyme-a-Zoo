@@ -432,6 +432,7 @@ class User {
         record.setObject(RZQuizDatabase.currentZooLevel(), forKey: "ZooLevel")
         record.setObject(RZQuizDatabase.currentLevel(), forKey: "QuizLevel")
         record.setObject(RZQuizDatabase.getKeeperString(), forKey: "Zookeeper")
+        record.setObject(RZQuizDatabase.getTotalMoneyEarnedArray(), forKey: "TotalMoneyEarned")
         
         RZCurrentUser = actualUser
         return record
@@ -447,6 +448,7 @@ class User {
             let zooLevel = record.valueForKey("ZooLevel") as? Int ?? 1
             let quizLevel = record.valueForKey("QuizLevel") as? Int ?? 1
             let keeperString = record.valueForKey("Zookeeper") as? String ?? "boy~1"
+            let totalMoneyEarned = record.valueForKey("TotalMoneyEarned") as? [String] ?? []
             
             let actualUser = RZCurrentUser
             RZCurrentUser = self
@@ -459,6 +461,7 @@ class User {
             RZQuizDatabase.setZooLevel(zooLevel)
             RZQuizDatabase.setQuizLevel(quizLevel)
             RZQuizDatabase.setKeeperWithString(keeperString)
+            RZQuizDatabase.setTotalMoneyEarnedFromArray(totalMoneyEarned)
             
             RZCurrentUser = actualUser
             return true

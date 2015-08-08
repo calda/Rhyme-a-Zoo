@@ -399,7 +399,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0640;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Stephen Celis";
 				TargetAttributes = {
 					DC3773F219C8CBB3004FCF85 = {
@@ -579,6 +579,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -649,6 +650,7 @@
 				INFOPLIST_FILE = SQLite/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.stephencelis.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -668,6 +670,7 @@
 				INFOPLIST_FILE = SQLite/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.stephencelis.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -681,6 +684,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				INFOPLIST_FILE = "SQLite Tests/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.stephencelis.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_WHOLE_MODULE_OPTIMIZATION = NO;
 			};
@@ -693,6 +697,7 @@
 				APPLICATION_EXTENSION_API_ONLY = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "SQLite Tests/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.stephencelis.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_WHOLE_MODULE_OPTIMIZATION = NO;
 			};
@@ -715,6 +720,7 @@
 				INFOPLIST_FILE = SQLite/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.stephencelis.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = SQLite;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -738,6 +744,7 @@
 				INFOPLIST_FILE = SQLite/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.stephencelis.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = SQLite;
 				SKIP_INSTALL = YES;
 			};
@@ -751,6 +758,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				INFOPLIST_FILE = "SQLite Tests/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.stephencelis.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "SQLiteCipher Tests";
 				SWIFT_WHOLE_MODULE_OPTIMIZATION = NO;
 			};
@@ -763,6 +771,7 @@
 				APPLICATION_EXTENSION_API_ONLY = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "SQLite Tests/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.stephencelis.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "SQLiteCipher Tests";
 				SWIFT_WHOLE_MODULE_OPTIMIZATION = NO;
 			};

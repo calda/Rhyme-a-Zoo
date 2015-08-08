@@ -3,15 +3,17 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "t_rhymes.png"
+      "filename" : "coin-20-small@1x.png"
     },
     {
       "idiom" : "universal",
-      "scale" : "2x"
+      "scale" : "2x",
+      "filename" : "coin-20-small@2x.png"
     },
     {
       "idiom" : "universal",
-      "scale" : "3x"
+      "scale" : "3x",
+      "filename" : "coin-20-small@3x.png"
     }
   ],
   "info" : {

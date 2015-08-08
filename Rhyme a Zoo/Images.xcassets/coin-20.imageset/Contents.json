@@ -3,15 +3,17 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "t_bank.png"
+      "filename" : "coin-20@1x.png"
     },
     {
       "idiom" : "universal",
-      "scale" : "2x"
+      "scale" : "2x",
+      "filename" : "coin-20@2x.png"
     },
     {
       "idiom" : "universal",
-      "scale" : "3x"
+      "scale" : "3x",
+      "filename" : "coin-20@3x.png"
     }
   ],
   "info" : {

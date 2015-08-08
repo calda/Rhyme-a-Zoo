@@ -171,7 +171,7 @@ class BuildingViewController : ZookeeperGameController {
     }
     
     func addButtonForAnimal(animal: String, playerOwns owned: Bool) {
-        let size = (owned ? (iPad() ? CGSizeMake(60, 60) : CGSizeMake(40, 40)) : (iPad() ? CGSizeMake(100, 80) : CGSizeMake(50, 40)))
+        let size = (owned ? (iPad() ? CGSizeMake(60, 60) : CGSizeMake(40, 40)) : (iPad() ? CGSizeMake(80, 80) : CGSizeMake(40, 40)))
         let percentCenter = coinCenters[animal]!
         let center = CGPointMake(percentCenter.x * sceneSize.width, percentCenter.y * sceneSize.height)
         var frame = CGRectMake(center.x - size.width/2, center.y - size.height/2, size.width, size.height)
@@ -185,7 +185,9 @@ class BuildingViewController : ZookeeperGameController {
         button.imageView!.contentMode = UIViewContentMode.ScaleAspectFit
         
         if !owned {
-            button.setImage(UIImage(named: "coin-stack"), forState: .Normal)
+            let coinSize = iPad() ? "medium" : "small"
+            let coinName = "coin-20-\(coinSize)"
+            button.setImage(UIImage(named: coinName), forState: .Normal)
             button.addTarget(self, action: "purchasePressed:", forControlEvents: .TouchUpInside)
             
             if !RZQuizDatabase.canAffordAnimal() {

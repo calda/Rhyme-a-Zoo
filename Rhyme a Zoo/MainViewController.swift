@@ -22,6 +22,9 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var userIcon: UIButton!
     @IBOutlet weak var userName: UIButton!
     
+    @IBOutlet weak var zookeeperButton: UIButton!
+    var currentZookeeper: String?
+    
     override func viewWillAppear(animated: Bool) {
         if self.presentedViewController == nil {
             
@@ -43,6 +46,11 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
         userName.setTitle(RZCurrentUser.name, forState: .Normal)
         
         RZUserDatabase.refreshUser(RZCurrentUser)
+        
+        if currentZookeeper != RZQuizDatabase.getKeeperString() {
+            createImageForZookeeper()
+        }
+        
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -163,6 +171,39 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
         let editUserController = UIStoryboard(name: "User", bundle: nil).instantiateViewControllerWithIdentifier("newUser") as! NewUserViewController
         editUserController.openInEditModeForUser(RZCurrentUser)
         self.presentViewController(editUserController, animated: true, completion: nil)
+    }
+    
+    func createImageForZookeeper() {
+        async() {
+            let gender = RZQuizDatabase.getKeeperGender()
+            let number = RZQuizDatabase.getKeeperNumber()
+            let imageName = "zookeeper-\(gender)\(number)"
+            
+            let foreground = UIImage(named: "home-zookeeper-foreground" + (iPad() ? "-large" : ""))!
+            let zookeeper = UIImage(named: imageName)!
+            let background = UIImage(named: "home-zookeeper-background" + (iPad() ? "-large" : ""))!
+            
+            UIGraphicsBeginImageContextWithOptions(background.size, false, 1)
+            background.drawAtPoint(CGPointZero)
+            
+            //draw zookeeper in center
+            var origin = CGPointMake(159, 422)
+            var size = CGSizeMake(720, 1250)
+            
+            if !iPad() {
+                origin = CGPointMake(origin.x / 2, origin.y / 2)
+                size = CGSizeMake(size.width / 2, size.height / 2)
+            }
+            
+            zookeeper.drawInRect(CGRect(origin: origin, size: size))
+            
+            foreground.drawAtPoint(CGPointZero)
+            
+            let composite = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+            self.zookeeperButton.setImage(composite, forState: .Normal)
+            self.currentZookeeper = RZQuizDatabase.getKeeperString()
+        }
     }
     
 }

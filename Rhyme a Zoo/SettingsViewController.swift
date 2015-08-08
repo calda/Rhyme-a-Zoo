@@ -14,24 +14,9 @@ class SettingsViewController : UIViewController, UITableViewDataSource, UITableV
     var classroom: Classroom!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet var touchRecognizer: UITouchGestureRecognizer!
-    var updateTimer: NSTimer?
     
     override func viewWillAppear(animated: Bool) {
         tableView.contentInset = UIEdgeInsets(top: 70.0, left: 0.0, bottom: 0.0, right: 0.0)
-        updateTimer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: "updateSettings", userInfo: nil, repeats: true)
-    }
-    
-    func updateSettings() {
-        RZUserDatabase.refreshLinkedClassroomData({ classroom, dataChanged in
-            if dataChanged {
-                self.classroom = classroom
-                self.tableView.reloadData()
-            }
-        })
-    }
-    
-    override func viewWillDisappear(animated: Bool) {
-        updateTimer?.invalidate()
     }
     
     //MARK: - Table View Data Source
@@ -91,7 +76,9 @@ class SettingsViewController : UIViewController, UITableViewDataSource, UITableV
             return row
         }
         
-        return tableView.dequeueReusableCellWithIdentifier(cell.identifier, forIndexPath: indexPath) as! UITableViewCell
+        let row = tableView.dequeueReusableCellWithIdentifier(cell.identifier, forIndexPath: indexPath) as! UITableViewCell
+        row.backgroundColor = UIColor.clearColor()
+        return row
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
@@ -193,14 +180,13 @@ class SettingsViewController : UIViewController, UITableViewDataSource, UITableV
             RZUserDatabase.unlinkClassroom()
             
             //give the server a sec to catch up
-            self.view.userInteractionEnabled = false
-            delay(2.0) {
-                //show alert then dismiss
-                let alert = UIAlertController(title: "This device has been removed from \"\(classroomName)\"", message: "", preferredStyle: .Alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: { _ in
+            //show alert then dismiss
+            let alert = UIAlertController(title: "Removing this device from \"\(classroomName)\"", message: "", preferredStyle: .Alert)
+            self.presentViewController(alert, animated: true, completion: nil)
+            delay(3.0) {
+                self.dismissViewControllerAnimated(true, completion: {
                     self.dismissViewControllerAnimated(true, completion: nil)
-                }))
-                self.presentViewController(alert, animated: true, completion: nil)
+                })
             }
         
         }))
@@ -222,13 +208,13 @@ class SettingsViewController : UIViewController, UITableViewDataSource, UITableV
                 RZUserDatabase.unlinkClassroom()
                 
                 //give the server a sec to catch up
-                self.view.userInteractionEnabled = false
-                delay(2.0) {
-                    let deletedAlert = UIAlertController(title: "Deleted \"\(classroomName)\"", message: nil, preferredStyle: .Alert)
-                    deletedAlert.addAction(UIAlertAction(title: "OK", style: .Default, handler: { _ in
+                //show alert then dismiss
+                let alert = UIAlertController(title: "Deleting \"\(classroomName)\"", message: "", preferredStyle: .Alert)
+                self.presentViewController(alert, animated: true, completion: nil)
+                delay(3.0) {
+                    self.dismissViewControllerAnimated(true, completion: {
                         self.dismissViewControllerAnimated(true, completion: nil)
-                    }))
-                    self.presentViewController(deletedAlert, animated: true, completion: nil)
+                    })
                 }
             })
         
@@ -252,6 +238,7 @@ class ToggleCell : UITableViewCell {
     
     func decorateForSetting(setting: ClassroomSetting) {
         self.setting = setting
+        self.backgroundColor = UIColor.clearColor()
         
         nameLabel.text = setting.name
         descriptionLabel.text = setting.description

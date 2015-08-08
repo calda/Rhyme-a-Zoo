@@ -435,8 +435,8 @@ class QuizViewController : UIViewController {
 }
 
 func setCoinsInImageViews(imageViews: [UIImageView], #gold: Int, #silver: Int, #big: Bool) {
-    let goldImage = UIImage(named: big ? "coin-gold-big" : "coin-gold")
-    let silverImage = UIImage(named: big ? "coin-silver-big" : "coin-silver")
+    let goldImage = UIImage(named: big ? "coin-gold-big" : iPad() ? "coin-gold-medium" : "coin-gold")
+    let silverImage = UIImage(named: big ? "coin-silver-big" : iPad() ? "coin-silver-medium" : "coin-silver")
     
     for i in 0 ..< gold {
         imageViews[i].alpha = 1.0

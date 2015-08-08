@@ -12,6 +12,8 @@ import SQLite
 ///Global database. QuizDatabase -> Quiz -> Question -> Option
 let RZQuizDatabase = QuizDatabase()
 
+//MARK: - Expressions and Keys for accessing data
+
 ///SQLite.swift wrapper for the legacy databace from the PC version of Rhyme a Zoo.
 private let sql = Database(NSBundle.mainBundle().pathForResource("LegacyDB", ofType: "db")!, readonly: true)
 //QUIZ table
@@ -41,6 +43,7 @@ let RZFavoritesKey: NSString = "com.hearatale.raz.favorites"
 let RZQuizResultsKey: NSString  = "com.hearatale.raz.quizResults"
 let RZQuizLevelKey: NSString  = "com.hearatale.raz.quizLevel"
 let RZPlayerBalanceKey: NSString  = "com.hearatale.raz.balance"
+let RZTotalMoneyEarnedKey: NSString = "com.hearatale.raz.totalMoney"
 let RZAnimalsKey: NSString  = "com.hearatale.raz.animals"
 let RZZooLevelKey: NSString  = "com.hearatale.raz.animalLevel"
 let RZKeeperNumberKey: NSString  = "com.hearatale.raz.keeperNumber"
@@ -54,6 +57,8 @@ func userKey(key: NSString, forUser user: User) -> String {
 func userKey(key: NSString) -> String {
     return userKey(key, forUser: RZCurrentUser)
 }
+
+//MARK: - Reading quiz data from the SQL database
 
 ///Top level database structure. Globally available at RZQuizDatabase. Contains many Quizes.
 ///Quiz Database -> Quiz -> Question -> Option
@@ -117,6 +122,8 @@ class QuizDatabase {
         return -1
     }
     
+    //MARK: - Player Data for Quizes
+    
     func getQuizData() -> [String : String] {
         return data.dictionaryForKey(userKey(RZQuizResultsKey)) as? [String : String] ?? [:]
     }
@@ -171,7 +178,7 @@ class QuizDatabase {
         return complete
     }
     
-    //bank 
+    //MARK: - Bank
     
     func getPlayerBalance() -> Double {
         return data.doubleForKey(userKey(RZPlayerBalanceKey))
@@ -188,7 +195,37 @@ class QuizDatabase {
         data.setDouble(value, forKey: userKey(RZPlayerBalanceKey))
     }
     
-    //zoo management
+    func getTotalMoneyEarned() -> (gold: Int, silver: Int) {
+        if let array = data.stringArrayForKey(userKey(RZTotalMoneyEarnedKey)) as? [String] {
+            let dict = arrayToDict(array)
+            if let gold = dict["gold"]?.toInt(), let silver = dict["silver"]?.toInt() {
+                return (gold, silver)
+            }
+        }
+        //unsuccessful
+        return (0, 0)
+    }
+    
+    func setTotalMoneyEarned(#gold: Int, silver: Int) {
+        let dict = ["gold" : "\(gold)", "silver" : "\(silver)"]
+        let array = dictToArray(dict)
+        data.setValue(array, forKey: userKey(RZTotalMoneyEarnedKey))
+    }
+    
+    func getTotalMoneyEarnedArray() -> [String] {
+        let (gold, silver) = getTotalMoneyEarned()
+        let dict = ["gold" : "\(gold)", "silver" : "\(silver)"]
+        return dictToArray(dict)
+    }
+    
+    func setTotalMoneyEarnedFromArray(array: [String]) {
+        let dict = arrayToDict(array)
+        if let gold = dict["gold"]?.toInt(), let silver = dict["silver"]?.toInt() {
+            setTotalMoneyEarned(gold: gold, silver: silver)
+        }
+    }
+    
+    //MARK: - Zoo Management
     
     func getOwnedAnimals() -> [String] {
         if let array = data.arrayForKey(userKey(RZAnimalsKey)) as? [String] {
@@ -247,7 +284,7 @@ class QuizDatabase {
         data.setInteger(level, forKey: userKey(RZZooLevelKey))
     }
     
-    //zookeeper
+    //MARK: - Zookeeper
     
     func getKeeperGender() -> String {
         let gender = data.stringForKey(userKey(RZKeeperGenderKey))
@@ -289,6 +326,8 @@ class QuizDatabase {
     }
     
 }
+
+//MARK: - Quiz / Rhyme Data
 
 typealias Rhyme = Quiz
 
@@ -381,6 +420,9 @@ struct Quiz : Printable {
         //also update player balance
         let cashInflux = Double(gold) + (Double(silver) * 0.5)
         RZQuizDatabase.changePlayerBalanceBy(cashInflux)
+        
+        let (totalGold, totalSilver) = RZQuizDatabase.getTotalMoneyEarned()
+        RZQuizDatabase.setTotalMoneyEarned(gold: totalGold + gold, silver: totalSilver + silver)
         
         RZUserDatabase.saveCurrentUserToLinkedClassroom()
     }
@@ -519,25 +561,4 @@ struct Option: Printable {
         }
     }
     
-}
-
-extension Array {
-    func shuffled() -> [T] {
-        var list = self
-        for i in 0..<(list.count - 1) {
-            let j = Int(arc4random_uniform(UInt32(list.count - i))) + i
-            swap(&list[i], &list[j])
-        }
-        return list
-    }
-}
-
-extension Int {
-    func threeCharacterString() -> String {
-        let start = "\(self)"
-        let length = count(start)
-        if length == 1 { return "00\(start)" }
-        else if length == 2 { return "0\(start)" }
-        else { return start }
-    }
 }

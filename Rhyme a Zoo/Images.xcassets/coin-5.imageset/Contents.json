@@ -3,15 +3,17 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "t_avatar.png"
+      "filename" : "coin stack@1x.png"
     },
     {
       "idiom" : "universal",
-      "scale" : "2x"
+      "scale" : "2x",
+      "filename" : "coin stack@2x.png"
     },
     {
       "idiom" : "universal",
-      "scale" : "3x"
+      "scale" : "3x",
+      "filename" : "coin stack@3x.png"
     }
   ],
   "info" : {

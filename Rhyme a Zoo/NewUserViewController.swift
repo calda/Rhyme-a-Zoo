@@ -66,7 +66,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
             nameLabel.alpha = 0.95
             userInputName = user.name
             
-            editModeDeleteButton.alpha = 1.0
+            editModeDeleteButton.alpha = RZSettingUserCreation.currentSetting() == false ? 0.0 : 1.0
             editModeBackButton.alpha = 1.0
             doneButton.alpha = 0.0
             typeNameButton.alpha = 0.0
@@ -80,6 +80,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
     }
     
     func setAvailableIconsForUsers(users: [User]) {
+        var userRemoved = false
         for user in users {
             let usedIcon = user.iconName
             let iconCount = availableIcons.count
@@ -87,6 +88,13 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
                 //go backwards through the array so we can take out indecies as we go
                 let i = iconCount - i_forwards
                 if usedIcon.lowercaseString.hasPrefix(availableIcons[i].lowercaseString) {
+                    
+                    //leave one of the user's current icon
+                    if user.toUserString() == RZCurrentUser.toUserString() {
+                        if userRemoved { continue }
+                        else { userRemoved = true }
+                    }
+                    
                     availableIcons.removeAtIndex(i)
                 }
             }
@@ -216,6 +224,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
     }
     
     @IBAction func continuePressed(sender: AnyObject) {
+        self.resignFirstResponder()
         if RZSettingRequirePasscode.currentSetting() == true {
             createPasscode("Create a passcode for \(nameLabel.text!)", currentController: self, { passcode in
                 if let passcode = passcode {

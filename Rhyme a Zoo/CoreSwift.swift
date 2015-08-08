@@ -218,10 +218,27 @@ enum LocationFailureReason {
     case Error(NSError)
 }
 
+//MARK: - Standard Library Extensions
 
+extension Array {
+    ///Returns a copy of the array in random order
+    func shuffled() -> [T] {
+        var list = self
+        for i in 0..<(list.count - 1) {
+            let j = Int(arc4random_uniform(UInt32(list.count - i))) + i
+            swap(&list[i], &list[j])
+        }
+        return list
+    }
+}
 
-
-
-
-
-
+extension Int {
+    ///Converts an integer to a standardized three-character string. 1 -> 001. 99 -> 099. 123 -> 123.
+    func threeCharacterString() -> String {
+        let start = "\(self)"
+        let length = count(start)
+        if length == 1 { return "00\(start)" }
+        else if length == 2 { return "0\(start)" }
+        else { return start }
+    }
+}
