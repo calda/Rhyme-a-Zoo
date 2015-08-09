@@ -126,7 +126,12 @@ class RhymeViewController : UIViewController {
     }
     
     override func viewDidAppear(animated: Bool) {
-        playRhyme()
+        delay(0.05) {
+            if !self.willPlayAnimalVideo() {
+                self.playRhyme()
+            }
+        }
+        
     }
     
     //MARK: - Handling Playback of the Rhyme
@@ -395,6 +400,34 @@ class RhymeViewController : UIViewController {
             }
         }
         
+    }
+    
+    //MARK: - Playing "Buy your animal" video
+    
+    func willPlayAnimalVideo() -> Bool {
+        let balance = RZQuizDatabase.getPlayerBalance()
+        let numberOfAnimals = RZQuizDatabase.getOwnedAnimals().count
+        
+        var videoToPlay: String? = nil
+        if balance >= 20 && numberOfAnimals == 0 { videoToPlay = "animals-video" }
+        
+        if let videoToPlay = videoToPlay {
+            playAnimalVideo(videoToPlay)
+            return true
+        }
+        
+        return false
+    }
+    
+    func playAnimalVideo(name: String) {
+        playVideo(name: name, currentController: self, completion: {
+            //present the current zoo level building
+            let currentZooLevel = RZQuizDatabase.currentZooLevel()
+            let building = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("building") as! BuildingViewController
+            building.mustBuy = true
+            building.decorate(building: currentZooLevel, displaySize: self.view.frame.size)
+            self.presentViewController(building, animated: true, completion: nil)
+        })
     }
     
 }

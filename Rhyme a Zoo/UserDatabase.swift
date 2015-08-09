@@ -437,6 +437,7 @@ class User {
         record.setObject(RZQuizDatabase.currentLevel(), forKey: "QuizLevel")
         record.setObject(RZQuizDatabase.getKeeperString(), forKey: "Zookeeper")
         record.setObject(RZQuizDatabase.getTotalMoneyEarnedArray(), forKey: "TotalMoneyEarned")
+        record.setObject("\(RZQuizDatabase.hasWatchedWelcomeVideo())", forKey: "HasWatchedWelcomeVideo")
         
         RZCurrentUser = actualUser
         return record
@@ -453,6 +454,7 @@ class User {
             let quizLevel = record.valueForKey("QuizLevel") as? Int ?? 1
             let keeperString = record.valueForKey("Zookeeper") as? String ?? "boy~1"
             let totalMoneyEarned = record.valueForKey("TotalMoneyEarned") as? [String] ?? []
+            let hasWatchedWelcomeVideo = record.valueForKey("HasWatchedWelcomeVideo") as? String ?? "false"
             
             let actualUser = RZCurrentUser
             RZCurrentUser = self
@@ -466,6 +468,7 @@ class User {
             RZQuizDatabase.setQuizLevel(quizLevel)
             RZQuizDatabase.setKeeperWithString(keeperString)
             RZQuizDatabase.setTotalMoneyEarnedFromArray(totalMoneyEarned)
+            RZQuizDatabase.setHasWatchedWelcomeVideo(hasWatchedWelcomeVideo == "true")
             
             RZCurrentUser = actualUser
             return true
@@ -483,8 +486,9 @@ class User {
 let RZSettingPhoneticsOnly = ClassroomSetting("Only Show Phonetics Questions", "Students will not be quizzed on rhyme comprehension.", false)
 let RZSettingRequirePasscode = ClassroomSetting("Require Student Passcodes", "Students will have to type their passcode to play.", true)
 let RZSettingUserCreation = ClassroomSetting("Allow students to create new Users", "Students will be able to create new user accounts.", false)
+let RZSettingSkipVideos = ClassroomSetting("Allow students to skip videos", "Students will be able to skip videos, possibly missing important info.", false)
 
-let RZClassroomSettings = [RZSettingRequirePasscode, RZSettingUserCreation, RZSettingPhoneticsOnly]
+let RZClassroomSettings = [RZSettingRequirePasscode, RZSettingUserCreation, RZSettingPhoneticsOnly, RZSettingSkipVideos]
 
 struct ClassroomSetting {
     

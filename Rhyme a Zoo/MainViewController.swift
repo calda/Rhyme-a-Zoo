@@ -116,6 +116,16 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
             }
         })
         
+        //play welcome video if it hasn't been played
+        delay(0.1) {
+            if !RZQuizDatabase.hasWatchedWelcomeVideo() {
+                playVideo(name: "welcome-video", currentController: self, completion: {
+                    RZQuizDatabase.setHasWatchedWelcomeVideo(true)
+                    RZUserDatabase.saveCurrentUserToLinkedClassroom()
+                })
+            }
+        }
+        
     }
     
     func touchDownNotificationRecieved(notification: NSNotification) {

@@ -14,6 +14,7 @@ class VideoViewController : UIViewController {
     //MARK: - Managing Playback
     
     var videoName = "welcome-video"
+    var completion: (() -> ())?
     var frames: [(imageName: String, time: Double)]?
     var timers: [NSTimer] = []
     
@@ -68,11 +69,18 @@ class VideoViewController : UIViewController {
     //MARK: - Configuring the view
     
     @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var skipButton: UIVisualEffectView!
     
     override func viewWillAppear(animated: Bool) {
         loadDataForVideo()
         if let frames = frames {
             imageView.image = UIImage(named: frames[0].imageName)
+        }
+        
+        if RZSettingSkipVideos.currentSetting() == false {
+            skipButton.hidden = true
+        } else {
+            skipButton.hidden = false
         }
         
     }
@@ -89,9 +97,20 @@ class VideoViewController : UIViewController {
         UAHaltPlayback()
     }
     
+    override func viewDidDisappear(animated: Bool) {
+        completion?()
+    }
+    
     @IBAction func closeView(sender: AnyObject) {
         self.dismissViewControllerAnimated(true, completion: nil)
     }
     
-    
 }
+
+func playVideo(#name: String, #currentController: UIViewController, #completion: (() -> ())?) {
+    let videoController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("video") as! VideoViewController
+    videoController.videoName = name
+    videoController.completion = completion
+    currentController.presentViewController(videoController, animated: true, completion: nil)
+}
+

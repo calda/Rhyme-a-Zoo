@@ -151,6 +151,9 @@ class ZooViewController : ZookeeperGameController {
         let x = backgroundImage.frame.width * percentagePoint.x
         let y = backgroundImage.frame.height * percentagePoint.y
         var frame = CGRectMake(x - 20.0, y - 20.0, 40.0, 40.0) //frame inside of backgroundImage
+        if iPad() {
+            frame = CGRectMake(x - 30.0, y - 30.0, 60.0, 60.0)
+        }
         let backgroundOrigin = backgroundImage.frame.origin
         frame.offset(dx: backgroundOrigin.x, dy: backgroundOrigin.y)
         

@@ -48,6 +48,7 @@ let RZAnimalsKey: NSString  = "com.hearatale.raz.animals"
 let RZZooLevelKey: NSString  = "com.hearatale.raz.animalLevel"
 let RZKeeperNumberKey: NSString  = "com.hearatale.raz.keeperNumber"
 let RZKeeperGenderKey: NSString  = "com.hearatale.raz.keeperGender"
+let RZHasWatchedWelcomeVideo: NSString = "com.hearatale.raz.watchedWelcome"
 
 func userKey(key: NSString, forUser user: User) -> String {
     let originalKey = key as String
@@ -323,6 +324,16 @@ class QuizDatabase {
         if let number = splits[1].toInt() {
             setKeeperNumber(number)
         }
+    }
+    
+    //MARK: - User Statistics
+    
+    func hasWatchedWelcomeVideo() -> Bool {
+        return data.boolForKey(userKey(RZHasWatchedWelcomeVideo))
+    }
+    
+    func setHasWatchedWelcomeVideo(status: Bool) {
+        data.setBool(status, forKey: userKey(RZHasWatchedWelcomeVideo))
     }
     
 }

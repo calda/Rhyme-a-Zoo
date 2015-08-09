@@ -49,6 +49,7 @@ class SettingsViewController : UIViewController, UITableViewDataSource, UITableV
         ("toggle", .Toggle(setting: RZSettingRequirePasscode)),
         ("toggle", .Toggle(setting: RZSettingUserCreation)),
         ("toggle", .Toggle(setting: RZSettingPhoneticsOnly)),
+        ("toggle", .Toggle(setting: RZSettingSkipVideos)),
         ("passcode", .Function(function: { controller in
             controller.changePasscode()
         })),

@@ -15,6 +15,7 @@ class BuildingViewController : ZookeeperGameController {
     @IBOutlet weak var blurredBackground: UIImageView!
     @IBOutlet weak var infoButton: UIButton!
     @IBOutlet weak var buildingButton: UIButton!
+    @IBOutlet weak var backButton: UIButton!
     
     let percentageFrames = [ //each point is a percentage of the total width/height of the background image
         "giraffe" : CGRect(origin: CGPointMake(0.637, 0.0493), size: CGSizeMake(0.318, 0.921)),
@@ -97,6 +98,7 @@ class BuildingViewController : ZookeeperGameController {
     var animalAudioNumber: [String : Int] = [:]
     var buyButtons: [UIButton] = []
     var building: Int!
+    var mustBuy: Bool = false
     var displaySize: CGSize!
     var sceneSize: CGSize!
     
@@ -168,6 +170,10 @@ class BuildingViewController : ZookeeperGameController {
         
         let dark = (building > RZQuizDatabase.currentZooLevel() ? "-dark" : "")
         buildingButton.setImage(UIImage(named: "button-\(building)\(dark)"), forState: .Normal)
+        
+        if mustBuy {
+            backButton.enabled = false
+        }
     }
     
     func addButtonForAnimal(animal: String, playerOwns owned: Bool) {
@@ -285,6 +291,7 @@ class BuildingViewController : ZookeeperGameController {
         if let animal = sender.restorationIdentifier {
             RZQuizDatabase.purchaseAnimal(animal)
             RZQuizDatabase.advanceCurrentLevelIfComplete(buildingAnimals[building - 1])
+            backButton.enabled = true
             
             //color in animal and play sound
             UAPlayer().play("correct", ofType: ".mp3", ifConcurrent: .Interrupt)
