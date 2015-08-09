@@ -334,7 +334,11 @@ class UserDatabase {
                         }
                     }
                     
-                    RZUserDatabase.saveUserToLinkedClassroom(newUser)
+                    if let record = newUser.getUpdatedRecord(classroom) {
+                        newUser.record = record
+                        RZUserDatabase.saveUserToLinkedClassroom(newUser)
+                    }
+                    
                     
                 })
             }
@@ -372,7 +376,7 @@ class User {
         self.name = name
         self.iconName = iconName
         self.icon = UIImage(named: iconName)!
-        ID = name + "\(arc4random_uniform(10000))"
+        self.ID = name + "\(arc4random_uniform(10000))"
     }
     
     ///creates a new user with a unique ID
@@ -380,7 +384,7 @@ class User {
         self.name = name
         self.iconName = iconName
         self.icon = UIImage(named: iconName)!
-        ID = name + "\(arc4random_uniform(10000))"
+        self.ID = name + "\(arc4random_uniform(10000))"
         RZUserDatabase.saveNewUserToLinkedClassroom(self)
     }
     

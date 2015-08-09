@@ -133,7 +133,7 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
         for (button, frame) in buttonFrames {
             if frame.contains(touch) {
                 UIView.animateWithDuration(0.2, animations: {
-                    button.transform = CGAffineTransformMakeScale(1.1, 1.1)
+                    button.transform = CGAffineTransformMakeScale(1.07, 1.07)
                 })
             } else {
                 UIView.animateWithDuration(0.2, animations: {
