@@ -9,6 +9,32 @@
 import Foundation
 import UIKit
 
+let RZUserIconOptions = ["bat", "Birds", "bunny", "calf", "cat", "cow", "dog", "duck", "ducks", "elephant", "fish",
+    "fly", "flying squirrel", "fox", "frog", "goat", "goose", "hen", "hog", "horse", "lion", "mouse", "pig",
+    "robin", "sheep", "puppy", "turtle", "wolf"]
+
+func updateAvailableIconsForUsers(users: [User], inout availableIcons: [String]) {
+    var userRemoved = false
+    for user in users {
+        let usedIcon = user.iconName
+        let iconCount = availableIcons.count
+        for i_forwards in 1 ... iconCount {
+            //go backwards through the array so we can take out indecies as we go
+            let i = iconCount - i_forwards
+            if usedIcon.lowercaseString.hasPrefix(availableIcons[i].lowercaseString) {
+                
+                //leave one of the user's current icon
+                if user.toUserString() == RZCurrentUser.toUserString() {
+                    if userRemoved { continue }
+                    else { userRemoved = true }
+                }
+                
+                availableIcons.removeAtIndex(i)
+            }
+        }
+    }
+}
+
 class NewUserViewController : UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     @IBOutlet weak var selectedIcon: UIImageView!
@@ -33,9 +59,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
     @IBOutlet weak var doneButton: UIButton!
     
     
-    var availableIcons = ["bat", "Birds", "bunny", "calf", "cat", "cow", "dog", "duck", "ducks", "elephant", "fish",
-        "fly", "flying squirrel", "fox", "frog", "goat", "goose", "hen", "hog", "horse", "lion", "mouse", "pig",
-        "robin", "sheep", "puppy", "turtle", "wolf"]
+    var availableIcons = RZUserIconOptions
     
     override func viewWillAppear(animated: Bool) {
         editModeBackButton.alpha = 0.0
@@ -47,13 +71,13 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
         
         //remove unavailable icons and shuffle remaining
         availableIcons = availableIcons.shuffled()
-        setAvailableIconsForUsers(RZUserDatabase.getLocalUsers())
+        updateAvailableIconsForUsers(RZUserDatabase.getLocalUsers(), &self.availableIcons)
         
         RZUserDatabase.getLinkedClassroom({ classroom in
             if let classroom = classroom {
                 self.requireName = true
                 RZUserDatabase.getUsersForClassroom(classroom, completion: { users in
-                    self.setAvailableIconsForUsers(users)
+                    updateAvailableIconsForUsers(users, &self.availableIcons)
                     self.collectionView.reloadData()
                 })
             }
@@ -76,28 +100,6 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
             //remove .jpg
             let iconName = (iconFile as NSString).stringByReplacingOccurrencesOfString(".jpg", withString: "")
             self.availableIcons.append(iconName)
-        }
-    }
-    
-    func setAvailableIconsForUsers(users: [User]) {
-        var userRemoved = false
-        for user in users {
-            let usedIcon = user.iconName
-            let iconCount = availableIcons.count
-            for i_forwards in 1 ... iconCount {
-                //go backwards through the array so we can take out indecies as we go
-                let i = iconCount - i_forwards
-                if usedIcon.lowercaseString.hasPrefix(availableIcons[i].lowercaseString) {
-                    
-                    //leave one of the user's current icon
-                    if user.toUserString() == RZCurrentUser.toUserString() {
-                        if userRemoved { continue }
-                        else { userRemoved = true }
-                    }
-                    
-                    availableIcons.removeAtIndex(i)
-                }
-            }
         }
     }
     

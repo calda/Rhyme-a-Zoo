@@ -36,14 +36,14 @@ class KeeperViewController : UIViewController {
     
     @IBAction func nextKeeper(sender: UIButton) {
         number += 1
-        if number == 17 { number = 1 }
+        if number == 37 { number = 1 }
         RZQuizDatabase.setKeeperNumber(number)
         keeperUpdated(nil)
     }
     
     @IBAction func previousKeeper(sender: UIButton) {
         number -= 1
-        if number == 0 { number = 16 }
+        if number == 0 { number = 36 }
         RZQuizDatabase.setKeeperNumber(number)
         keeperUpdated(nil)
     }

@@ -20,13 +20,29 @@ func delay(delay: Double, closure: ()->()) {
 
 ///play a CATransition for a UIView
 func playTransitionForView(view: UIView, #duration: Double, transition transitionName: String) {
+    playTransitionForView(view, duration: duration, transition: transitionName, subtype: nil)
+}
+
+///play a CATransition for a UIView
+func playTransitionForView(view: UIView, #duration: Double, transition transitionName: String, var subtype: String? = nil) {
     let transition = CATransition()
     transition.duration = duration
     transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
     transition.type = transitionName
+    
+    //run fix for transition subtype
+    //subtypes don't take device orientation into account
+    let orientation = UIApplication.sharedApplication().statusBarOrientation
+    //if orientation == .LandscapeLeft || orientation == .PortraitUpsideDown {
+        //if subtype == kCATransitionFromLeft { subtype = kCATransitionFromRight }
+        //else if subtype == kCATransitionFromRight { subtype = kCATransitionFromLeft }
+        //else if subtype == kCATransitionFromTop { subtype = kCATransitionFromBottom }
+        //else if subtype == kCATransitionFromBottom { subtype = kCATransitionFromTop }
+    //}
+    
+    transition.subtype = subtype
     view.layer.addAnimation(transition, forKey: nil)
 }
-
 
 ///dimiss a stack of View Controllers until a desired controler is found
 func dismissController(controller: UIViewController, untilMatch controllerCheck: (UIViewController) -> Bool) {
@@ -108,10 +124,38 @@ func openSettings() {
 }
 
 
+///returns trus if the current device is an iPad
 func iPad() -> Bool {
     return UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad
 }
 
+
+///a more succinct function call to post a notification
+func postNotification(name: String, object: AnyObject?) {
+    NSNotificationCenter.defaultCenter().postNotificationName(name, object: object, userInfo: nil)
+}
+
+///Asynchonrously ownsamples the image view's image to match the view's size
+func downsampleImageInView(imageView: UIImageView) {
+    async() {
+        let newSize = imageView.frame.size
+        let screenScale = UIScreen.mainScreen().scale
+        let scaleSize = CGSizeMake(newSize.width * screenScale, newSize.height * screenScale)
+        
+        if let original = imageView.image where original.size.width > scaleSize.width {
+            UIGraphicsBeginImageContext(scaleSize)
+            let context = UIGraphicsGetCurrentContext()
+            CGContextSetInterpolationQuality(context, kCGInterpolationHigh)
+            CGContextSetShouldAntialias(context, true)
+            original.drawInRect(CGRect(origin: CGPointZero, size: scaleSize))
+            let newImage = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+            dispatch_async(dispatch_get_main_queue(), {
+                imageView.image = newImage
+            })
+        }
+    }
+}
 
 //MARK: - Classes
 
@@ -218,6 +262,30 @@ enum LocationFailureReason {
     case Error(NSError)
 }
 
+///Standard Stack data structure
+
+struct Stack<T> {
+    
+    var array : [T] = []
+    
+    mutating func push(push: T) {
+        array.append(push)
+    }
+    
+    mutating func pop() -> T? {
+        if array.count == 0 { return nil }
+        let count = array.count
+        let pop = array[count - 1]
+        array.removeLast()
+        return pop
+    }
+    
+    var count: Int {
+        return array.count
+    }
+    
+}
+
 //MARK: - Standard Library Extensions
 
 extension Array {
@@ -240,5 +308,12 @@ extension Int {
         if length == 1 { return "00\(start)" }
         else if length == 2 { return "0\(start)" }
         else { return start }
+    }
+}
+
+extension NSObject {
+    ///Short-hand function to register a notification observer
+    func observeNotification(name: String, selector: Selector) {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: selector, name: name, object: nil)
     }
 }

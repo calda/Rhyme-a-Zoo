@@ -22,6 +22,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     @IBOutlet weak var collectionWidth: NSLayoutConstraint!
     @IBOutlet weak var coverGradient: UIImageView!
     
+    @IBOutlet weak var reloadButton: UIButton!
     @IBOutlet weak var classroomIcon: UIButton!
     @IBOutlet weak var classroomLabel: UIButton!
     @IBOutlet weak var collectionViewPosition: NSLayoutConstraint!
@@ -71,8 +72,6 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
                 self.classroomLabel.hidden = false
                 self.classroomLabel.titleLabel!.text = classroom.name
                 self.classroomLabel.setTitle(classroom.name, forState: .Normal)
-                self.classroomLabel.alpha = 0.0
-                self.classroomIcon.alpha = 0.0
                 self.classroomIcon.hidden = false
                 self.coverGradient.alpha = 0.0
                 self.collectionViewPosition.constant = 30.0
@@ -120,6 +119,10 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
                 }
                 
                 self.decorateForLoadedUsers()
+                
+                UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+                    self.reloadButton.alpha = 0.0
+                }, completion: nil)
                 
             }
             
@@ -430,6 +433,10 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
         })
     }
     
+    @IBAction func reloadUsers(sender: UIButton) {
+        self.loadUsers()
+        self.activityIndicator.hidden = false
+    }
     
 }
 

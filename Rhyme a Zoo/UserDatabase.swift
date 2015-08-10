@@ -195,7 +195,7 @@ class UserDatabase {
         let predicate = NSPredicate(format: "distanceToLocation:fromLocation:(Location, %@) < 8047", location) //within 5 miles
         let query = CKQuery(recordType: "Classroom", predicate: predicate)
         query.sortDescriptors = [CKLocationSortDescriptor(key: "Location", relativeLocation: location)]
-        cloud.performQuery(query, inZoneWithID: nil, completionHandler: classroomQueryCompletionHandler(completion))
+        cloud.performQuery(query, inZoneWithID: nil, completionHandler: classroomQueryCompletionHandler(reverseResults: true, completion: completion))
     }
     
     func getClassroomsMatchingText(text: String, location: CLLocation?, completion: [Classroom] -> ()) {
@@ -206,10 +206,10 @@ class UserDatabase {
         } else {
             query.sortDescriptors = [NSSortDescriptor(key: "Name", ascending: true)]
         }
-        cloud.performQuery(query, inZoneWithID: nil, completionHandler: classroomQueryCompletionHandler(completion))
+        cloud.performQuery(query, inZoneWithID: nil, completionHandler: classroomQueryCompletionHandler(reverseResults: location != nil, completion: completion))
     }
     
-    private func classroomQueryCompletionHandler(completion: [Classroom] -> ()) -> ([AnyObject]!, NSError!) -> () {
+    private func classroomQueryCompletionHandler(#reverseResults: Bool, completion: [Classroom] -> ()) -> ([AnyObject]!, NSError!) -> () {
         
         func classroomQueryCompletionHandler(results: [AnyObject]!, error: NSError!) {
             
@@ -221,6 +221,10 @@ class UserDatabase {
                 var classrooms: [Classroom] = []
                 for record in records {
                     classrooms.append(Classroom(record: record))
+                }
+                
+                if reverseResults {
+                    classrooms = classrooms.reverse()
                 }
                 
                 sync() {
@@ -362,7 +366,7 @@ class UserDatabase {
     
 }
 
-class User {
+class User : NSObject {
     
     let name: String
     var icon: UIImage?
@@ -385,8 +389,21 @@ class User {
         self.iconName = iconName
         self.icon = UIImage(named: iconName)!
         self.ID = name + "\(arc4random_uniform(10000))"
+        super.init()
         RZUserDatabase.saveNewUserToLinkedClassroom(self)
     }
+    
+    ///creates a new user with a unique ID
+    init(name: String, iconName: String, passcode: String?) {
+        self.name = name
+        self.iconName = iconName
+        self.icon = UIImage(named: iconName)!
+        self.ID = name + "\(arc4random_uniform(10000))"
+        self.passcode = passcode
+        super.init()
+        RZUserDatabase.saveNewUserToLinkedClassroom(self)
+    }
+    
     
     init?(fromString string: String) {
         let splits = split(string){ $0 == "~" }
@@ -394,12 +411,14 @@ class User {
             name = ""
             iconName = ""
             ID = ""
+            super.init()
             return nil
         }
         name = splits[0]
         ID = splits[1]
         iconName = splits[2]
         icon = UIImage(named: iconName)
+        super.init()
     }
     
     convenience init?(record: CKRecord) {
