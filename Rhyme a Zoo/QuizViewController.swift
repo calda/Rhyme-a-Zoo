@@ -357,8 +357,12 @@ class QuizViewController : UIViewController {
             
             if answerAttempts == 1 {
                 goldCoins++
+                RZQuizDatabase.updatePercentCorrect(question, correct: true)
             } else if answerAttempts == 2 {
                 silverCoins++
+                RZQuizDatabase.updatePercentCorrect(question, correct: false)
+            } else {
+                RZQuizDatabase.updatePercentCorrect(question, correct: false)
             }
             
             //halt question audio if it is still playing

@@ -41,6 +41,7 @@ let WordCategory = Expression<Int>("Category")
 //User Data Keys managed by the database
 let RZFavoritesKey: NSString = "com.hearatale.raz.favorites"
 let RZQuizResultsKey: NSString  = "com.hearatale.raz.quizResults"
+let RZPercentCorrectKey: String = "com.hearatale.raz.percentCorrect"
 let RZQuizLevelKey: NSString  = "com.hearatale.raz.quizLevel"
 let RZPlayerBalanceKey: NSString  = "com.hearatale.raz.balance"
 let RZTotalMoneyEarnedKey: NSString = "com.hearatale.raz.totalMoney"
@@ -336,6 +337,59 @@ class QuizDatabase {
         data.setBool(status, forKey: userKey(RZHasWatchedWelcomeVideo))
     }
     
+    func getPercentCorrectArray() -> [String] {
+        if let array = data.stringArrayForKey(userKey(RZPercentCorrectKey)) as? [String] {
+            if array.count != 4 {
+                //create a new dictionary
+                let dict = ["totalComprehension" : "0", "correctComprehension" : "0", "totalPhonetic" : "0", "correctPhonetic" : "0"]
+                let array = dictToArray(dict)
+                setPercentCorrectArray(array)
+                return array
+            }
+            return array
+        }
+        else {
+            //create a new dictionary
+            let dict = ["totalComprehension" : "0", "correctComprehension" : "0", "totalPhonetic" : "0", "correctPhonetic" : "0"]
+            let array = dictToArray(dict)
+            setPercentCorrectArray(array)
+            return array
+        }
+    }
+    
+    func setPercentCorrectArray(array: [String]) {
+        data.setValue(array, forKey: userKey(RZPercentCorrectKey))
+    }
+    
+    func getPercentCorrectDict() -> [String : Int] {
+        let array = getPercentCorrectArray()
+        let stringDict = arrayToDict(array)
+        var dict: [String : Int] = [:]
+        for (key, value) in stringDict {
+            if let int = value.toInt() {
+                dict[key] = int
+            }
+        }
+        return dict
+    }
+    
+    func updatePercentCorrect(question: Question, correct: Bool) {
+        var dict = getPercentCorrectDict()
+        let isPhonetic = question.isPhonetic()
+        let totalKey = isPhonetic ? "totalPhonetic" : "totalComprehension"
+        let correctKey = isPhonetic ? "correctPhonetic" : "correctComprehension"
+        dict[totalKey] = (dict[totalKey] ?? 0) + 1
+        dict[correctKey] = (dict[correctKey] ?? 0) + (correct ? 1 : 0)
+        
+        //turn [String : String] into [String : Int]
+        var stringDict: [String : String] = [:]
+        for (key, int) in dict {
+            stringDict[key] = "\(int)"
+        }
+
+        setPercentCorrectArray(dictToArray(stringDict))
+    }
+    
 }
 
 //MARK: - Quiz / Rhyme Data
@@ -547,6 +601,10 @@ struct Question: Printable {
         answer = data[QuestionAnswer]
         category = data[QuestionCategory].toInt()!
         text = data[QuestionText]
+    }
+    
+    func isPhonetic() -> Bool {
+        return false
     }
     
 }

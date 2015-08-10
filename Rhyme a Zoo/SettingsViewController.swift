@@ -136,7 +136,6 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
             if cell.frame.contains(touch) {
                 
                 let index = tableView.indexPathForCell(cell)!.item
-                let cell = cells[index]
                 let delegate = tableView.delegate as? SettingsViewTableDelegate
                 
                 if sender.state == .Ended {
@@ -331,7 +330,7 @@ protocol SettingsViewTableDelegate : UITableViewDelegate, UITableViewDataSource 
     
 }
 
-//MARK: Delegate for showing a list of users
+//MARK: - Delegate for showing a list of users
 
 class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailComposeViewControllerDelegate {
     
@@ -361,6 +360,8 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
     func getBackButtonImage() -> UIImage {
         return UIImage(named: "button-back")!
     }
+    
+    //MARK: Table View Data Source
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return users.count + (showEmailCell ? 2 : 1)
@@ -405,6 +406,7 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
         }
         else {
             let user = users[index - (showEmailCell ? 2 : 1)]
+            showStudentStatistics(user)
         }
     }
     
@@ -552,8 +554,333 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
     
-    func showStudentStatistics() {
+    func showStudentStatistics(user: User) {
+        let newDelegate = SettingsUserStatisticsDelegate(user: user, settingsController: settingsController)
+        settingsController.switchToDelegate(newDelegate, isBack: false)
+    }
+    
+}
+
+//MARK: - Delegate for showing User Statistics
+
+class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
+    
+    let user: User
+    let settingsController: SettingsViewController
+    
+    init(user: User, settingsController: SettingsViewController) {
+        self.user = user
+        self.settingsController = settingsController
+    }
+    
+    func getTitle() -> String {
+        return "Student Statistics"
+    }
+    
+    func getBackButtonImage() -> UIImage {
+        return UIImage(named: "button-back")!
+    }
+    
+    //MARK: Table View Data Source
+    
+    var cells: [(identifier: String, decorate: ((UITableViewCell, User) -> ())?, tap: ((User, SettingsViewController) -> ())?)] = [
         
+        //MARK: User Name and Icon
+        (identifier: "bigUser", decorate: { ($0 as? BigUserCell)?.decorateForUser($1) }, tap: nil),
+        
+        //MARK: Passcode
+        (identifier: "userInfo", decorate: { cell, user in
+            if let cell = cell as? UserInfoCell {
+                cell.setTitle("Passcode:")
+                cell.setItem(user.passcode ?? "Not set")
+                if user.passcode == nil && RZSettingRequirePasscode.currentSetting() == true {
+                    cell.itemLabel.textColor = UIColor.redColor()
+                    cell.itemLabel.alpha = 0.4
+                } else {
+                    cell.itemLabel.textColor = UIColor.whiteColor()
+                    cell.itemLabel.alpha = 0.7
+                }
+            }
+        }, tap: nil),
+        
+        //MARK: Change / Create Passcode
+        (identifier: "userInfo", decorate: { cell, user in
+            if let cell = cell as? UserInfoCell {
+                cell.setTitle(user.passcode == nil ? "Create Passcode" : "Change Passcode")
+                if RZSettingRequirePasscode.currentSetting() == false {
+                    cell.setItem("(Passcodes are disabled)")
+                } else {
+                    cell.setItem(nil)
+                }
+                cell.setIndented(true)
+                cell.setHasFunction(true)
+            }
+            }, tap: { user, settingsController in
+                let new = user.passcode != nil ? " new " : " "
+                createPasscode("Create a\(new)4-digit Passcode for \(user.name)", currentController: settingsController, { passcode in
+                    if let passcode = passcode {
+                        user.passcode = passcode
+                        RZUserDatabase.saveUserToLinkedClassroom(user)
+                        settingsController.tableView.reloadData()
+                    }
+                })
+        }),
+        
+        (identifier: "blank", decorate: { cell, user in cell.hideSeparator() }, tap: nil),
+        
+        //MARK: Most Recent Activity
+        (identifier: "userInfo", decorate: { cell, user in
+            if let cell = cell as? UserInfoCell {
+                cell.setTitle("Last played on")
+                if let date = user.dateLastModified() {
+                    let dateString = NSDateFormatter.localizedStringFromDate(date, dateStyle: .MediumStyle, timeStyle: .NoStyle)
+                    let timeString = NSDateFormatter.localizedStringFromDate(date, dateStyle: .NoStyle, timeStyle: .ShortStyle)
+                    cell.setItem("\(dateString) at \(timeString)")
+                } else {
+                    cell.setItem("(No recent activity)")
+                }
+            }
+        }, tap: nil),
+        
+        //MARK: Most Recent Rhyme
+        (identifier: "userInfo", decorate: { cell, user in
+            if let cell = cell as? UserInfoCell {
+                cell.setTitle("Most Recent Quiz:")
+                cell.setItem("No recent activity")
+                
+                if let recent = user.findHighestCompletedRhyme() {
+                    let index = RZQuizDatabase.getIndexForRhyme(recent)
+                    cell.setItem("\(recent.name) (#\(index))")
+                }
+            }
+        }, tap: nil),
+        
+        //MARK: Score for Most Recent
+        (identifier: "userInfo", decorate: { cell, user in
+            if let cell = cell as? UserInfoCell {
+                cell.setTitle("Score:")
+                cell.setItem("Unknown")
+                cell.setIndented(true)
+                
+                if let recent = user.findHighestCompletedRhyme() {
+                    user.useQuizDatabase() {
+                        let quizData = RZQuizDatabase.getQuizData()
+                        if let score = quizData[recent.number.threeCharacterString()] {
+                            let splits = split(score){ $0 == ":" }
+                            if let gold = splits[0].toInt(), let silver = splits[1].toInt() {
+                                let goldPlural = gold == 1 ? "" : "s"
+                                let silverPlural = silver == 1 ? "" : "s"
+                                cell.setItem("\(gold) gold coin\(goldPlural) and \(silver) silver coin\(silverPlural)")
+                            } else {
+                                cell.setItem(score)
+                            }
+                        }
+                    }
+                }
+            }
+        }, tap: nil),
+        
+        //MARK: Show All Scores
+        (identifier: "userInfo", decorate: { cell, user in
+            if let cell = cell as? UserInfoCell {
+                cell.setTitle("Show All Scores")
+                cell.setItem("(Unimplemented)")
+                cell.setIndented(true)
+                cell.setHasFunction(true)
+            }
+        }, tap: { user, settingController in
+            println("this needs to be implemented")
+        }),
+        
+        (identifier: "blank", decorate: { cell, user in cell.hideSeparator() }, tap: nil),
+        
+        //MARK: Quizes Played
+        (identifier: "userInfo", decorate: { cell, user in
+            if let cell = cell as? UserInfoCell {
+                cell.setTitle("Quizzes Played:")
+                cell.setItem("0")
+                
+                user.useQuizDatabase() {
+                    let quizData = RZQuizDatabase.getQuizData()
+                    cell.setItem("\(quizData.count)")
+                }
+            }
+        }, tap: nil),
+        
+        //MARK: Questions Answered
+        (identifier: "userInfo", decorate: { cell, user in
+            if let cell = cell as? UserInfoCell {
+                cell.setTitle("Questions Answered:")
+                cell.setItem("0")
+                cell.setIndented(true)
+                
+                user.useQuizDatabase() {
+                    //"totalPhonetic" : "totalComprehension"
+                    //"correctPhonetic" : "correctComprehension"
+                    let questionDict = RZQuizDatabase.getPercentCorrectDict()
+                    if let phonetic = questionDict["totalPhonetic"], let comp = questionDict["totalComprehension"] {
+                        cell.setItem("\(phonetic + comp)")
+                    }
+                }
+            }
+        }, tap: nil),
+        
+        //MARK: Percent Correct
+        (identifier: "userInfo", decorate: { cell, user in
+            if let cell = cell as? UserInfoCell {
+                cell.setTitle("Percent Correct On First Try:")
+                cell.setItem("0%")
+                cell.setIndented(true)
+                
+                user.useQuizDatabase() {
+                    let questionDict = RZQuizDatabase.getPercentCorrectDict()
+                    if let phonetic = questionDict["totalPhonetic"], let comp = questionDict["totalComprehension"],
+                       let phoneticCorrect = questionDict["correctPhonetic"], let compCorrect = questionDict["correctComprehension"] {
+                        let totalPlayed = phonetic + comp
+                        let totalCorrect = phoneticCorrect + compCorrect
+                        let percent = totalPlayed == 0 ? 0 : Int((CGFloat(totalCorrect) / CGFloat(totalPlayed)) * 100.0)
+                        cell.setItem("\(percent)% (\(totalCorrect)/\(totalPlayed))")
+                    }
+                }
+            }
+        }, tap: nil),
+        
+        //MARK: Comprehension Percent Correct
+        (identifier: "userInfo", decorate: { cell, user in
+            if let cell = cell as? UserInfoCell {
+                cell.setTitle("Comprehension Questions:")
+                cell.setItem("0%")
+                cell.setDoubleIndented(true)
+                
+                user.useQuizDatabase() {
+                    let questionDict = RZQuizDatabase.getPercentCorrectDict()
+                    if let comp = questionDict["totalComprehension"], let compCorrect = questionDict["correctComprehension"] {
+                        let percent = comp == 0 ? 0 : Int((CGFloat(compCorrect) / CGFloat(comp)) * 100.0)
+                        cell.setItem("\(percent)% (\(compCorrect)/\(comp))")
+                    }
+                }
+            }
+        }, tap: nil),
+        
+        //MARK: Comprehension Percent Correct
+        (identifier: "userInfo", decorate: { cell, user in
+            if let cell = cell as? UserInfoCell {
+                cell.setTitle("Phonetics Questions:")
+                cell.setItem("0%")
+                cell.setDoubleIndented(true)
+                
+                user.useQuizDatabase() {
+                    let questionDict = RZQuizDatabase.getPercentCorrectDict()
+                    if let phonetic = questionDict["totalPhonetic"], let phoneticCorrect = questionDict["correctPhonetic"] {
+                        let percent = phonetic == 0 ? 0 : Int((CGFloat(phoneticCorrect) / CGFloat(phonetic)) * 100.0)
+                        cell.setItem("\(percent)% (\(phoneticCorrect)/\(phonetic))")
+                    }
+                }
+            }
+        }, tap: nil),
+        
+        //MARK: Total Coins Earned
+        //MARK: Score for Most Recent
+        (identifier: "userInfo", decorate: { cell, user in
+            if let cell = cell as? UserInfoCell {
+                cell.setTitle("Total Coins Earned:")
+                cell.setItem("0 gold coins and 0 silver coins")
+                cell.setIndented(true)
+                
+                if let recent = user.findHighestCompletedRhyme() {
+                    user.useQuizDatabase() {
+                        let (gold, silver) = RZQuizDatabase.getTotalMoneyEarned()
+                        let goldPlural = gold == 1 ? "" : "s"
+                        let silverPlural = silver == 1 ? "" : "s"
+                        cell.setItem("\(gold) gold coin\(goldPlural) and \(silver) silver coin\(silverPlural)")
+                    }
+                }
+            }
+        }, tap: nil),
+        
+        (identifier: "blank", decorate: { cell, user in cell.hideSeparator() }, tap: nil),
+        
+        //MARK: Current Zoo Level
+        (identifier: "userInfo", decorate: { cell, user in
+            if let cell = cell as? UserInfoCell {
+                cell.setTitle("Current Zoo Level:")
+                cell.setItem("Herbivores (Level 1)")
+                
+                user.useQuizDatabase() {
+                    let zooLevel = RZQuizDatabase.currentZooLevel()
+                    let levelNames = ["Herbivores (Level 1)", "Birds (Level 2)", "Aquatic Animals (Level 3)",
+                        "Carnivores (Level 4)", "Reptiles (Level 5)", "Primates (Level 6)",
+                        "Dinosaurs (Level 7)", "Mythology (Level 8)"]
+                    let currentName = levelNames[zooLevel - 1]
+                    cell.setItem(currentName)
+                }
+            }
+        }, tap: nil),
+        
+        //MARK: Current Balance
+        (identifier: "userInfo", decorate: { cell, user in
+            if let cell = cell as? UserInfoCell {
+                cell.setTitle("Current Balance:")
+                cell.setItem("0")
+                cell.setIndented(true)
+                
+                user.useQuizDatabase() {
+                    let balance = RZQuizDatabase.getPlayerBalance()
+                    cell.setItem("\(balance)")
+                }
+            }
+        }, tap: nil),
+        
+        //MARK: Animals Purchased
+        (identifier: "userInfo", decorate: { cell, user in
+            if let cell = cell as? UserInfoCell {
+                cell.setTitle("Animals Purchased:")
+                cell.setItem("0")
+                cell.setIndented(true)
+                
+                user.useQuizDatabase() {
+                    let count = RZQuizDatabase.getOwnedAnimals().count
+                    cell.setItem("\(count)")
+                }
+            }
+        }, tap: nil)
+        
+    ]
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return cells.count
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cellInfo = cells[indexPath.item]
+        let row = tableView.dequeueReusableCellWithIdentifier(cellInfo.identifier, forIndexPath: indexPath) as! UITableViewCell
+        cellInfo.decorate?(row, self.user)
+        row.backgroundColor = UIColor.clearColor()
+        return row
+    }
+    
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        let id = cells[indexPath.item].identifier
+        if id == "bigUser" { return 100.0}
+        if id == "blank" { return 30.0 }
+        return 40.0
+    }
+    
+    func canHighlightCell(index: Int) -> Bool {
+        return cells[index].tap != nil
+    }
+    
+    func processSelectedCell(index: Int) {
+        if let tapFunction = cells[index].tap {
+            tapFunction(user, settingsController)
+        }
+    }
+    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        postNotification(RZSetTouchDelegateEnabledNotification, false)
+        delay(0.5) {
+            postNotification(RZSetTouchDelegateEnabledNotification, true)
+        }
     }
     
 }
@@ -651,15 +978,66 @@ class UserNameCell : UITableViewCell {
             passcodeLabel.textColor = UIColor.whiteColor()
             passcodeLabel.alpha = 0.5
         } else {
-            passcodeLabel.text = "no passcode set"
-            passcodeLabel.textColor = UIColor.redColor()
-            passcodeLabel.alpha = 0.4
+            if RZSettingRequirePasscode.currentSetting() == true {
+                passcodeLabel.text = "no passcode set"
+                passcodeLabel.textColor = UIColor.redColor()
+                passcodeLabel.alpha = 0.4
+            }
+            else {
+                passcodeLabel.alpha = 0.0
+            }
+            
         }
     }
     
 }
 
+class BigUserCell : UITableViewCell {
+    
+    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var icon: UIImageView!
+    
+    func decorateForUser(user: User) {
+        nameLabel.text = user.name
+        icon.image = user.icon
+        decorateUserIcon(icon)
+        downsampleImageInView(icon)
+        self.hideSeparator()
+    }
+    
+}
 
+class UserInfoCell : UITableViewCell {
+    
+    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var itemLabel: UILabel!
+    @IBOutlet weak var titleLeading: NSLayoutConstraint!
+    
+    func setTitle(string: String) {
+        titleLabel.text = string
+    }
+    
+    func setItem(string: String?) {
+        itemLabel.text = string
+    }
+    
+    func setIndented(indented: Bool) {
+        titleLeading.constant = indented ? 30.0 : 0.0
+        self.layoutIfNeeded()
+    }
+    func setDoubleIndented(indented: Bool) {
+        titleLeading.constant = indented ? 60.0 : 0.0
+        self.layoutIfNeeded()
+    }
+    
+    func setHasFunction(hasFunction: Bool) {
+        self.accessoryType = hasFunction ? .DisclosureIndicator : .None
+    }
+    
+}
 
-
-
+extension UITableViewCell {
+    func hideSeparator() {
+        self.separatorInset = UIEdgeInsetsMake(0, self.frame.size.width, 0, 0)
+    }
+}

@@ -432,6 +432,13 @@ class User : NSObject {
         return name + "~" + ID + "~" + iconName
     }
     
+    func dateLastModified() -> NSDate? {
+        let modified = record?.modificationDate
+        let created = record?.creationDate
+        //let's not count creation as a modification
+        return created == modified ? nil : modified
+    }
+    
     func getUpdatedRecord(classroom: Classroom) -> CKRecord? {
         //keep the default user from propegating up into the cloud
         if self.name == "DEFAULT USER // YOU SHOULD NEVER SEE THIS" { return nil }
@@ -457,6 +464,7 @@ class User : NSObject {
         record.setObject(RZQuizDatabase.getKeeperString(), forKey: "Zookeeper")
         record.setObject(RZQuizDatabase.getTotalMoneyEarnedArray(), forKey: "TotalMoneyEarned")
         record.setObject("\(RZQuizDatabase.hasWatchedWelcomeVideo())", forKey: "HasWatchedWelcomeVideo")
+        record.setObject(RZQuizDatabase.getPercentCorrectArray(), forKey: "PercentCorrect")
         
         RZCurrentUser = actualUser
         return record
@@ -465,6 +473,7 @@ class User : NSObject {
     func pullDataFromCloud() -> Bool {
         if let record = record {
             
+            //get from CKRecord
             let quizData = record.valueForKey("QuizData") as! [String]
             let favorites = record.valueForKey("Favorites") as? [Int] ?? []
             let balance = record.valueForKey("Balance") as? Double ?? 0
@@ -474,6 +483,7 @@ class User : NSObject {
             let keeperString = record.valueForKey("Zookeeper") as? String ?? "boy~1"
             let totalMoneyEarned = record.valueForKey("TotalMoneyEarned") as? [String] ?? []
             let hasWatchedWelcomeVideo = record.valueForKey("HasWatchedWelcomeVideo") as? String ?? "false"
+            let percentCorrect = record.valueForKey("PercentCorrect") as? [String] ?? []
             
             let actualUser = RZCurrentUser
             RZCurrentUser = self
@@ -488,6 +498,7 @@ class User : NSObject {
             RZQuizDatabase.setKeeperWithString(keeperString)
             RZQuizDatabase.setTotalMoneyEarnedFromArray(totalMoneyEarned)
             RZQuizDatabase.setHasWatchedWelcomeVideo(hasWatchedWelcomeVideo == "true")
+            RZQuizDatabase.setPercentCorrectArray(percentCorrect)
             
             RZCurrentUser = actualUser
             return true
@@ -495,6 +506,41 @@ class User : NSObject {
         }
         else {
             return false
+        }
+    }
+    
+    func useQuizDatabase(function: () -> ()) {
+        let actualUser = RZCurrentUser
+        RZCurrentUser = self
+        function()
+        RZCurrentUser = actualUser
+    }
+    
+    func useQuizDatabaseToReturn<T>(function: () -> (T)) -> T {
+        let actualUser = RZCurrentUser
+        RZCurrentUser = self
+        let willReturn = function()
+        RZCurrentUser = actualUser
+        return willReturn
+    }
+    
+    func findHighestCompletedRhyme() -> Rhyme? {
+        return useQuizDatabaseToReturn() {
+            var highestRhyme: Rhyme?
+            var highestIndex: Int = 0
+            
+            for (numberString, _) in RZQuizDatabase.getQuizData() {
+                if let number = numberString.toInt() {
+                    let rhyme = Rhyme(number)
+                    let index = RZQuizDatabase.getIndexForRhyme(rhyme)
+                    if index > highestIndex {
+                        highestRhyme = rhyme
+                        highestIndex = index
+                    }
+                }
+            }
+            
+            return highestRhyme
         }
     }
     
