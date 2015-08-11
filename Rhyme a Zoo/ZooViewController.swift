@@ -46,6 +46,7 @@ class ZooViewController : ZookeeperGameController {
         switch(level) {
             case 7: questionConstant = 70; break;
             case 8: questionConstant = 130; break;
+            case 9: questionConstant = 130; break;
             default: questionConstant = 10; break;
         }
         questionButtonLeading.constant = questionConstant

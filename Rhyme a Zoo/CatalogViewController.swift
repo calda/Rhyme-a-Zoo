@@ -138,6 +138,7 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
     
     @IBAction func homePressed(sender: AnyObject) {
         self.dismissViewControllerAnimated(true, completion: nil)
+        RZShowingFavorites = false
     }
     
     @IBAction func toggleFavorites(sender: UIButton) {

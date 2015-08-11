@@ -410,6 +410,7 @@ class RhymeViewController : UIViewController {
         
         var videoToPlay: String? = nil
         if balance >= 20 && numberOfAnimals == 0 { videoToPlay = "animals-video" }
+        if balance >= 60 { videoToPlay = "too-much-money" }
         
         if let videoToPlay = videoToPlay {
             playAnimalVideo(videoToPlay)

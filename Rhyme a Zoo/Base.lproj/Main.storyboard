@@ -2237,7 +2237,7 @@
                             <constraint firstItem="fPh-9B-4Wo" firstAttribute="top" secondItem="lDB-qg-dFL" secondAttribute="topMargin" id="cLD-Jy-DEQ"/>
                             <constraint firstAttribute="trailing" secondItem="fgt-1h-uuK" secondAttribute="trailing" id="cnx-sa-82M"/>
                             <constraint firstItem="fPh-9B-4Wo" firstAttribute="width" secondItem="lDB-qg-dFL" secondAttribute="width" multiplier="0.7" id="ezx-ar-eIy"/>
-                            <constraint firstItem="fPh-9B-4Wo" firstAttribute="height" secondItem="M0m-Wc-wlY" secondAttribute="height" multiplier="0.865" id="fdg-lV-902">
+                            <constraint firstItem="fPh-9B-4Wo" firstAttribute="height" secondItem="M0m-Wc-wlY" secondAttribute="height" multiplier="0.873" id="fdg-lV-902">
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
                             </constraint>
                             <constraint firstItem="fSM-MT-0dr" firstAttribute="top" secondItem="fPh-9B-4Wo" secondAttribute="bottom" id="u3N-v5-45a"/>

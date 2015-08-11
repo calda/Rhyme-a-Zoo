@@ -110,6 +110,8 @@ class BuildingViewController : ZookeeperGameController {
     }
     
     override func viewWillAppear(animated: Bool) {
+        self.view.userInteractionEnabled = false
+        
         //update background
         let image = UIImage(named:"building\(building).jpg")
         backgroundImage.image = image
@@ -217,6 +219,16 @@ class BuildingViewController : ZookeeperGameController {
         self.view.addSubview(button)
     }
     
+    override func viewDidAppear(animated: Bool) {
+        delay(1.0) {
+            self.view.userInteractionEnabled = true
+        }
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        RZUserDatabase.saveCurrentUserToLinkedClassroom()
+    }
+    
     //MARK: - User Interaction
     
     @IBAction func tapDetected(sender: UITapGestureRecognizer) {
@@ -290,7 +302,7 @@ class BuildingViewController : ZookeeperGameController {
         }
         if let animal = sender.restorationIdentifier {
             RZQuizDatabase.purchaseAnimal(animal)
-            RZQuizDatabase.advanceCurrentLevelIfComplete(buildingAnimals[building - 1])
+            let didAdvanceLevel = RZQuizDatabase.advanceCurrentLevelIfComplete(buildingAnimals[building - 1])
             backButton.enabled = true
             
             //color in animal and play sound
@@ -312,6 +324,17 @@ class BuildingViewController : ZookeeperGameController {
             sender.removeFromSuperview()
             if let index = find(mainButtons, sender) {
                 mainButtons.removeAtIndex(index)
+            }
+            
+            if didAdvanceLevel {
+                delay(1.0) {
+                    let newLevel = RZQuizDatabase.currentZooLevel()
+                    if contains(2...7, newLevel) {
+                        playVideo(name: "zoo-level-\(newLevel)", currentController: self, completion: {
+                            self.backButton.enabled = true
+                        })
+                    }
+                }
             }
         }
     }

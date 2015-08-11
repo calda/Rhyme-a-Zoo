@@ -28,6 +28,7 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
         self.view.layer.masksToBounds = true
         tableView.clipsToBounds = false
         tableView.layer.masksToBounds = false
+        SettingsUserStatisticsDelegate.settingsControllerStatic = self
     }
     
     func getTitle() -> String {
@@ -135,15 +136,16 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
             let touch = sender.locationInView(cell.superview!)
             if cell.frame.contains(touch) {
                 
-                let index = tableView.indexPathForCell(cell)!.item
-                let delegate = tableView.delegate as? SettingsViewTableDelegate
-                
-                if sender.state == .Ended {
-                    delegate?.processSelectedCell(index)
-                }
-                else {
-                    if delegate?.canHighlightCell(index) == true {
-                        animateSelection(index)
+                if let index = tableView.indexPathForCell(cell)?.item {
+                    let delegate = tableView.delegate as? SettingsViewTableDelegate
+                    
+                    if sender.state == .Ended {
+                        delegate?.processSelectedCell(index)
+                    }
+                    else {
+                        if delegate?.canHighlightCell(index) == true {
+                            animateSelection(index)
+                        }
                     }
                 }
             }
@@ -269,7 +271,7 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
     
     func showUsers() {
         let delegate = SettingsUsersDelegate(self)
-        switchToDelegate(delegate, isBack: false)
+        switchToDelegate(delegate, isBack: false, atOffset: nil)
         self.activityIndicator.hidden = false
         RZUserDatabase.getUsersForClassroom(self.classroom, completion: { users in
             delay(0.3) {
@@ -281,23 +283,24 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
     
     //MARK: - Handling Delegate changes
     
-    var delegateStack: Stack<SettingsViewTableDelegate> = Stack()
+    var delegateStack: Stack<(delegate: SettingsViewTableDelegate, contentOffset: CGPoint)> = Stack()
     var currentDelegate: SettingsViewTableDelegate!
     
     @IBAction func backButtonPressed(sender: AnyObject) {
-        if let newDelegate = delegateStack.pop() {
-            switchToDelegate(newDelegate, isBack: true)
+        if let (newDelegate, offset) = delegateStack.pop() {
+            switchToDelegate(newDelegate, isBack: true, atOffset: offset)
         }
-        else {
+        else if sender is UIButton {
             //already on the last delegate
             self.dismissViewControllerAnimated(true, completion: nil)
         }
     }
     
-    func switchToDelegate(delegate: SettingsViewTableDelegate, isBack: Bool) {
+    func switchToDelegate(delegate: SettingsViewTableDelegate, isBack: Bool, atOffset offset: CGPoint?) {
         self.activityIndicator.hidden = true
         if let currentDelegate = tableView.delegate as? SettingsViewTableDelegate where !isBack {
-            delegateStack.push(currentDelegate)
+            let delegateInfo = (delegate: currentDelegate, contentOffset: self.tableView.contentOffset)
+            delegateStack.push(delegateInfo)
         }
         currentDelegate = delegate //store a strong reference of the delegate
         tableView.delegate = delegate
@@ -314,6 +317,7 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
         //change button
         let image = delegate.getBackButtonImage()
         backButton.setImage(image, forState: .Normal)
+        self.tableView.contentOffset = offset ?? CGPointMake(0.0, -70.0)
         playTransitionForView(backButton, duration: 0.3, transition: kCATransitionFade)
     }
     
@@ -327,6 +331,7 @@ protocol SettingsViewTableDelegate : UITableViewDelegate, UITableViewDataSource 
     func canHighlightCell(index: Int) -> Bool
     func getTitle() -> String
     func getBackButtonImage() -> UIImage
+    func scrollViewDidScroll(scrollView: UIScrollView)
     
 }
 
@@ -343,7 +348,7 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
         }
     }
     var passcodesRequired: Bool
-    var showEmailCell: Bool {
+    var showPasscodeEmailCell: Bool {
         return passcodesRequired && users.count != 0
     }
     
@@ -364,7 +369,7 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
     //MARK: Table View Data Source
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return users.count + (showEmailCell ? 2 : 1)
+        return users.count + (showPasscodeEmailCell ? 3 : 2)
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -374,14 +379,19 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
             cell.backgroundColor = UIColor.clearColor()
             return cell
         }
-        if index == 1 && showEmailCell {
+        if index == 1 {
+            let cell = tableView.dequeueReusableCellWithIdentifier("dataEmail", forIndexPath: indexPath) as! UITableViewCell
+            cell.backgroundColor = UIColor.clearColor()
+            return cell
+        }
+        if index == 2 && showPasscodeEmailCell {
             let cell = tableView.dequeueReusableCellWithIdentifier("passcodeEmail", forIndexPath: indexPath) as! UITableViewCell
             cell.backgroundColor = UIColor.clearColor()
             return cell
         }
         
         let cell = tableView.dequeueReusableCellWithIdentifier("user", forIndexPath: indexPath) as! UserNameCell
-        cell.decorateForUser(users[index - (showEmailCell ? 2 : 1)])
+        cell.decorateForUser(users[index - (showPasscodeEmailCell ? 3 : 2)])
         cell.backgroundColor = UIColor.clearColor()
         return cell
     }
@@ -401,11 +411,16 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
         if index == 0 {
             startNewStudentFlow()
         }
-        else if index == 1 && showEmailCell {
+        else if index == 1 {
+            //switch to the email creation delegate
+            let newDelegate = SettingsComposeEmailDelegate(users: self.users, settingsController: settingsController)
+            settingsController.switchToDelegate(newDelegate, isBack: false, atOffset: nil)
+        }
+        else if index == 2 && showPasscodeEmailCell {
             sendPasscodeEmail()
         }
         else {
-            let user = users[index - (showEmailCell ? 2 : 1)]
+            let user = users[index - (showPasscodeEmailCell ? 3 : 2)]
             showStudentStatistics(user)
         }
     }
@@ -447,7 +462,7 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
     
     func getPasscodeForNewStudentFlow(name: String, iconName: String) {
         if RZSettingRequirePasscode.currentSetting() == true {
-            let alert = UIAlertController(title: "Add a Passcode", message: "You have student passcodes enabled.", preferredStyle: .Alert)
+            let alert = UIAlertController(title: "Add a Passcode", message: "To keep your student's profile safe, please choose an option to assign them a passcode.", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Random", style: .Default, handler: { _ in
                 //generate a 4-digit passcode
                 var passcode: String = ""
@@ -525,27 +540,19 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
                 allUsersHavePasscode = false
             }
             
-            let line = "<b>\(name):</b> \(passcode)</br>"
+            let line = "<b>\(name):&nbsp;</b> \(passcode)</br>"
             messageBody = messageBody + line
         }
         
         if !allUsersHavePasscode {
             let line = "</br><i>Not all of your students have passcodes.</br>Anybody with access to your classroom will be able to play on their profile."
-            let line2 = "</br>You can give them a passcode by going in to your classroom settings, tapping \"View / Edit Students\", and then tapping their name.</i>"
+            let line2 = "</br>You can give them a passcode by going in to your classroom settings, tapping \"View All Students\", and then tapping their name.</i>"
             messageBody = messageBody + line + line2
         }
         
         mail.setMessageBody(messageBody, isHTML: true)
         
-        settingsController.presentViewController(mail, animated: true, completion: {
-            //show an alert after presenting the mail controller
-            let alert = UIAlertController(title: "Created Email Message of Student Passcodes", message: "Send it to yourself for record keeping, to print on a computer, or to use in a spreadsheet.", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Cancel", style: .Destructive, handler: { _ in
-                mail.dismissViewControllerAnimated(true, completion: nil)
-            }))
-            alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
-            mail.presentViewController(alert, animated: true, completion: nil)
-        })
+        settingsController.presentViewController(mail, animated: true, completion: nil)
         
         
     }
@@ -556,7 +563,7 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
     
     func showStudentStatistics(user: User) {
         let newDelegate = SettingsUserStatisticsDelegate(user: user, settingsController: settingsController)
-        settingsController.switchToDelegate(newDelegate, isBack: false)
+        settingsController.switchToDelegate(newDelegate, isBack: false, atOffset: nil)
     }
     
 }
@@ -567,14 +574,17 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
     
     let user: User
     let settingsController: SettingsViewController
+    static var settingsControllerStatic: SettingsViewController? = nil
     
     init(user: User, settingsController: SettingsViewController) {
         self.user = user
+        user.pullDataFromCloud()
         self.settingsController = settingsController
+        SettingsUserStatisticsDelegate.settingsControllerStatic = settingsController
     }
     
     func getTitle() -> String {
-        return "Student Statistics"
+        return "Statistics: \(user.name)"
     }
     
     func getBackButtonImage() -> UIImage {
@@ -583,22 +593,25 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
     
     //MARK: Table View Data Source
     
-    var cells: [(identifier: String, decorate: ((UITableViewCell, User) -> ())?, tap: ((User, SettingsViewController) -> ())?)] = [
+    static var cells: [(identifier: String, decorate: ((UITableViewCell, User) -> ())?, tap: ((User, SettingsViewController) -> ())?)] = [
         
         //MARK: User Name and Icon
-        (identifier: "bigUser", decorate: { ($0 as? BigUserCell)?.decorateForUser($1) }, tap: nil),
+        (identifier: "bigUser", decorate: { cell, user in
+            if let cell = cell as? BigUserCell, let settingsController = SettingsUserStatisticsDelegate.settingsControllerStatic {
+                cell.decorateForUser(user, controller: settingsController)
+            }
+        }, tap: nil),
         
         //MARK: Passcode
         (identifier: "userInfo", decorate: { cell, user in
             if let cell = cell as? UserInfoCell {
                 cell.setTitle("Passcode:")
                 cell.setItem(user.passcode ?? "Not set")
+                cell.setIndent(0)
+                
                 if user.passcode == nil && RZSettingRequirePasscode.currentSetting() == true {
                     cell.itemLabel.textColor = UIColor.redColor()
                     cell.itemLabel.alpha = 0.4
-                } else {
-                    cell.itemLabel.textColor = UIColor.whiteColor()
-                    cell.itemLabel.alpha = 0.7
                 }
             }
         }, tap: nil),
@@ -612,7 +625,7 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
                 } else {
                     cell.setItem(nil)
                 }
-                cell.setIndented(true)
+                cell.setIndent(1)
                 cell.setHasFunction(true)
             }
             }, tap: { user, settingsController in
@@ -631,11 +644,27 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
         //MARK: Most Recent Activity
         (identifier: "userInfo", decorate: { cell, user in
             if let cell = cell as? UserInfoCell {
-                cell.setTitle("Last played on")
+                cell.setTitle("Last played ")
+                cell.setIndent(0)
+                
                 if let date = user.dateLastModified() {
-                    let dateString = NSDateFormatter.localizedStringFromDate(date, dateStyle: .MediumStyle, timeStyle: .NoStyle)
-                    let timeString = NSDateFormatter.localizedStringFromDate(date, dateStyle: .NoStyle, timeStyle: .ShortStyle)
-                    cell.setItem("\(dateString) at \(timeString)")
+                    
+                    let deltaTime = -date.timeIntervalSinceNow
+                    
+                    if deltaTime < 3600 { //less than an hour
+                        cell.setItem("\(Int(deltaTime/60.0)) minutes ago")
+                    }
+                    else if deltaTime < 86400 { //less than a day
+                        cell.setItem("\(Int(deltaTime/3600.0)) hours ago")
+                    }
+                    else if deltaTime < 432000 { //less than five days
+                        cell.setItem("\(Int(deltaTime/86400.0)) days ago")
+                    }
+                    else {
+                        cell.setTitle("Last played ")
+                        let dateString = NSDateFormatter.localizedStringFromDate(date, dateStyle: .MediumStyle, timeStyle: .NoStyle)
+                        cell.setItem(dateString)
+                    }
                 } else {
                     cell.setItem("(No recent activity)")
                 }
@@ -647,10 +676,11 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
             if let cell = cell as? UserInfoCell {
                 cell.setTitle("Most Recent Quiz:")
                 cell.setItem("No recent activity")
+                cell.setIndent(0)
                 
                 if let recent = user.findHighestCompletedRhyme() {
                     let index = RZQuizDatabase.getIndexForRhyme(recent)
-                    cell.setItem("\(recent.name) (#\(index))")
+                    cell.setItem("\(recent.name) (#\(index + 1))")
                 }
             }
         }, tap: nil),
@@ -660,7 +690,7 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
             if let cell = cell as? UserInfoCell {
                 cell.setTitle("Score:")
                 cell.setItem("Unknown")
-                cell.setIndented(true)
+                cell.setIndent(1)
                 
                 if let recent = user.findHighestCompletedRhyme() {
                     user.useQuizDatabase() {
@@ -684,12 +714,16 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
         (identifier: "userInfo", decorate: { cell, user in
             if let cell = cell as? UserInfoCell {
                 cell.setTitle("Show All Scores")
-                cell.setItem("(Unimplemented)")
-                cell.setIndented(true)
+                cell.setItem(nil)
+                cell.setIndent(1)
                 cell.setHasFunction(true)
             }
-        }, tap: { user, settingController in
-            println("this needs to be implemented")
+        }, tap: { user, settingsController in
+            
+            //switch to All Quiz Scores delegate
+            let newDelegate = SettingsQuizScoresDelegate(user: user, settingsController: settingsController)
+            settingsController.switchToDelegate(newDelegate, isBack: false, atOffset: nil)
+            
         }),
         
         (identifier: "blank", decorate: { cell, user in cell.hideSeparator() }, tap: nil),
@@ -699,6 +733,7 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
             if let cell = cell as? UserInfoCell {
                 cell.setTitle("Quizzes Played:")
                 cell.setItem("0")
+                cell.setIndent(0)
                 
                 user.useQuizDatabase() {
                     let quizData = RZQuizDatabase.getQuizData()
@@ -712,7 +747,7 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
             if let cell = cell as? UserInfoCell {
                 cell.setTitle("Questions Answered:")
                 cell.setItem("0")
-                cell.setIndented(true)
+                cell.setIndent(1)
                 
                 user.useQuizDatabase() {
                     //"totalPhonetic" : "totalComprehension"
@@ -730,7 +765,7 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
             if let cell = cell as? UserInfoCell {
                 cell.setTitle("Percent Correct On First Try:")
                 cell.setItem("0%")
-                cell.setIndented(true)
+                cell.setIndent(1)
                 
                 user.useQuizDatabase() {
                     let questionDict = RZQuizDatabase.getPercentCorrectDict()
@@ -750,7 +785,7 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
             if let cell = cell as? UserInfoCell {
                 cell.setTitle("Comprehension Questions:")
                 cell.setItem("0%")
-                cell.setDoubleIndented(true)
+                cell.setIndent(2)
                 
                 user.useQuizDatabase() {
                     let questionDict = RZQuizDatabase.getPercentCorrectDict()
@@ -767,7 +802,7 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
             if let cell = cell as? UserInfoCell {
                 cell.setTitle("Phonetics Questions:")
                 cell.setItem("0%")
-                cell.setDoubleIndented(true)
+                cell.setIndent(2)
                 
                 user.useQuizDatabase() {
                     let questionDict = RZQuizDatabase.getPercentCorrectDict()
@@ -785,7 +820,7 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
             if let cell = cell as? UserInfoCell {
                 cell.setTitle("Total Coins Earned:")
                 cell.setItem("0 gold coins and 0 silver coins")
-                cell.setIndented(true)
+                cell.setIndent(1)
                 
                 if let recent = user.findHighestCompletedRhyme() {
                     user.useQuizDatabase() {
@@ -805,9 +840,11 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
             if let cell = cell as? UserInfoCell {
                 cell.setTitle("Current Zoo Level:")
                 cell.setItem("Herbivores (Level 1)")
+                cell.setIndent(0)
                 
                 user.useQuizDatabase() {
-                    let zooLevel = RZQuizDatabase.currentZooLevel()
+                    var zooLevel = RZQuizDatabase.currentZooLevel()
+                    if zooLevel == 9 { zooLevel = 8 }
                     let levelNames = ["Herbivores (Level 1)", "Birds (Level 2)", "Aquatic Animals (Level 3)",
                         "Carnivores (Level 4)", "Reptiles (Level 5)", "Primates (Level 6)",
                         "Dinosaurs (Level 7)", "Mythology (Level 8)"]
@@ -822,7 +859,7 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
             if let cell = cell as? UserInfoCell {
                 cell.setTitle("Current Balance:")
                 cell.setItem("0")
-                cell.setIndented(true)
+                cell.setIndent(1)
                 
                 user.useQuizDatabase() {
                     let balance = RZQuizDatabase.getPlayerBalance()
@@ -836,7 +873,7 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
             if let cell = cell as? UserInfoCell {
                 cell.setTitle("Animals Purchased:")
                 cell.setItem("0")
-                cell.setIndented(true)
+                cell.setIndent(1)
                 
                 user.useQuizDatabase() {
                     let count = RZQuizDatabase.getOwnedAnimals().count
@@ -848,11 +885,11 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
     ]
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return cells.count
+        return SettingsUserStatisticsDelegate.cells.count
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cellInfo = cells[indexPath.item]
+        let cellInfo = SettingsUserStatisticsDelegate.cells[indexPath.item]
         let row = tableView.dequeueReusableCellWithIdentifier(cellInfo.identifier, forIndexPath: indexPath) as! UITableViewCell
         cellInfo.decorate?(row, self.user)
         row.backgroundColor = UIColor.clearColor()
@@ -860,18 +897,19 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        let id = cells[indexPath.item].identifier
+        let id = SettingsUserStatisticsDelegate.cells[indexPath.item].identifier
         if id == "bigUser" { return 100.0}
         if id == "blank" { return 30.0 }
+        if indexPath.item == 7 { return 60.0 } //Show All Scores. (this is probaly gonna be real error prone)
         return 40.0
     }
     
     func canHighlightCell(index: Int) -> Bool {
-        return cells[index].tap != nil
+        return SettingsUserStatisticsDelegate.cells[index].tap != nil
     }
     
     func processSelectedCell(index: Int) {
-        if let tapFunction = cells[index].tap {
+        if let tapFunction = SettingsUserStatisticsDelegate.cells[index].tap {
             tapFunction(user, settingsController)
         }
     }
@@ -885,6 +923,268 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
     
 }
 
+//MARK: - Delegate for All Quiz Scores
+
+class SettingsQuizScoresDelegate: NSObject, SettingsViewTableDelegate {
+    
+    let user: User
+    let settingsController: SettingsViewController
+    let quizData: [(rhymeName: String, score: String)] //actuall processed strings
+    
+    init(user: User, settingsController: SettingsViewController) {
+        self.user = user
+        self.settingsController = settingsController
+        
+        self.quizData = user.useQuizDatabaseToReturn() {
+            
+            var processedData: [(rhymeName: String, score: String)] = []
+            var quizData = RZQuizDatabase.getQuizData()
+            
+            for quizIndex in 0 ..< RZQuizDatabase.count {
+                let quiz = RZQuizDatabase.getRhyme(quizIndex)
+                let numberString = quiz.number.threeCharacterString()
+                if let resultString = quizData[numberString] {
+                    //turn result into string
+                    let coinString : String
+                    
+                    let splits = split(resultString){ $0 == ":" }
+                    if let gold = splits[0].toInt(), let silver = splits[1].toInt() {
+                        coinString = "\(gold) gold, \(silver) silver"
+                    } else {
+                        coinString = resultString
+                    }
+                    let data = (rhymeName: quiz.name + " (#\(quizIndex))", score: coinString)
+                    processedData.append(data)
+                    quizData.removeValueForKey(numberString)
+                }
+            }
+            
+            return processedData
+        }
+        
+    }
+    
+    func getTitle() -> String {
+        return "All Quiz Scores: \(user.name)"
+    }
+    
+    func getBackButtonImage() -> UIImage {
+        return UIImage(named: "button-back")!
+    }
+    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        postNotification(RZSetTouchDelegateEnabledNotification, false)
+        delay(0.5) {
+            postNotification(RZSetTouchDelegateEnabledNotification, true)
+        }
+    }
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return quizData.count + 1
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let index = indexPath.item
+        if index == 0 {
+            let cell = tableView.dequeueReusableCellWithIdentifier("bigUser", forIndexPath: indexPath) as! BigUserCell
+            cell.decorateForUser(self.user, controller: settingsController)
+            return cell
+        }
+        else {
+            let (rhymeName, score) = quizData[index - 1]
+            let cell = tableView.dequeueReusableCellWithIdentifier("userInfoRight", forIndexPath: indexPath) as! UserInfoCell
+            cell.setTitle(rhymeName)
+            cell.setItem(score)
+            cell.setIndent(0)
+            cell.makeItemResistCompression()
+            cell.backgroundColor = UIColor.clearColor()
+            return cell
+        }
+    }
+    
+    func canHighlightCell(index: Int) -> Bool {
+        return false
+    }
+    
+    func processSelectedCell(index: Int) {
+        return
+    }
+    
+}
+
+//MARK: - Delegate for Composing Data Email
+
+class SettingsComposeEmailDelegate : NSObject, SettingsViewTableDelegate, MFMailComposeViewControllerDelegate {
+    
+    let settingsController: SettingsViewController
+    let users: [User]
+    var cells: [(identifier: String, decorate: ((UITableViewCell, User) -> ())?, selected: Bool)] = [
+        //start with blank cell for the top
+        (identifier: "blank", decorate: { cell, user in cell.hideSeparator() }, selected: false)
+    ]
+    
+    init(users: [User], settingsController: SettingsViewController) {
+        self.users = users
+        self.settingsController = settingsController
+        
+        for (identifier, decorate, tap) in SettingsUserStatisticsDelegate.cells {
+            if tap != nil { continue } //ignore cells with functions
+            if identifier != "userInfo" && identifier != "blank" { continue }
+            cells.append(identifier: identifier == "userInfo" ? "userInfoCheck" : identifier, decorate: decorate, selected: false)
+        }
+        
+        //add another blank at the end
+        let blank = cells[0]
+        cells.append(identifier: "blank", decorate: blank.decorate, selected: false)
+        
+    }
+    
+    func getTitle() -> String {
+        return "Send Email with Custom Student Data"
+    }
+    
+    func getBackButtonImage() -> UIImage {
+        return UIImage(named: "button-back")!
+    }
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return cells.count + 2
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        if indexPath.item == 0 {
+            let cell = tableView.dequeueReusableCellWithIdentifier("emailHeader", forIndexPath: indexPath) as! UITableViewCell
+            cell.backgroundColor = UIColor.clearColor()
+            return cell
+        }
+        if indexPath.item == cells.count + 1 {
+            let cell = tableView.dequeueReusableCellWithIdentifier("sendEmail", forIndexPath: indexPath) as! UITableViewCell
+            cell.backgroundColor = UIColor.clearColor()
+            return cell
+        }
+        
+        let cellInfo = cells[indexPath.item - 1]
+        let row = tableView.dequeueReusableCellWithIdentifier(cellInfo.identifier, forIndexPath: indexPath) as! UITableViewCell
+        cellInfo.decorate?(row, users[0])
+        if let row = row as? UserInfoCheckCell {
+            row.setChecked(cellInfo.selected, animated: false)
+        }
+        row.backgroundColor = UIColor.clearColor()
+        return row
+    }
+    
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        if indexPath.item == 0 || indexPath.item == cells.count + 1 {
+            return 75.0
+        }
+        if cells[indexPath.item - 1].identifier == "blank" {
+            return 20.0
+        }
+        return 50.0
+    }
+    
+    func canHighlightCell(index: Int) -> Bool {
+        if index == 0 { return false }
+        if index == cells.count + 1 { return true }
+        
+        if cells[index - 1].identifier == "blank" { return false }
+        return true
+    }
+    
+    func processSelectedCell(index: Int) {
+        if index == cells.count + 1 {
+            sendCustomEmail()
+        }
+        else if index == 0 {
+            return
+        }
+        else {
+            var cell = cells[index - 1]
+            cells[index - 1] = (cell.identifier, cell.decorate, !cell.selected)
+            cell = cells[index - 1]
+            
+            //get the row and toggle the button
+            let indexPath = NSIndexPath(forRow: index, inSection: 0)
+            if let row = settingsController.tableView.cellForRowAtIndexPath(indexPath) as? UserInfoCheckCell {
+                row.setChecked(cell.selected, animated: true)
+            }
+        }
+    }
+    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        postNotification(RZSetTouchDelegateEnabledNotification, false)
+        delay(0.5) {
+            postNotification(RZSetTouchDelegateEnabledNotification, true)
+        }
+    }
+    
+    func sendCustomEmail() {
+        
+        if !MFMailComposeViewController.canSendMail() {
+            //show an alert to tell the user to set up mail
+            let alert = UIAlertController(title: "You haven't set up your email yet.", message: "Set up your email in the Settings App and then try again.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Nevermind", style: .Destructive, handler: nil))
+            alert.addAction(UIAlertAction(title: "Settings", style: .Default, handler: { _ in
+                openSettings()
+            }))
+            return
+        }
+        
+        let mail = MFMailComposeViewController()
+        mail.setMessageBody(createEmailBody(), isHTML: true)
+        mail.setSubject("Rhyme a Zoo Student Data")
+        mail.mailComposeDelegate = self
+        
+        settingsController.presentViewController(mail, animated: true, completion: nil)
+    }
+    
+    func createEmailBody() -> String {
+        
+        var emailBody: String = ""
+        
+        //add introduction
+        emailBody += "<b>Rhyme a Zoo Student Data:</b> \(settingsController.classroom.name)</br>"
+        
+        let now = NSDate()
+        let dateString = NSDateFormatter.localizedStringFromDate(now, dateStyle: .MediumStyle, timeStyle: .NoStyle)
+        let timeString = NSDateFormatter.localizedStringFromDate(now, dateStyle: .NoStyle, timeStyle: .ShortStyle)
+        let nowString = "\(dateString) at \(timeString)"
+        emailBody += "<i>This data was generated on \(nowString).</i></br></br>"
+        
+        for user in users {
+            //add user header
+            emailBody += "<b>\(user.name)</b></br>"
+            
+            //iterate through cells
+            var currentCell = 1
+            
+            for (identifier, decorate, selected) in cells {
+                currentCell++
+                if !selected { continue }
+                
+                let indexPath = NSIndexPath(forRow: currentCell, inSection: 0)
+                if let cell = settingsController.tableView.dequeueReusableCellWithIdentifier(identifier) as? UserInfoCell {
+                    decorate?(cell, user)
+                    //create string from cell
+                    let unknown = "Unknown"
+                    let cellString = "\(cell.titleLabel.text ?? unknown): &nbsp;<i>\(cell.itemLabel.text ?? unknown)</i></br>"
+                    emailBody += cellString
+                }
+            }
+            
+            emailBody += "</b></br>"
+        }
+        
+        return emailBody
+    }
+    
+    func mailComposeController(controller: MFMailComposeViewController!, didFinishWithResult result: MFMailComposeResult, error: NSError!) {
+        controller.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+}
+
+
 //MARK: - Custom Cells
 
 class StudentsCell : UITableViewCell {
@@ -895,6 +1195,8 @@ class StudentsCell : UITableViewCell {
     func decorateForUsers(usersArray: [User]) {
         let contentView = label.superview!
         let users = usersArray.reverse() //reverse user array since we draw it backwards
+        
+        label.text = users.count == 0 ? "Add Students" : "View All Students"
         
         if previousUserCount == users.count { return }
         
@@ -922,9 +1224,14 @@ class StudentsCell : UITableViewCell {
             contentView.addSubview(image)
             downsampleImageInView(image)
             
+            if previousUserCount == 0 {
+                image.transform = CGAffineTransformMakeTranslation(0.0, 5.0)
+            }
+            
             image.alpha = 0.0
-            UIView.animateWithDuration(0.3, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+            UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
                 image.alpha = 1.0
+                image.transform = CGAffineTransformMakeTranslation(0.0, 0.0)
             }, completion: nil)
             
             currentX -= size.width + 5.0
@@ -957,6 +1264,11 @@ class ToggleCell : UITableViewCell {
     
     @IBAction func switchToggled(sender: UISwitch) {
         setting?.updateSetting(sender.on)
+        
+        if let setting = setting where setting.key == RZSettingRequirePasscode.key && sender.on {
+            //make sure all users have passcodes
+            checkAllUsersHavePasscode()
+        }
     }
     
 }
@@ -996,13 +1308,41 @@ class BigUserCell : UITableViewCell {
     
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var icon: UIImageView!
+    var controller: SettingsViewController?
+    var user: User?
     
-    func decorateForUser(user: User) {
+    func decorateForUser(user: User, controller: SettingsViewController) {
         nameLabel.text = user.name
         icon.image = user.icon
         decorateUserIcon(icon)
         downsampleImageInView(icon)
         self.hideSeparator()
+        self.controller = controller
+        self.user = user
+    }
+    
+    @IBAction func deletePressed(sender: AnyObject) {
+        if let user = user, let controller = controller {
+            //confirm with alert
+            let alert = UIAlertController(title: "Delete \(user.name)?", message: "This student will lose all of their progress forever.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Nevermind", style: .Default, handler: nil))
+            alert.addAction(UIAlertAction(title: "Delete", style: .Destructive, handler: { _ in
+                
+                RZUserDatabase.deleteLocalUser(user, deleteFromClassroom: true)
+                controller.backButtonPressed(self)
+                delay(1.0) {
+                    controller.tableView.reloadData()
+                    RZUserDatabase.getUsersForClassroom(controller.classroom, completion: { users in
+                        if let delegate = controller.tableView.delegate as? SettingsUsersDelegate {
+                            delegate.users = users
+                            controller.tableView.reloadData()
+                        }
+                    })
+                }
+                
+            }))
+            controller.presentViewController(alert, animated: true, completion: nil)
+        }
     }
     
 }
@@ -1015,23 +1355,67 @@ class UserInfoCell : UITableViewCell {
     
     func setTitle(string: String) {
         titleLabel.text = string
+        self.accessoryType = .None
     }
     
     func setItem(string: String?) {
         itemLabel.text = string
+        itemLabel.textColor = UIColor.whiteColor()
+        itemLabel.alpha = 0.7
+        itemLabel.setContentCompressionResistancePriority(750.0, forAxis: UILayoutConstraintAxis.Horizontal)
     }
     
-    func setIndented(indented: Bool) {
-        titleLeading.constant = indented ? 30.0 : 0.0
-        self.layoutIfNeeded()
-    }
-    func setDoubleIndented(indented: Bool) {
-        titleLeading.constant = indented ? 60.0 : 0.0
+    func setIndent(level: Int) {
+        let indent = CGFloat(level) * 30.0
+        titleLeading.constant = indent
         self.layoutIfNeeded()
     }
     
     func setHasFunction(hasFunction: Bool) {
         self.accessoryType = hasFunction ? .DisclosureIndicator : .None
+    }
+    
+    func makeItemResistCompression() {
+        itemLabel.setContentCompressionResistancePriority(800.0, forAxis: UILayoutConstraintAxis.Horizontal)
+    }
+    
+}
+
+class UserInfoCheckCell : UserInfoCell {
+    
+    @IBOutlet weak var check: UIImageView!
+    
+    func setChecked(checked: Bool, animated: Bool) {
+        check.image = UIImage(named: checked ? "button-check" : "button-cancel")
+        let scale: CGFloat = checked ? 1.3 : 1.0
+        let transform = CGAffineTransformMakeScale(scale, scale)
+        let alpha: CGFloat = checked ? 1.0 : 0.75
+        
+        if animated {
+            UIView.animateWithDuration(0.6, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: nil, animations: {
+                self.check.transform = transform
+                self.check.alpha = alpha
+            }, completion: nil)
+        }
+        else {
+            check.transform = transform
+            self.check.alpha = alpha
+        }
+    }
+    
+    override func setItem(string: String?) {
+        super.setItem(string)
+        itemLabel.alpha = 0.0
+    }
+    
+    override func setTitle(string: String) {
+        if string.hasSuffix(":") {
+            let truncated = string.substringToIndex(string.endIndex.predecessor())
+            super.setTitle(truncated)
+        }
+        else {
+           super.setTitle(string)
+        }
     }
     
 }
@@ -1040,4 +1424,53 @@ extension UITableViewCell {
     func hideSeparator() {
         self.separatorInset = UIEdgeInsetsMake(0, self.frame.size.width, 0, 0)
     }
+}
+
+func checkAllUsersHavePasscode() {
+    RZUserDatabase.getLinkedClassroom({ classroom in
+        if let classroom = classroom {
+            RZUserDatabase.getUsersForClassroom(classroom, completion: { users in
+                var noPasscode: [User] = []
+                for user in users {
+                    if user.passcode == nil {
+                        noPasscode.append(user)
+                    }
+                }
+                
+                if noPasscode.count > 0 {
+                    //ask if we should generate passcodes for users without them
+                    let plural = noPasscode.count == 1 ? " doesn't have a passcode." : " don't have passcodes."
+                    let alert = UIAlertController(title: "Passcodes Enabled", message: "...but \(noPasscode.count) user\(plural) This means anybody with access to your classroom can play on their profile. Would you like us to create passcodes for them?", preferredStyle: .Alert)
+                    alert.addAction(UIAlertAction(title: "Create Passcodes", style: .Default, handler: { _ in
+                        
+                        for user in noPasscode {
+                            //generate a 4-digit passcode
+                            var passcode: String = ""
+                            for _ in 1...4 {
+                                let digit = "\(arc4random_uniform(9))"
+                                passcode = passcode + digit
+                            }
+                            
+                            user.passcode = passcode
+                            RZUserDatabase.saveUserToLinkedClassroom(user)
+                        }
+                        
+                        //show done alert
+                        let done = UIAlertController(title: "Passcodes Created", message: "All of your users now have passcodes. You can the new passcodes by tapping \"View All Students\" on this screen.", preferredStyle: .Alert)
+                        done.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+                        if let controller = SettingsUserStatisticsDelegate.settingsControllerStatic {
+                            controller.presentViewController(done, animated: true, completion: nil)
+                        }
+                        
+                    }))
+                    alert.addAction(UIAlertAction(title: "Ignore", style: .Destructive, handler: nil))
+                    
+                    if let controller = SettingsUserStatisticsDelegate.settingsControllerStatic {
+                        controller.presentViewController(alert, animated: true, completion: nil)
+                    }
+                    
+                }
+            })
+        }
+    })
 }

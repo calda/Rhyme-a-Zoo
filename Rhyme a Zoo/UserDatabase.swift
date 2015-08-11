@@ -452,6 +452,7 @@ class User : NSObject {
         } else {
             record = CKRecord(recordType: "User")
         }
+        
         record.setObject(toUserString(), forKey: "UserString")
         record.setObject(self.passcode, forKey: "Passcode")
         record.setObject(dictToArray(RZQuizDatabase.getQuizData()), forKey: "QuizData")
@@ -474,7 +475,7 @@ class User : NSObject {
         if let record = record {
             
             //get from CKRecord
-            let quizData = record.valueForKey("QuizData") as! [String]
+            let quizData = record.valueForKey("QuizData") as? [String] ?? []
             let favorites = record.valueForKey("Favorites") as? [Int] ?? []
             let balance = record.valueForKey("Balance") as? Double ?? 0
             let ownedAnimals = record.valueForKey("OwnedAnimals") as? [String] ?? []
@@ -551,7 +552,7 @@ class User : NSObject {
 let RZSettingPhoneticsOnly = ClassroomSetting("Only Show Phonetics Questions", "Students will not be quizzed on rhyme comprehension.", false)
 let RZSettingRequirePasscode = ClassroomSetting("Require Student Passcodes", "Students will have to type their passcode to play.", true)
 let RZSettingUserCreation = ClassroomSetting("Allow students to create new Users", "Students will be able to create new user accounts.", false)
-let RZSettingSkipVideos = ClassroomSetting("Allow students to skip videos", "Students will be able to skip videos, possibly missing important info.", false)
+let RZSettingSkipVideos = ClassroomSetting("Allow students to skip videos", "Students will be able to skip videos, possibly missing important info.", true)
 
 let RZClassroomSettings = [RZSettingRequirePasscode, RZSettingUserCreation, RZSettingPhoneticsOnly, RZSettingSkipVideos]
 

@@ -21,6 +21,8 @@ class PasscodeViewController : UIViewController {
     var correctPasscode: String = "1234"
     var descriptionString: String = ""
     var completion: (Bool) -> () = { _ in }
+    var playAudioPrompts = false
+    var mistakeCount = 0
     
     //passcode creation
     var creationMode = false
@@ -35,6 +37,12 @@ class PasscodeViewController : UIViewController {
         
         for button in outputButtons {
             button.transform = CGAffineTransformMakeScale(0.5, 0.5)
+        }
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        if playAudioPrompts {
+            UAPlayer().play("passcode", ofType: "mp3", ifConcurrent: .Interrupt)
         }
     }
     
@@ -146,6 +154,10 @@ class PasscodeViewController : UIViewController {
                 }
             } else {
                 clearInput(shake: true, waitForDescription: true)
+                mistakeCount++
+                if playAudioPrompts && mistakeCount % 2 == 0 {
+                    UAPlayer().play("passcode-forgot", ofType: "mp3", ifConcurrent: .Interrupt)
+                }
             }
         }
     }
@@ -212,10 +224,11 @@ func requestPasscode(correctPasscode: String, description: String, currentContro
     }
 }
 
-func requestPasscdoe(correctPasscode: String, description: String, currentController current: UIViewController, successCompletion: ((Bool) -> ())?) {
+func requestPasscdoe(correctPasscode: String, description: String, currentController current: UIViewController, forKids: Bool = false, successCompletion: ((Bool) -> ())?) {
     let passcode = UIStoryboard(name: "User", bundle: nil).instantiateViewControllerWithIdentifier("passcode") as! PasscodeViewController
     passcode.correctPasscode = correctPasscode
     passcode.descriptionString = description
+    passcode.playAudioPrompts = forKids
     passcode.view.frame = current.view.frame
     current.view.addSubview(passcode.view)
     

@@ -59,6 +59,12 @@ class BankViewController : UIViewController {
             availableCoinsArea.hidden = false
         }
         
+        if availableBalance > 60 {
+            coinPile.hidden = false
+            coinPile.alpha = 1.0
+            availableCoinsArea.hidden = true
+        }
+        
         //adjust center mark of coin view
         let height = availableCoinsView.frame.height
         let offset = height / -19.7

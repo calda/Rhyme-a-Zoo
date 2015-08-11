@@ -30,6 +30,7 @@ class QuizViewController : UIViewController {
     var goldCoins = 0
     var silverCoins = 0
     var quizPlayedBefore = false
+    var dismissAfterPlaying = true
     
     @IBOutlet weak var quizOverView: UIView!
     @IBOutlet weak var quizOverViewTop: NSLayoutConstraint!
@@ -202,7 +203,21 @@ class QuizViewController : UIViewController {
         //update data
         if !quizPlayedBefore {
             quiz.saveQuizResult(gold: goldCoins, silver: silverCoins)
-            RZQuizDatabase.advanceLevelIfCurrentIsComplete()
+            let previousLevel = RZQuizDatabase.currentLevel()
+            let levelUp = RZQuizDatabase.advanceLevelIfCurrentIsComplete()
+            
+            if levelUp && previousLevel == 24 {
+                //game is won
+                delay(3.0) {
+                    playVideo(name: "game-over", currentController: self, completion: {
+                        UAHaltPlayback()
+                        self.stopAllTimers()
+                        self.dismissViewControllerAnimated(true, completion: nil)
+                    })
+                }
+                self.dismissAfterPlaying = false //keep this view from dismissing itself
+            }
+            
         }
         
         //disable the quiz
@@ -271,7 +286,7 @@ class QuizViewController : UIViewController {
         let duration = UALengthOfFile("\(name)\(random)", ofType: ".mp3")
         
         //transition to next unplayed rhyme
-        if !quizPlayedBefore {
+        if !quizPlayedBefore && dismissAfterPlaying {
             delay(duration + 0.5) {
                 let unplayed = self.quiz.getNextUnplayed(RZShowingFavorites)
                 

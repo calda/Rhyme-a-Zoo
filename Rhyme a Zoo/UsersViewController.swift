@@ -169,12 +169,12 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
             //confirm with passcode
             if let passcode = RZUserDatabase.getLinkedClassroomPasscode() {
                 
-                requestPasscdoe(passcode, "Verify passcode to leave classroom on this device.", currentController: self, { success in
+                requestPasscdoe(passcode, "Verify passcode to leave classroom on this device.", currentController: self) { success in
                     if success {
                         RZUserDatabase.unlinkClassroom()
                     }
                     self.loadUsers()
-                })
+                }
                 
             }
             else {
@@ -300,8 +300,10 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     
     func checkUserPasscode(user: User) {
         if let passcode = user.passcode where RZSettingRequirePasscode.currentSetting() == true {
-            requestPasscode(passcode, "Enter the passcode for \(user.name)", currentController: self, completion: {
-                self.logInToUser(user)
+            requestPasscdoe(passcode, "Enter the passcode for \(user.name)", currentController: self, forKids: true, { success in
+                if success {
+                    self.logInToUser(user)
+                }
             })
         }
         else {

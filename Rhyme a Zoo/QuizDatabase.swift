@@ -190,7 +190,6 @@ class QuizDatabase {
         let current = getPlayerBalance()
         let new = current + amount
         data.setDouble(new, forKey: userKey(RZPlayerBalanceKey))
-        RZUserDatabase.saveCurrentUserToLinkedClassroom()
     }
     
     func setPlayerBalance(value: Double) {
@@ -257,7 +256,6 @@ class QuizDatabase {
         var animals = getOwnedAnimals()
         animals.append(animal)
         data.setValue(animals, forKey: userKey(RZAnimalsKey))
-        RZUserDatabase.saveCurrentUserToLinkedClassroom()
     }
     
     func currentZooLevel() -> Int {
@@ -278,7 +276,6 @@ class QuizDatabase {
             let currentLevel = currentZooLevel()
             data.setInteger(currentLevel + 1, forKey: userKey(RZZooLevelKey))
         }
-        RZUserDatabase.saveCurrentUserToLinkedClassroom()
         return complete
     }
     
