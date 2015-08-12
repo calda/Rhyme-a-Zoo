@@ -187,6 +187,10 @@ class PasscodeViewController : UIViewController {
 
     @IBAction func cancelPasscode(sender: AnyObject) {
         
+        if playAudioPrompts {
+            UAHaltPlayback()
+        }
+        
         if creationMode {
             creationComplation(nil)
             return
@@ -203,6 +207,7 @@ func requestPasscode(correctPasscode: String, description: String, currentContro
     passcode.descriptionString = description
     passcode.view.frame = current.view.frame
     current.view.addSubview(passcode.view)
+    current.view.userInteractionEnabled = false
 
     //animate
     let offscreenOrigin = CGPointMake(0, current.view.frame.height * 1.2)
@@ -210,7 +215,9 @@ func requestPasscode(correctPasscode: String, description: String, currentContro
     
     UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
         passcode.view.frame.origin = CGPointZero
-    }, completion: nil)
+    }, completion: { _ in
+        current.view.userInteractionEnabled = true
+    })
     
     passcode.completion = { success in
         UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
@@ -231,6 +238,7 @@ func requestPasscdoe(correctPasscode: String, description: String, currentContro
     passcode.playAudioPrompts = forKids
     passcode.view.frame = current.view.frame
     current.view.addSubview(passcode.view)
+    current.view.userInteractionEnabled = false
     
     //animate
     let offscreenOrigin = CGPointMake(0, current.view.frame.height * 1.2)
@@ -238,7 +246,9 @@ func requestPasscdoe(correctPasscode: String, description: String, currentContro
     
     UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
         passcode.view.frame.origin = CGPointZero
-        }, completion: nil)
+    }, completion: { _ in
+            current.view.userInteractionEnabled = true
+    })
     
     passcode.completion = { success in
         UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
@@ -257,6 +267,7 @@ func createPasscode(description: String, currentController current: UIViewContro
     passcode.descriptionString = description
     passcode.view.frame = current.view.frame
     current.view.addSubview(passcode.view)
+    current.view.userInteractionEnabled = false
     
     //animate
     let offscreenOrigin = CGPointMake(0, current.view.frame.height * 1.2)
@@ -264,7 +275,9 @@ func createPasscode(description: String, currentController current: UIViewContro
     
     UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
         passcode.view.frame.origin = CGPointZero
-        }, completion: nil)
+    }, completion: { _ in
+            current.view.userInteractionEnabled = true
+    })
     
     passcode.creationComplation = { newPasscode in
         UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {

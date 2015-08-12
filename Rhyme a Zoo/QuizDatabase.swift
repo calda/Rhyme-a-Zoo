@@ -74,7 +74,26 @@ class QuizDatabase {
     }
     var levelCount: Int = 24 //24 levels. This is just a fact.
     
+    
+    //any question in this array will override a question from the LegacyDB
+    var dbOverride: [String : (text: String, options: [String])] = [:]
+    
+    
     init() {
+        //load DB Override before loading questions
+        let overrideFile = NSBundle.mainBundle().URLForResource("DB Override", withExtension: "csv")!
+        let csv = csvToArray(overrideFile)
+        for line in csv {
+            let splits = split(line){ $0 == "," }
+            let number = splits[0]
+            let text = splits[1]
+            let options = [splits[2], splits[3], splits[4], splits[5]]
+            
+            dbOverride.updateValue((text: text, options: options), forKey: number)
+        }
+        
+        
+        //load rhymes and questions
         for level in 1...levelCount {
             var displayOrderArray: [Int?] = [nil, nil, nil, nil, nil]
             for quiz in Quizes.filter(QuizLevel == level) {
@@ -569,17 +588,13 @@ struct Question: Printable {
     //"QUESTION" table
     let quizNumber: Int
     let number: Int
-    let answer: String
+    var answer: String
     let category: Int
-    let text: String
+    var text: String
+    private var options: [Option]
     var shuffledOptions: [Option] {
         get {
-            var array: [Option] = []
-            for option in WordBank.filter(WordCategory == category) {
-                let wordText = option[WordText]
-                array.append(Option(word: wordText))
-            }
-            return array.shuffled()
+            return options.shuffled()
         }
     }
     
@@ -592,16 +607,55 @@ struct Question: Printable {
     init(_ number: Int) {
         self.number = number
         
+        //get info for question
         question = Questions.filter(QuestionNumber == self.number)
         let data = question.select(QuizNumber, QuestionAnswer, QuestionCategory, QuestionText).first!
         quizNumber = data[QuizNumber]
         answer = data[QuestionAnswer]
         category = data[QuestionCategory].toInt()!
         text = data[QuestionText]
+        
+        //get options
+        var options: [Option] = []
+        for option in WordBank.filter(WordCategory == category) {
+            let wordText = option[WordText]
+            options.append(Option(word: wordText))
+        }
+        self.options = options
+        
+        
+        //check DB Override
+        if let (overrideText, overrideOptions) = RZQuizDatabase.dbOverride["\(self.number)"] {
+            self.text = overrideText
+            
+            self.options = []
+            for optionText in overrideOptions {
+                if optionText.uppercaseString == optionText {
+                    //is phonetic option
+                    self.options.append(Option(word: "sound-\(optionText)"))
+                }
+                else {
+                    self.options.append(Option(word: optionText))
+                }
+            }
+            
+            self.answer = self.options[0].word
+        }
+        
     }
     
     func isPhonetic() -> Bool {
-        return false
+        var phonetic = true
+        
+        for option in options {
+            if option.word != option.word.uppercaseString {
+                //if the option is not 100% uppercase
+                //then it isn't a phonetic question
+                phonetic = false
+            }
+        }
+        
+        return phonetic
     }
     
 }
@@ -609,7 +663,20 @@ struct Question: Printable {
 ///Owned by a Question. The smallest element of the database.
 struct Option: Printable {
     
-    let word: String
+    let rawWord: String
+    
+    var word: String {
+        //check for phonetic answer
+        //format: sound-I-short
+        //or: sound-P
+        
+        if rawWord.hasPrefix("sound-") {
+            let splits = split(rawWord){ $0 == "-" }
+            return splits[1]
+        }
+        else { return rawWord }
+    }
+    
     var description: String {
         get{
             return word
@@ -617,13 +684,13 @@ struct Option: Printable {
     }
     
     init(word: String) {
-        self.word = word
+        self.rawWord = word
     }
     
     func playAudio() {
-        var success = UAPlayer().play(word, ofType: ".mp3", ifConcurrent: .Interrupt)
+        var success = UAPlayer().play(rawWord, ofType: ".mp3", ifConcurrent: .Interrupt)
         if !success {
-            UAPlayer().play(word.lowercaseString, ofType: ".mp3", ifConcurrent: .Interrupt)
+            UAPlayer().play(rawWord.lowercaseString, ofType: ".mp3", ifConcurrent: .Interrupt)
         }
     }
     

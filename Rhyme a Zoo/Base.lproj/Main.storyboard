@@ -713,14 +713,25 @@
                                                             <constraint firstAttribute="width" secondItem="Leh-TF-ViK" secondAttribute="height" multiplier="1:1" id="AGy-cf-bVq"/>
                                                         </constraints>
                                                     </imageView>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="UGH" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.20000000000000001" translatesAutoresizingMaskIntoConstraints="NO" id="MzK-ui-ECs">
+                                                        <rect key="frame" x="15" y="5" width="107" height="107"/>
+                                                        <animations/>
+                                                        <fontDescription key="fontDescription" name="TimesNewRomanPS-BoldMT" family="Times New Roman" pointSize="120"/>
+                                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
                                                 </subviews>
                                                 <animations/>
                                                 <color key="backgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 <constraints>
+                                                    <constraint firstItem="Leh-TF-ViK" firstAttribute="trailing" secondItem="MzK-ui-ECs" secondAttribute="trailing" constant="5" id="7qL-et-Lof"/>
+                                                    <constraint firstItem="Leh-TF-ViK" firstAttribute="leading" secondItem="MzK-ui-ECs" secondAttribute="leading" constant="-5" id="BmX-pE-WpV"/>
                                                     <constraint firstItem="Leh-TF-ViK" firstAttribute="top" secondItem="ZWl-q0-6tv" secondAttribute="top" id="Jx0-qc-wj5"/>
                                                     <constraint firstItem="OoC-Cn-5km" firstAttribute="leading" secondItem="ZWl-q0-6tv" secondAttribute="leading" id="NKW-nt-zt1"/>
+                                                    <constraint firstItem="Leh-TF-ViK" firstAttribute="bottom" secondItem="MzK-ui-ECs" secondAttribute="bottom" constant="5" id="U7w-c2-FqQ"/>
                                                     <constraint firstAttribute="width" secondItem="ZWl-q0-6tv" secondAttribute="height" multiplier="1:1" id="dSa-Xf-Ogw"/>
                                                     <constraint firstItem="OoC-Cn-5km" firstAttribute="top" secondItem="Leh-TF-ViK" secondAttribute="bottom" id="ncn-69-Q2F"/>
+                                                    <constraint firstItem="Leh-TF-ViK" firstAttribute="top" secondItem="MzK-ui-ECs" secondAttribute="top" constant="-5" id="obn-MI-Jy3"/>
                                                     <constraint firstAttribute="centerX" secondItem="Leh-TF-ViK" secondAttribute="centerX" id="sfB-cb-a8e"/>
                                                     <constraint firstAttribute="trailing" secondItem="OoC-Cn-5km" secondAttribute="trailing" id="szt-K3-2iz"/>
                                                     <constraint firstAttribute="bottom" secondItem="OoC-Cn-5km" secondAttribute="bottom" id="vJR-Hj-ldA"/>
@@ -756,17 +767,28 @@
                                                             <constraint firstAttribute="width" secondItem="uo4-6j-doc" secondAttribute="height" multiplier="1:1" id="iEE-bi-U2N"/>
                                                         </constraints>
                                                     </imageView>
+                                                    <label opaque="NO" userInteractionEnabled="NO" tag="1" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="UGH" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.20000000000000001" translatesAutoresizingMaskIntoConstraints="NO" id="Jgu-gw-ZOx">
+                                                        <rect key="frame" x="15" y="5" width="107" height="107"/>
+                                                        <animations/>
+                                                        <fontDescription key="fontDescription" name="TimesNewRomanPS-BoldMT" family="Times New Roman" pointSize="120"/>
+                                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
                                                 </subviews>
                                                 <animations/>
                                                 <color key="backgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 <constraints>
+                                                    <constraint firstItem="uo4-6j-doc" firstAttribute="leading" secondItem="Jgu-gw-ZOx" secondAttribute="leading" constant="-5" id="Dcq-MA-SRQ"/>
                                                     <constraint firstAttribute="trailing" secondItem="LpJ-Yb-rID" secondAttribute="trailing" id="Ilj-mq-sp2"/>
                                                     <constraint firstItem="uo4-6j-doc" firstAttribute="top" secondItem="udj-wB-XeU" secondAttribute="top" id="JXK-qp-lt5"/>
                                                     <constraint firstItem="LpJ-Yb-rID" firstAttribute="leading" secondItem="udj-wB-XeU" secondAttribute="leading" id="TLT-YI-94Q"/>
                                                     <constraint firstAttribute="centerX" secondItem="uo4-6j-doc" secondAttribute="centerX" id="UsK-tg-fue"/>
                                                     <constraint firstItem="LpJ-Yb-rID" firstAttribute="top" secondItem="uo4-6j-doc" secondAttribute="bottom" id="WWS-4G-kUV"/>
+                                                    <constraint firstItem="uo4-6j-doc" firstAttribute="trailing" secondItem="Jgu-gw-ZOx" secondAttribute="trailing" constant="5" id="n7d-w0-2NF"/>
                                                     <constraint firstAttribute="width" secondItem="udj-wB-XeU" secondAttribute="height" multiplier="1:1" id="pFl-fT-fTi"/>
                                                     <constraint firstAttribute="bottom" secondItem="LpJ-Yb-rID" secondAttribute="bottom" id="vhk-4A-rD0"/>
+                                                    <constraint firstItem="uo4-6j-doc" firstAttribute="bottom" secondItem="Jgu-gw-ZOx" secondAttribute="bottom" constant="5" id="xjL-Vm-Mr5"/>
+                                                    <constraint firstItem="uo4-6j-doc" firstAttribute="top" secondItem="Jgu-gw-ZOx" secondAttribute="top" constant="-5" id="zi2-hp-tTc"/>
                                                 </constraints>
                                             </view>
                                             <view tag="2" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kwv-v9-qSe" userLabel="item 3 container">
@@ -789,6 +811,13 @@
                                                         <color key="textColor" white="0.14000000000000001" alpha="1" colorSpace="calibratedWhite"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
+                                                    <label opaque="NO" userInteractionEnabled="NO" tag="2" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="UGH" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.20000000000000001" translatesAutoresizingMaskIntoConstraints="NO" id="oyu-TU-Bqg">
+                                                        <rect key="frame" x="15" y="5" width="107" height="107"/>
+                                                        <animations/>
+                                                        <fontDescription key="fontDescription" name="TimesNewRomanPS-BoldMT" family="Times New Roman" pointSize="120"/>
+                                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
                                                 </subviews>
                                                 <animations/>
                                                 <color key="backgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -796,8 +825,12 @@
                                                     <constraint firstAttribute="bottom" secondItem="15c-rh-x3w" secondAttribute="bottom" id="2JC-l9-w7m"/>
                                                     <constraint firstItem="15c-rh-x3w" firstAttribute="leading" secondItem="Kwv-v9-qSe" secondAttribute="leading" id="5IA-Ci-h3F"/>
                                                     <constraint firstAttribute="trailing" secondItem="15c-rh-x3w" secondAttribute="trailing" id="6mv-we-xV6"/>
+                                                    <constraint firstItem="oyu-TU-Bqg" firstAttribute="top" secondItem="udy-QK-Gq2" secondAttribute="top" constant="5" id="OBN-pA-aHo"/>
+                                                    <constraint firstItem="oyu-TU-Bqg" firstAttribute="leading" secondItem="udy-QK-Gq2" secondAttribute="leading" constant="5" id="PLd-HX-z2t"/>
                                                     <constraint firstAttribute="centerX" secondItem="udy-QK-Gq2" secondAttribute="centerX" id="XgG-x0-TrB"/>
                                                     <constraint firstItem="15c-rh-x3w" firstAttribute="top" secondItem="udy-QK-Gq2" secondAttribute="bottom" id="bL5-ER-1zC"/>
+                                                    <constraint firstItem="oyu-TU-Bqg" firstAttribute="bottom" secondItem="udy-QK-Gq2" secondAttribute="bottom" constant="-5" id="nrs-cy-5C3"/>
+                                                    <constraint firstItem="oyu-TU-Bqg" firstAttribute="trailing" secondItem="udy-QK-Gq2" secondAttribute="trailing" constant="-5" id="xjM-yS-IuV"/>
                                                     <constraint firstAttribute="width" secondItem="Kwv-v9-qSe" secondAttribute="height" multiplier="1:1" id="yVa-vy-niE"/>
                                                     <constraint firstItem="udy-QK-Gq2" firstAttribute="top" secondItem="Kwv-v9-qSe" secondAttribute="top" id="yhK-CK-FfC"/>
                                                 </constraints>
@@ -822,17 +855,29 @@
                                                             <constraint firstAttribute="width" secondItem="SRD-9k-nrU" secondAttribute="height" multiplier="1:1" id="Wy5-pb-pNp"/>
                                                         </constraints>
                                                     </imageView>
+                                                    <label opaque="NO" userInteractionEnabled="NO" tag="3" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="UGH" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.20000000000000001" translatesAutoresizingMaskIntoConstraints="NO" id="chS-X8-Ure">
+                                                        <rect key="frame" x="15" y="5" width="107" height="107"/>
+                                                        <animations/>
+                                                        <fontDescription key="fontDescription" name="TimesNewRomanPS-BoldMT" family="Times New Roman" pointSize="120"/>
+                                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
                                                 </subviews>
                                                 <animations/>
                                                 <color key="backgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 <constraints>
                                                     <constraint firstAttribute="trailing" secondItem="kyk-kp-gfs" secondAttribute="trailing" id="4V5-Ug-JTJ"/>
                                                     <constraint firstAttribute="width" secondItem="Pee-f9-UrB" secondAttribute="height" multiplier="1:1" id="7BA-Ob-kb0"/>
+                                                    <constraint firstItem="SRD-9k-nrU" firstAttribute="trailing" secondItem="chS-X8-Ure" secondAttribute="trailing" constant="5" id="DNK-p6-AJe"/>
                                                     <constraint firstItem="SRD-9k-nrU" firstAttribute="top" secondItem="Pee-f9-UrB" secondAttribute="top" id="KNr-wg-AHW"/>
+                                                    <constraint firstItem="SRD-9k-nrU" firstAttribute="top" secondItem="chS-X8-Ure" secondAttribute="top" constant="-5" id="OvY-xg-Aim"/>
                                                     <constraint firstAttribute="bottom" secondItem="kyk-kp-gfs" secondAttribute="bottom" id="Q4m-ko-wHg"/>
+                                                    <constraint firstItem="SRD-9k-nrU" firstAttribute="leading" secondItem="chS-X8-Ure" secondAttribute="leading" constant="-5" id="Xci-0K-EtB"/>
                                                     <constraint firstItem="kyk-kp-gfs" firstAttribute="leading" secondItem="Pee-f9-UrB" secondAttribute="leading" id="n3n-VO-1yH"/>
                                                     <constraint firstItem="kyk-kp-gfs" firstAttribute="top" secondItem="SRD-9k-nrU" secondAttribute="bottom" id="pXf-kA-pvz"/>
                                                     <constraint firstAttribute="centerX" secondItem="SRD-9k-nrU" secondAttribute="centerX" id="r60-Fd-UqC"/>
+                                                    <constraint firstItem="SRD-9k-nrU" firstAttribute="centerX" secondItem="chS-X8-Ure" secondAttribute="centerX" id="rPX-iN-DVj"/>
+                                                    <constraint firstItem="SRD-9k-nrU" firstAttribute="bottom" secondItem="chS-X8-Ure" secondAttribute="bottom" constant="5" id="zaS-M3-ml9"/>
                                                 </constraints>
                                             </view>
                                         </subviews>
@@ -1290,6 +1335,10 @@
                         <outletCollection property="coins" destination="IzG-sU-kvH" collectionClass="NSMutableArray" id="Q2B-PX-2RN"/>
                         <outletCollection property="coins" destination="wnn-xh-yTO" collectionClass="NSMutableArray" id="ovv-PT-AhG"/>
                         <outletCollection property="coins" destination="blA-sF-HnQ" collectionClass="NSMutableArray" id="ysF-xl-kaR"/>
+                        <outletCollection property="phoneticLabels" destination="chS-X8-Ure" collectionClass="NSMutableArray" id="km9-O5-Udu"/>
+                        <outletCollection property="phoneticLabels" destination="oyu-TU-Bqg" collectionClass="NSMutableArray" id="LgT-9w-eiH"/>
+                        <outletCollection property="phoneticLabels" destination="Jgu-gw-ZOx" collectionClass="NSMutableArray" id="kxW-DW-0ye"/>
+                        <outletCollection property="phoneticLabels" destination="MzK-ui-ECs" collectionClass="NSMutableArray" id="zad-9B-Dun"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fWk-UT-rip" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2488,11 +2537,6 @@
                                 <rect key="frame" x="0.0" y="0.0" width="568" height="320"/>
                                 <animations/>
                             </imageView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Cdh-5H-OxP" userLabel="coin view">
-                                <rect key="frame" x="0.0" y="0.0" width="568" height="320"/>
-                                <animations/>
-                                <color key="backgroundColor" red="0.51442426443099976" green="0.51440888643264771" blue="0.51441758871078491" alpha="0.0" colorSpace="calibratedRGB"/>
-                            </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L7c-mE-kyb">
                                 <rect key="frame" x="0.0" y="0.0" width="568" height="320"/>
                                 <subviews>
@@ -2548,16 +2592,16 @@
                                         </connections>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RUZ-0Q-YO4">
-                                        <rect key="frame" x="10" y="247" width="329" height="73"/>
+                                        <rect key="frame" x="10" y="260" width="252" height="60"/>
                                         <animations/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="73" id="U39-dp-mK3"/>
+                                            <constraint firstAttribute="height" constant="60" id="U39-dp-mK3"/>
                                         </constraints>
                                         <attributedString key="attributedText">
                                             <fragment content="0">
                                                 <attributes>
                                                     <color key="NSColor" red="0.99265420436859131" green="0.86586689949035645" blue="0.3806612491607666" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <font key="NSFont" size="75" name="DINCondensed-Bold"/>
+                                                    <font key="NSFont" size="62" name="DINCondensed-Bold"/>
                                                     <font key="NSOriginalFont" size="75" name="DINCondensed-Bold"/>
                                                     <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" lineHeightMultiple="1.1499999999999999" tighteningFactorForTruncation="0.0"/>
                                                 </attributes>
@@ -2565,7 +2609,7 @@
                                             <fragment content=" ">
                                                 <attributes>
                                                     <color key="NSColor" red="0.99624025819999995" green="0.81428295370000003" blue="0.11515008660000001" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <font key="NSFont" size="75" name="DINCondensed-Bold"/>
+                                                    <font key="NSFont" size="62" name="DINCondensed-Bold"/>
                                                     <font key="NSOriginalFont" size="75" name="DINCondensed-Bold"/>
                                                     <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" lineHeightMultiple="1.1499999999999999" tighteningFactorForTruncation="0.0"/>
                                                 </attributes>
@@ -2573,7 +2617,7 @@
                                             <fragment content="+">
                                                 <attributes>
                                                     <color key="NSColor" red="0.87450980392156863" green="0.87450980392156863" blue="0.87450980392156863" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <font key="NSFont" size="75" name="DINCondensed-Bold"/>
+                                                    <font key="NSFont" size="62" name="DINCondensed-Bold"/>
                                                     <font key="NSOriginalFont" size="75" name="DINCondensed-Bold"/>
                                                     <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" lineHeightMultiple="1.1499999999999999" tighteningFactorForTruncation="0.0"/>
                                                 </attributes>
@@ -2581,7 +2625,7 @@
                                             <fragment content=" ">
                                                 <attributes>
                                                     <color key="NSColor" red="0.99624025819999995" green="0.81428295370000003" blue="0.11515008660000001" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <font key="NSFont" size="75" name="DINCondensed-Bold"/>
+                                                    <font key="NSFont" size="62" name="DINCondensed-Bold"/>
                                                     <font key="NSOriginalFont" size="75" name="DINCondensed-Bold"/>
                                                     <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" lineHeightMultiple="1.1499999999999999" tighteningFactorForTruncation="0.0"/>
                                                 </attributes>
@@ -2589,7 +2633,7 @@
                                             <fragment content="0">
                                                 <attributes>
                                                     <color key="NSColor" red="0.89983391759999998" green="0.89977270359999995" blue="0.89980852600000005" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <font key="NSFont" size="75" name="DINCondensed-Bold"/>
+                                                    <font key="NSFont" size="62" name="DINCondensed-Bold"/>
                                                     <font key="NSOriginalFont" size="75" name="DINCondensed-Bold"/>
                                                     <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" lineHeightMultiple="1.1499999999999999" tighteningFactorForTruncation="0.0"/>
                                                 </attributes>
@@ -2604,7 +2648,7 @@
                                             <fragment content="earned">
                                                 <attributes>
                                                     <color key="NSColor" red="1" green="0.9998849630355835" blue="0.99995571374893188" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <font key="NSFont" size="50" name="DINCondensed-Bold"/>
+                                                    <font key="NSFont" size="35" name="DINCondensed-Bold"/>
                                                     <font key="NSOriginalFont" size="50" name="DINCondensed-Bold"/>
                                                     <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" lineHeightMultiple="1.1499999999999999" tighteningFactorForTruncation="0.0"/>
                                                 </attributes>
@@ -2612,7 +2656,7 @@
                                             <fragment content=" total">
                                                 <attributes>
                                                     <color key="NSColor" red="1" green="0.9998849630355835" blue="0.99995571374893188" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <font key="NSFont" size="50" name="DINCondensed-Bold"/>
+                                                    <font key="NSFont" size="35" name="DINCondensed-Bold"/>
                                                     <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" lineHeightMultiple="1.1499999999999999" tighteningFactorForTruncation="0.0"/>
                                                 </attributes>
                                             </fragment>
@@ -2622,61 +2666,61 @@
                                         <size key="shadowOffset" width="2" height="2"/>
                                     </label>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YFB-t8-opf" userLabel="available coins area">
-                                        <rect key="frame" x="20" y="45" width="528" height="197"/>
+                                        <rect key="frame" x="20" y="45" width="528" height="210"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" horizontalCompressionResistancePriority="760" verticalCompressionResistancePriority="760" translatesAutoresizingMaskIntoConstraints="NO" id="1Xn-D2-D9b" userLabel="available coins">
-                                                <rect key="frame" x="18" y="10" width="493" height="197"/>
+                                                <rect key="frame" x="2" y="10" width="525" height="210"/>
                                                 <subviews>
                                                     <imageView userInteractionEnabled="NO" tag="7" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="coin-5" translatesAutoresizingMaskIntoConstraints="NO" id="EcJ-fk-VGK">
-                                                        <rect key="frame" x="0.0" y="0.0" width="98" height="99"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="105" height="105"/>
                                                         <animations/>
                                                     </imageView>
                                                     <imageView userInteractionEnabled="NO" tag="9" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="coin-gold-big" translatesAutoresizingMaskIntoConstraints="NO" id="jrV-LB-Qfx">
-                                                        <rect key="frame" x="0.0" y="99" width="98" height="98"/>
+                                                        <rect key="frame" x="0.0" y="105" width="105" height="105"/>
                                                         <animations/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" secondItem="jrV-LB-Qfx" secondAttribute="height" multiplier="1:1" id="AJ7-9D-WMi"/>
                                                         </constraints>
                                                     </imageView>
                                                     <imageView userInteractionEnabled="NO" tag="5" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="coin-gold-big" translatesAutoresizingMaskIntoConstraints="NO" id="HBO-tV-DDD">
-                                                        <rect key="frame" x="98" y="99" width="98" height="98"/>
+                                                        <rect key="frame" x="105" y="105" width="104" height="105"/>
                                                         <animations/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" secondItem="HBO-tV-DDD" secondAttribute="height" multiplier="1:1" id="WMb-dk-nZ1"/>
                                                         </constraints>
                                                     </imageView>
                                                     <imageView userInteractionEnabled="NO" tag="1" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="coin-gold-big" translatesAutoresizingMaskIntoConstraints="NO" id="hav-7b-kez">
-                                                        <rect key="frame" x="196" y="99" width="99" height="98"/>
+                                                        <rect key="frame" x="209" y="105" width="105" height="105"/>
                                                         <animations/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" secondItem="hav-7b-kez" secondAttribute="height" id="Oef-BJ-gZX"/>
                                                         </constraints>
                                                     </imageView>
                                                     <imageView userInteractionEnabled="NO" tag="4" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="coin-gold-big" translatesAutoresizingMaskIntoConstraints="NO" id="HZD-US-WFw">
-                                                        <rect key="frame" x="295" y="99" width="98" height="98"/>
+                                                        <rect key="frame" x="314" y="105" width="104" height="105"/>
                                                         <animations/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" secondItem="HZD-US-WFw" secondAttribute="height" multiplier="1:1" id="Bc7-jJ-VsU"/>
                                                         </constraints>
                                                     </imageView>
                                                     <imageView userInteractionEnabled="NO" tag="3" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="coin-5" translatesAutoresizingMaskIntoConstraints="NO" id="wyP-cS-0my">
-                                                        <rect key="frame" x="98" y="0.0" width="98" height="99"/>
+                                                        <rect key="frame" x="105" y="0.0" width="104" height="105"/>
                                                         <animations/>
                                                     </imageView>
                                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="coin-20" translatesAutoresizingMaskIntoConstraints="NO" id="nbY-gT-UM4">
-                                                        <rect key="frame" x="196" y="0.0" width="99" height="99"/>
+                                                        <rect key="frame" x="209" y="0.0" width="105" height="105"/>
                                                         <animations/>
                                                     </imageView>
                                                     <imageView userInteractionEnabled="NO" tag="2" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="coin-5" translatesAutoresizingMaskIntoConstraints="NO" id="a01-tp-Xnp">
-                                                        <rect key="frame" x="295" y="0.0" width="98" height="99"/>
+                                                        <rect key="frame" x="314" y="0.0" width="104" height="105"/>
                                                         <animations/>
                                                     </imageView>
                                                     <imageView userInteractionEnabled="NO" tag="6" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="coin-5" translatesAutoresizingMaskIntoConstraints="NO" id="a8J-bR-TBi">
-                                                        <rect key="frame" x="393" y="0.0" width="98" height="99"/>
+                                                        <rect key="frame" x="418" y="0.0" width="105" height="105"/>
                                                         <animations/>
                                                     </imageView>
                                                     <imageView userInteractionEnabled="NO" tag="8" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="coin-silver-big" translatesAutoresizingMaskIntoConstraints="NO" id="hOb-VZ-lZw">
-                                                        <rect key="frame" x="393" y="99" width="100" height="98"/>
+                                                        <rect key="frame" x="418" y="105" width="107" height="105"/>
                                                         <animations/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" secondItem="hOb-VZ-lZw" secondAttribute="height" multiplier="45:44" id="8pm-lR-6Wx"/>
@@ -2780,7 +2824,7 @@
                                             </mask>
                                         </variation>
                                     </view>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lfO-Cz-GLc">
+                                    <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lfO-Cz-GLc">
                                         <rect key="frame" x="508" y="260" width="50" height="50"/>
                                         <animations/>
                                         <constraints>
@@ -2803,7 +2847,7 @@
                                             </mask>
                                         </variation>
                                         <connections>
-                                            <action selector="totalButton:" destination="ANo-I5-aZA" eventType="touchUpInside" id="8wR-yQ-9qa"/>
+                                            <action selector="repeatAnimation:" destination="ANo-I5-aZA" eventType="touchUpInside" id="RSh-F9-GL1"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -2839,6 +2883,11 @@
                                         <exclude reference="lD6-aT-pXY"/>
                                     </mask>
                                 </variation>
+                            </view>
+                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Cdh-5H-OxP" userLabel="coin view">
+                                <rect key="frame" x="0.0" y="0.0" width="568" height="320"/>
+                                <animations/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>
                             </view>
                         </subviews>
                         <animations/>
@@ -2881,6 +2930,7 @@
                         <outlet property="coinPile" destination="54e-3A-Lwv" id="Kcv-Yt-O8v"/>
                         <outlet property="coinView" destination="Cdh-5H-OxP" id="D3a-nb-ZtH"/>
                         <outlet property="noCoins" destination="odt-Hd-YgP" id="EaR-Sq-3ga"/>
+                        <outlet property="repeatAnimationButton" destination="lfO-Cz-GLc" id="Rkp-N8-77y"/>
                         <outletCollection property="coinImages" destination="nbY-gT-UM4" collectionClass="NSMutableArray" id="JYb-yy-lHm"/>
                         <outletCollection property="coinImages" destination="a01-tp-Xnp" collectionClass="NSMutableArray" id="fIP-Iz-7xB"/>
                         <outletCollection property="coinImages" destination="a8J-bR-TBi" collectionClass="NSMutableArray" id="ELt-5o-skI"/>

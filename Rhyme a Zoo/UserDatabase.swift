@@ -549,12 +549,11 @@ class User : NSObject {
 
 //MARK: - Classroom Settings
 
-let RZSettingPhoneticsOnly = ClassroomSetting("Only Show Phonetics Questions", "Students will not be quizzed on rhyme comprehension.", false)
 let RZSettingRequirePasscode = ClassroomSetting("Require Student Passcodes", "Students will have to type their passcode to play.", true)
 let RZSettingUserCreation = ClassroomSetting("Allow students to create new Users", "Students will be able to create new user accounts.", false)
 let RZSettingSkipVideos = ClassroomSetting("Allow students to skip videos", "Students will be able to skip videos, possibly missing important info.", true)
 
-let RZClassroomSettings = [RZSettingRequirePasscode, RZSettingUserCreation, RZSettingPhoneticsOnly, RZSettingSkipVideos]
+let RZClassroomSettings = [RZSettingRequirePasscode, RZSettingUserCreation, RZSettingSkipVideos]
 
 struct ClassroomSetting {
     

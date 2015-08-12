@@ -1660,8 +1660,8 @@
                                             <rect key="frame" x="0.0" y="0.0" width="535" height="48"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Send Email with Custom Student Data" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="omF-Tl-kw9">
-                                                    <rect key="frame" x="8" y="11" width="387" height="27"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Create customized email with Student Data" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="omF-Tl-kw9">
+                                                    <rect key="frame" x="8" y="11" width="438" height="27"/>
                                                     <animations/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
                                                     <color key="textColor" red="1" green="0.99997437" blue="0.99999129769999995" alpha="1" colorSpace="calibratedRGB"/>
@@ -1685,8 +1685,8 @@
                                             <rect key="frame" x="0.0" y="0.0" width="535" height="48"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Send Email with Passcodes" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5lf-rX-8e0">
-                                                    <rect key="frame" x="8" y="11" width="281" height="27"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Send email with Passcodes" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5lf-rX-8e0">
+                                                    <rect key="frame" x="8" y="11" width="279" height="27"/>
                                                     <animations/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
                                                     <color key="textColor" red="1" green="0.99997437" blue="0.99999129769999995" alpha="1" colorSpace="calibratedRGB"/>
@@ -1816,6 +1816,7 @@
                                         <animations/>
                                         <color key="backgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <connections>
+                                            <outlet property="deleteButton" destination="wpz-d1-JNb" id="ZtQ-Ur-G7S"/>
                                             <outlet property="icon" destination="GhS-Zw-Y3g" id="PpS-Es-GEV"/>
                                             <outlet property="nameLabel" destination="jDI-sY-UGP" id="Lvt-Md-ctP"/>
                                         </connections>
@@ -2027,7 +2028,7 @@
                                             <outlet property="titleLeading" destination="MPf-mF-8wV" id="mF1-Ij-Xkj"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="sendEmail" id="j6i-s1-48U">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="sendEmail" rowHeight="75" id="j6i-s1-48U">
                                         <rect key="frame" x="0.0" y="278" width="568" height="49"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="j6i-s1-48U" id="EEv-89-RYb">
@@ -2035,20 +2036,20 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Send Email to..." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Uu5-2G-3at">
-                                                    <rect key="frame" x="8" y="7" width="222" height="34"/>
+                                                    <rect key="frame" x="8" y="20" width="222" height="34"/>
                                                     <animations/>
                                                     <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="28"/>
                                                     <color key="textColor" red="1" green="0.99997437" blue="0.99999129769999995" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="c7F-e5-Jpy">
-                                                    <rect key="frame" x="520" y="4" width="40" height="40"/>
+                                                    <rect key="frame" x="500" y="7" width="60" height="60"/>
                                                     <animations/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="40" id="DDE-H0-BLg"/>
-                                                        <constraint firstAttribute="width" constant="40" id="Kgq-x7-qRJ"/>
+                                                        <constraint firstAttribute="height" constant="60" id="DDE-H0-BLg"/>
+                                                        <constraint firstAttribute="width" constant="60" id="Kgq-x7-qRJ"/>
                                                     </constraints>
-                                                    <state key="normal" image="button-forward">
+                                                    <state key="normal" image="button-continue-big">
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                 </button>
@@ -2234,7 +2235,7 @@
         <image name="happy.jpg" width="256" height="256"/>
     </resources>
     <inferredMetricsTieBreakers>
+        <segue reference="IXF-a0-qaD"/>
         <segue reference="hJB-u5-nFD"/>
-        <segue reference="InO-fJ-gRJ"/>
     </inferredMetricsTieBreakers>
 </document>

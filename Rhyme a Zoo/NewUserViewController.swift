@@ -114,7 +114,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
     }
     
     func playInstructionAudio() {
-        UAPlayer().play("create user", ofType: "m4a", ifConcurrent: .Interrupt)
+        UAPlayer().play("create-user", ofType: "mp3", ifConcurrent: .Interrupt)
     }
     
     override func viewWillDisappear(animated: Bool) {

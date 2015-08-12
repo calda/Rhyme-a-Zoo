@@ -157,6 +157,12 @@ func downsampleImageInView(imageView: UIImageView) {
     }
 }
 
+///Converts a URL to a CSV into an array of all of the lines in the CSV.
+func csvToArray(url: NSURL) -> [String] {
+    let string = String(contentsOfURL: url, encoding: NSUTF8StringEncoding, error: nil)
+    return split(string!){ $0 == "\r\n" }
+}
+
 //MARK: - Classes
 
 ///A touch gesture recognizer that sends events on both .Began (down) and .Ended (up)

@@ -37,6 +37,10 @@ class BankViewController : UIViewController {
     @IBOutlet weak var backButton: UIButton!
     var addingNewCoins = true
     var initialCoinString: NSAttributedString!
+    @IBOutlet weak var repeatAnimationButton: UIButton!
+    
+    var hasSpentCoins: Bool = false
+    var coinTimers: [NSTimer] = []
     
     override func viewWillAppear(animated: Bool) {
         self.view.layoutIfNeeded()
@@ -65,11 +69,27 @@ class BankViewController : UIViewController {
             availableCoinsArea.hidden = true
         }
         
+        let (totalGold, totalSilver) = RZQuizDatabase.getTotalMoneyEarned()
+        let totalBalance = Double(totalGold) + (Double(totalSilver) * 0.5)
+        hasSpentCoins = totalBalance > availableBalance
+        
         //adjust center mark of coin view
         let height = availableCoinsView.frame.height
         let offset = height / -19.7
         coinAreaOffset.constant = offset
         self.view.layoutIfNeeded()
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        playAnimation()
+    }
+    
+    override func viewDidLoad() {
+        initialCoinString = coinCount.attributedText!
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        self.endTimers()
     }
     
     func decorateCoins(#gold: Int, silver: Int) {
@@ -117,33 +137,92 @@ class BankViewController : UIViewController {
 
     }
     
-    func spawnCoins() {
-        let (totalGold, totalSilver) = RZQuizDatabase.getTotalMoneyEarned()
+    func playAnimation() {
+        self.repeatAnimationButton.enabled = false
         
-        for _ in 0 ..< min(300, totalGold) {
-            var wait = Double(arc4random_uniform(400)) / 100.0
-            if coinView.subviews.count < 5 {
-                wait = 0.0
+        UAPlayer().play("coins-available", ofType: "mp3", ifConcurrent: .Interrupt)
+        let duration = UALengthOfFile("coins-total", ofType: "mp3")
+        
+        if !hasSpentCoins { return }
+        
+        //play raining coins animation
+        
+        delay(duration) {
+            UIView.animateWithDuration(1.0) {
+                self.coinView.backgroundColor = UIColor(white: 0.0, alpha: 0.7)
+                self.availableCoinsArea.alpha = 0.3
             }
-            
-            delay(wait) {
-                self.spawnCoinOfType(.Gold)
-            }
+            self.spawnCoins()
         }
-        for _ in 0 ..< min(300, totalSilver) {
-            var wait = Double(arc4random_uniform(100)) / 50.0
-            if coinView.subviews.count < 5 {
-                wait = 0.0
-            }
-            
-            delay(wait) {
-                self.spawnCoinOfType(.Silver)
+        delay(duration + 0.5) {
+            UAPlayer().play("coins-total", ofType: "mp3", ifConcurrent: .Interrupt)
+        }
+        delay(duration + 4.0) {
+            self.repeatAnimationButton.enabled = true
+            UIView.animateWithDuration(0.5) {
+                self.coinView.backgroundColor = UIColor.clearColor()
+                self.availableCoinsArea.alpha = 1.0
             }
         }
     }
     
-    override func viewDidLoad() {
-        initialCoinString = coinCount.attributedText!
+    func spawnCoins() {
+        let (totalGold, totalSilver) = RZQuizDatabase.getTotalMoneyEarned()
+        
+        dispatch_async(RZAsyncQueue) {
+            for _ in 0 ..< min(300, totalGold) {
+                var wait = NSTimeInterval(arc4random_uniform(100)) / 100.0
+                
+                sync() {
+                    let timer = NSTimer.scheduledTimerWithTimeInterval(wait, target: self, selector: "spawnCoinOfType:", userInfo: CoinType.Gold.getImage(), repeats: false)
+                    self.coinTimers.append(timer)
+                }
+                
+            }
+            for _ in 0 ..< min(300, totalSilver) {
+                var wait = Double(arc4random_uniform(100)) / 50.0
+                
+                sync() {
+                    let timer = NSTimer.scheduledTimerWithTimeInterval(wait, target: self, selector: "spawnCoinOfType:", userInfo: CoinType.Silver.getImage(), repeats: false)
+                    self.coinTimers.append(timer)
+                }
+                
+            }
+        }
+        
+    }
+    
+    func spawnCoinOfType(timer: NSTimer) {
+        println(timer)
+        if let image = timer.userInfo as? UIImage {
+            if coinView.subviews.count > 500 {
+                return
+            }
+            let startX = CGFloat(arc4random_uniform(UInt32(self.view.frame.width)))
+            
+            let coin = UIImageView(frame: CGRectMake(startX - 15.0, -30.0, 30.0, 30.0))
+            if iPad() {
+                coin.frame = CGRectMake(startX - 25.0, -50.0, 50.0, 50.0)
+            }
+            coin.image = image
+            self.coinView.addSubview(coin)
+            
+            let endPosition = CGPointMake(startX - 25.0, self.view.frame.height + 50)
+            let duration = 2.0 + (Double(Int(arc4random_uniform(1000))) / 250.0)
+            UIView.animateWithDuration(duration, animations: {
+                coin.frame.origin = endPosition
+                }, completion: { success in
+                    coin.removeFromSuperview()
+            })
+        }
+        
+    }
+    
+    func endTimers() {
+        for timer in coinTimers {
+            timer.invalidate()
+        }
+        coinTimers = []
     }
     
     func updateReadout() {
@@ -163,39 +242,13 @@ class BankViewController : UIViewController {
         coinCount.attributedText = text
     }
     
-    func spawnCoinOfType(type: CoinType) {
-        if coinView.subviews.count > 500 {
-            return
-        }
-        let startX = CGFloat(arc4random_uniform(UInt32(self.view.frame.width)))
-        
-        let coin = UIImageView(frame: CGRectMake(startX - 15.0, -30.0, 30.0, 30.0))
-        if iPad() {
-            coin.frame = CGRectMake(startX - 25.0, -50.0, 50.0, 50.0)
-        }
-        coin.image = type.getImage()
-        self.coinView.addSubview(coin)
-        
-        let endPosition = CGPointMake(startX - 25.0, self.view.frame.height + 50)
-        let duration = 2.0 + (Double(Int(arc4random_uniform(1000))) / 250.0)
-        UIView.animateWithDuration(duration, animations: {
-            coin.frame.origin = endPosition
-        }, completion: { success in
-            coin.removeFromSuperview()
-        })
-    }
-    
     @IBAction func back(sender: AnyObject) {
         self.dismissViewControllerAnimated(true, completion: nil)
         self.addingNewCoins = false
     }
     
-    @IBAction func totalButton(sender: UIButton) {
-        spawnCoins()
-        sender.enabled = false
-        delay(5.0) {
-            sender.enabled = true
-        }
+    @IBAction func repeatAnimation(sender: UIButton) {
+        playAnimation()
     }
     
     override func viewDidDisappear(animated: Bool) {

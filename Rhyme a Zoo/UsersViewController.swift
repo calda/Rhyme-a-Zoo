@@ -267,7 +267,12 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return users.count + (allowUserCreation ? 1 : 0)
+        let count = users.count + (allowUserCreation ? 1 : 0)
+        if count == 0 && cloudUsers {
+            //classroom has not been set up yet
+            showTeacherIntro()
+        }
+        return count
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -290,7 +295,6 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     //MARK: - Selection of Cells
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        println(indexPath.item)
         //if indexPath.item == users.count { //add user button is last
         //    return
         //}
@@ -423,12 +427,8 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
             if let classroom = classroom {
                 requestPasscode(classroom.passcode, "Passcode for \(classroom.name)", currentController: self, completion: {
                     let settings = UIStoryboard(name: "User", bundle: nil).instantiateViewControllerWithIdentifier("classroomSettings") as! SettingsViewController
-                    RZUserDatabase.getLinkedClassroom({ classroom in
-                        if let classroom = classroom {
-                            settings.classroom = classroom
-                            self.presentViewController(settings, animated: true, completion: nil)
-                        }
-                    })
+                    settings.classroom = classroom
+                    self.presentViewController(settings, animated: true, completion: nil)
                 })
             }
             
@@ -438,6 +438,38 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     @IBAction func reloadUsers(sender: UIButton) {
         self.loadUsers()
         self.activityIndicator.hidden = false
+    }
+    
+    func showTeacherIntro() {
+        let alert1 = UIAlertController(title: "Welcome to Rhyme a Zoo!", message: "You can access settings for your Classroom by tapping its name at the bottom left corner of the screen.", preferredStyle: .Alert)
+        alert1.addAction(UIAlertAction(title: "OK", style: .Default, handler: { _ in
+        
+            //show second alert
+            let alert2 = UIAlertController(title: "Add Students?", message: "Now you can add students to your Classroom. It's easy, as long as you have a list of names.", preferredStyle: .Alert)
+            alert2.addAction(UIAlertAction(title: "Open Student Settings", style: .Default, handler: { _ in self.switchToAddStudents() }))
+            alert2.addAction(UIAlertAction(title: "Do This Later", style: .Destructive, handler: nil))
+            self.presentViewController(alert2, animated: true, completion: nil)
+            
+        }))
+        
+        self.presentViewController(alert1, animated: true, completion: nil)
+    }
+    
+    func switchToAddStudents() {
+        RZUserDatabase.getLinkedClassroom({ classroom in
+            if let classroom = classroom {
+                //present settings controller
+                let settings = UIStoryboard(name: "User", bundle: nil).instantiateViewControllerWithIdentifier("classroomSettings") as! SettingsViewController
+                settings.classroom = classroom
+                self.presentViewController(settings, animated: true, completion: nil)
+                
+                //switch to users delegate
+                delay(0.6) {
+                    let delegate = SettingsUsersDelegate(settings)
+                    settings.switchToDelegate(delegate, isBack: false, atOffset: nil)
+                }
+            }
+        })
     }
     
 }

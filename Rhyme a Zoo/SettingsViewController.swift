@@ -70,7 +70,6 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
         })),
         ("toggle", .Toggle(setting: RZSettingRequirePasscode)),
         ("toggle", .Toggle(setting: RZSettingUserCreation)),
-        ("toggle", .Toggle(setting: RZSettingPhoneticsOnly)),
         ("toggle", .Toggle(setting: RZSettingSkipVideos)),
         ("passcode", .Function(function: { controller in
             controller.changePasscode()
@@ -1040,7 +1039,7 @@ class SettingsComposeEmailDelegate : NSObject, SettingsViewTableDelegate, MFMail
     }
     
     func getTitle() -> String {
-        return "Send Email with Custom Student Data"
+        return "Customize Email"
     }
     
     func getBackButtonImage() -> UIImage {
@@ -1308,6 +1307,7 @@ class BigUserCell : UITableViewCell {
     
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var icon: UIImageView!
+    @IBOutlet weak var deleteButton: UIButton!
     var controller: SettingsViewController?
     var user: User?
     
@@ -1319,6 +1319,8 @@ class BigUserCell : UITableViewCell {
         self.hideSeparator()
         self.controller = controller
         self.user = user
+        
+        self.deleteButton.hidden = self.frame.height != 100.0
     }
     
     @IBAction func deletePressed(sender: AnyObject) {

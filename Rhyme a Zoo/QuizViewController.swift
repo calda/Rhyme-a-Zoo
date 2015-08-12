@@ -16,6 +16,8 @@ class QuizViewController : UIViewController {
     @IBOutlet weak var backButton: UIButton!
     @IBOutlet var optionIcons: [UIImageView]!
     @IBOutlet var optionLabels: [UILabel]!
+    @IBOutlet var phoneticLabels: [UILabel]!
+    
     @IBOutlet var touchRecognizer: UITouchGestureRecognizer!
     
     @IBOutlet weak var questionContainer: UIView!
@@ -43,7 +45,6 @@ class QuizViewController : UIViewController {
     @IBOutlet weak var previousButton: UIButton!
     @IBOutlet weak var repeatButton: UIButton!
     
-    
     var timers: [NSTimer] = []
     
     //MARK: - Managing the view controller
@@ -56,6 +57,7 @@ class QuizViewController : UIViewController {
         sortOutletCollectionByTag(&optionLabels)
         sortOutletCollectionByTag(&optionContainers)
         sortOutletCollectionByTag(&coins)
+        sortOutletCollectionByTag(&phoneticLabels)
         
         quizOverView.backgroundColor = UIColor.clearColor()
         quizOverViewTop.constant = -UIScreen.mainScreen().bounds.height
@@ -115,20 +117,36 @@ class QuizViewController : UIViewController {
         
         for i in 0 ... 3 {
             let option = options[i]
-            let word = option.word
-            optionLabels[i].text = word
+            optionLabels[i].text = option.word
             optionContainers[i].alpha = 1.0
+            phoneticLabels[i].hidden = true
             
             //find the image for the word
-            var image = UIImage(named: word + ".jpg")
+            var image = UIImage(named: option.rawWord + ".jpg")
             if image == nil {
-                image = UIImage(named: word.lowercaseString + ".jpg")
+                image = UIImage(named: option.rawWord.lowercaseString + ".jpg")
             }
             if image == nil {
-                //no image to display, choose one of the 8 unknown images
-                let random = arc4random_uniform(7) + 1
-                let imageName = "unknown\(random).jpg"
-                image = UIImage(named: imageName)
+                
+                optionIcons[i].image = UIImage(named: "blank-white.jpg")
+                
+                if option.rawWord.hasPrefix("sound-") {
+                    //is phonetic question
+                    phoneticLabels[i].hidden = false
+                    phoneticLabels[i].text = option.word
+                    
+                    //properly center the text
+                    var font = UIFont(name: "TimesNewRomanPS-BoldMT", size: 120.0)!
+                    let text = phoneticLabels[i].text! as NSString
+                    
+                    while text.sizeWithAttributes([NSFontAttributeName : font]).width > phoneticLabels[i].frame.height {
+                        font = UIFont(name: "TimesNewRomanPS-BoldMT", size: font.pointSize - 10.0)!
+                    }
+                    
+                    phoneticLabels[i].font = font
+                    self.view.layoutIfNeeded()
+                    
+                }
             }
             if let image = image {
                 optionIcons[i].image = image
@@ -162,7 +180,7 @@ class QuizViewController : UIViewController {
             
             if i == 4 { continue }
             //calculate next delay
-            let audioName = options[i].word
+            let audioName = options[i].rawWord
             var duration = UALengthOfFile(audioName, ofType: "mp3")
             if duration == 0.0 { duration = 1.0 }
             
@@ -185,7 +203,7 @@ class QuizViewController : UIViewController {
                 return
             }
             
-            let audioName = options[option].word
+            let audioName = options[option].rawWord
             UAPlayer().play(audioName, ofType: "mp3", ifConcurrent: .Interrupt)
         }
     }
