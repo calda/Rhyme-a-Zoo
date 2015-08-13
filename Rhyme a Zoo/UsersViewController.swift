@@ -441,7 +441,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     }
     
     func showTeacherIntro() {
-        let alert1 = UIAlertController(title: "Welcome to Rhyme a Zoo!", message: "You can access settings for your Classroom by tapping its name at the bottom left corner of the screen.", preferredStyle: .Alert)
+        let alert1 = UIAlertController(title: "Welcome to Rhyme a Zoo!", message: "You can access settings for your Classroom at any time by tapping its name at the bottom left corner of the screen.", preferredStyle: .Alert)
         alert1.addAction(UIAlertAction(title: "OK", style: .Default, handler: { _ in
         
             //show second alert

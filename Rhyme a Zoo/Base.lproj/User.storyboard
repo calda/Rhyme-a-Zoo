@@ -341,13 +341,6 @@
                                     <outlet property="delegate" destination="0bY-vS-luc" id="hE2-f4-P8Y"/>
                                 </connections>
                             </collectionView>
-                            <label opaque="NO" userInteractionEnabled="NO" alpha="0.30000000000000004" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="New User" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nfF-oX-nqR">
-                                <rect key="frame" x="76" y="90" width="86" height="23"/>
-                                <animations/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="19"/>
-                                <color key="textColor" red="1" green="0.99997437000274658" blue="0.99999129772186279" alpha="1" colorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="IbY-ZW-wuR">
                                 <rect key="frame" x="60" y="5" width="118" height="118"/>
                                 <animations/>
@@ -465,7 +458,6 @@
                             <constraint firstItem="IbY-ZW-wuR" firstAttribute="top" secondItem="e5w-ZP-AhJ" secondAttribute="top" constant="5" id="68E-os-WFO"/>
                             <constraint firstAttribute="centerY" secondItem="E77-xS-fB8" secondAttribute="centerY" id="7K1-Cc-BpQ"/>
                             <constraint firstItem="7fm-9T-AP0" firstAttribute="trailing" secondItem="BeK-w5-Wfr" secondAttribute="trailing" id="86E-P8-Hla"/>
-                            <constraint firstItem="nfF-oX-nqR" firstAttribute="centerX" secondItem="IbY-ZW-wuR" secondAttribute="centerX" id="8xO-Rg-OlL"/>
                             <constraint firstItem="8Ot-bg-EK2" firstAttribute="leading" secondItem="GX0-5j-eoo" secondAttribute="trailing" constant="10" id="95f-ct-MDR"/>
                             <constraint firstItem="KCu-j4-g1t" firstAttribute="baseline" secondItem="GX0-5j-eoo" secondAttribute="baseline" id="9Yf-na-GC0"/>
                             <constraint firstItem="sdg-r1-wfp" firstAttribute="centerY" secondItem="KCu-j4-g1t" secondAttribute="centerY" id="A6r-a1-Ezc"/>
@@ -481,13 +473,10 @@
                             <constraint firstItem="8Ot-bg-EK2" firstAttribute="centerY" secondItem="GX0-5j-eoo" secondAttribute="centerY" constant="30" id="DBN-5M-koP"/>
                             <constraint firstItem="E77-xS-fB8" firstAttribute="width" secondItem="e5w-ZP-AhJ" secondAttribute="width" id="EGz-Od-xHv"/>
                             <constraint firstItem="8Ot-bg-EK2" firstAttribute="centerY" secondItem="tMv-RH-Tim" secondAttribute="centerY" id="EaF-Wu-HU9"/>
-                            <constraint firstItem="nfF-oX-nqR" firstAttribute="centerY" secondItem="IbY-ZW-wuR" secondAttribute="centerY" id="Evs-Ba-IEx"/>
                             <constraint firstItem="KCu-j4-g1t" firstAttribute="leading" secondItem="GX0-5j-eoo" secondAttribute="leading" id="F2W-CV-Tkh"/>
-                            <constraint firstItem="nfF-oX-nqR" firstAttribute="bottom" secondItem="IbY-ZW-wuR" secondAttribute="bottom" constant="-10" id="Fta-6M-oax"/>
                             <constraint firstItem="8Ot-bg-EK2" firstAttribute="leading" secondItem="IFm-Al-wLu" secondAttribute="leading" id="GqJ-dA-cbE"/>
                             <constraint firstItem="sdg-r1-wfp" firstAttribute="leading" secondItem="tMv-RH-Tim" secondAttribute="leading" id="HvW-dz-hIE"/>
                             <constraint firstItem="sdg-r1-wfp" firstAttribute="top" secondItem="tMv-RH-Tim" secondAttribute="top" constant="-30" id="KJk-mL-vKI"/>
-                            <constraint firstItem="nfF-oX-nqR" firstAttribute="centerX" secondItem="IbY-ZW-wuR" secondAttribute="centerX" id="Mfk-gV-Wl9"/>
                             <constraint firstItem="IFm-Al-wLu" firstAttribute="bottom" secondItem="tMv-RH-Tim" secondAttribute="bottom" id="N9m-I5-5Ph"/>
                             <constraint firstAttribute="centerX" secondItem="E77-xS-fB8" secondAttribute="centerX" id="OCZ-db-1OY"/>
                             <constraint firstItem="tMv-RH-Tim" firstAttribute="centerX" secondItem="IbY-ZW-wuR" secondAttribute="centerX" id="OMN-ML-jAg"/>
@@ -525,8 +514,6 @@
                         <variation key="default">
                             <mask key="constraints">
                                 <exclude reference="pMp-62-gnb"/>
-                                <exclude reference="8xO-Rg-OlL"/>
-                                <exclude reference="Evs-Ba-IEx"/>
                                 <exclude reference="3v5-8q-R2M"/>
                                 <exclude reference="vUe-yA-lhL"/>
                                 <exclude reference="vIT-gr-kxL"/>

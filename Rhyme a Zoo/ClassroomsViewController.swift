@@ -30,17 +30,17 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
     
     override func viewWillAppear(animated: Bool) {
         tableView.contentInset = UIEdgeInsets(top: 70.0, left: 0.0, bottom: 70.0, right: 0.0)
-        checkUserLoggedIn()
+        checkUserLoggedIn(showIntroAlert: true, delayAlertPresentation: false)
     }
     
-    func checkUserLoggedIn(delayAlertPresentation: Bool = false) {
+    func checkUserLoggedIn(#showIntroAlert: Bool, delayAlertPresentation: Bool = false) {
         RZUserDatabase.userLoggedIn({ loggedIn in
             if !loggedIn {
                 
                 let alert = UIAlertController(title: "Cannot join Classroom", message: "You must be logged in to an iCloud account on this device to join or create a classroom.", preferredStyle: .Alert)
                 alert.addAction(UIAlertAction(title: "Try Again", style: .Default, handler: { _ in
                     //recursively repeat this function
-                    self.checkUserLoggedIn()
+                    self.checkUserLoggedIn(showIntroAlert: showIntroAlert, delayAlertPresentation: delayAlertPresentation)
                 }))
                 alert.addAction(UIAlertAction(title: "Settings", style: .Default, handler: { _ in
                     self.activityIndicator.alpha = 0.0
@@ -61,13 +61,13 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
             }
                 
             else {
-                self.searchForNearbyClassrooms()
+                self.searchForNearbyClassrooms(showIntroAlert: showIntroAlert)
             }
             
         })
     }
     
-    func searchForNearbyClassrooms() {
+    func searchForNearbyClassrooms(#showIntroAlert: Bool) {
         searching = true
         repeatButton.enabled = false
         
@@ -83,11 +83,11 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
             self.currentLocation = location
             RZUserDatabase.getNearbyClassrooms(location, completion: { nearby in
                 self.nearbyClassrooms = nearby
-                self.dataLoaded()
+                self.dataLoaded(showIntroAlert: showIntroAlert)
             })
             }, failure: { error in
                 //failed to access location
-                self.dataLoaded()
+                self.dataLoaded(showIntroAlert: showIntroAlert)
                 
                 let alert = UIAlertController(title: "Could not determine location", message: "Enable Location Services or search for your classroom by name.", preferredStyle: .Alert)
                 let ok = UIAlertAction(title: "OK", style: .Default, handler: nil)
@@ -100,7 +100,9 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
         })
     }
     
-    func dataLoaded() {
+    func dataLoaded(#showIntroAlert: Bool) {
+        if showIntroAlert { self.showIntroAlert() }
+        
         searching = false
         delay(1.5) {
             self.repeatButton.enabled = true
@@ -129,6 +131,25 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
         }, completion: { success in
             self.activityIndicator.frame.origin = originalIndicatorOrigin
         })
+    }
+    
+    func showIntroAlert() {
+        let alert: UIAlertController
+        if let classrooms = self.nearbyClassrooms where classrooms.count != 0 {
+            //there was atleast one nearby classroom
+            alert = UIAlertController(title: "Join a Classroom", message: "If you already have a nearby classroom, tap its name on the list. If you want to create a new classrom, tap the green button in the bottom right corner.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+        }
+        else {
+            //zero classrooms
+            alert = UIAlertController(title: "Join a Classroom", message: "There are no nearby classrooms. Would you like to create one?", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Create Classroom", style: .Default, handler: { action in
+                self.createClassroomButtonPressed(action)
+            }))
+            alert.addAction(UIAlertAction(title: "Not Now", style: .Destructive, handler: nil))
+        }
+        
+        self.presentViewController(alert, animated: true, completion: nil)
     }
     
     //MARK: - Table View Data Source
@@ -216,7 +237,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
     
     @IBAction func repeatSearch(sender: AnyObject) {
         if !searching {
-            checkUserLoggedIn(delayAlertPresentation: false)
+            checkUserLoggedIn(showIntroAlert: false, delayAlertPresentation: false)
         }
     }
     
@@ -374,7 +395,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
     func processSearchText(text: String) {
         if (text as NSString).length < 4 {
             //search must be atleast 4 characters long
-            let alert = UIAlertController(title: "Text Too Short", message: "Your search text must be at least 4 characters long.", preferredStyle: .Alert)
+            let alert = UIAlertController(title: "Text Too Short", message: "Your search text must be at least 4 letters long.", preferredStyle: .Alert)
             let cancel = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
             let tryAgain = UIAlertAction(title: "Try Again", style: .Default, handler: { alert in
                 self.searchPressed(nil)
@@ -390,7 +411,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
         
         RZUserDatabase.getClassroomsMatchingText(text, location: currentLocation, completion: { classrooms in
             self.nearbyClassrooms = classrooms
-            self.dataLoaded()
+            self.dataLoaded(showIntroAlert: false)
         })
         
         //animate
@@ -427,7 +448,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
             self.tableView.alpha = 0.0
         }, completion: nil)
         
-        searchForNearbyClassrooms()
+        searchForNearbyClassrooms(showIntroAlert: false)
         nearbyClassroomsLabel.text = "Nearby Classrooms"
         noNearbyLabel.text = "No nearby classrooms."
     }

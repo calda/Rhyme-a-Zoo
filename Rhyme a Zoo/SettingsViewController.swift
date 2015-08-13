@@ -347,8 +347,14 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
         }
     }
     var passcodesRequired: Bool
+    var showCustomEmailCell: Bool {
+        return users.count != 0
+    }
     var showPasscodeEmailCell: Bool {
         return passcodesRequired && users.count != 0
+    }
+    var additionalCells: Int {
+        return 1 + (showCustomEmailCell ? 1 : 0) + (showPasscodeEmailCell ? 1 : 0)
     }
     
     init(_ settingsController: SettingsViewController) {
@@ -368,7 +374,7 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
     //MARK: Table View Data Source
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return users.count + (showPasscodeEmailCell ? 3 : 2)
+        return users.count + additionalCells
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -378,7 +384,7 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
             cell.backgroundColor = UIColor.clearColor()
             return cell
         }
-        if index == 1 {
+        if index == 1 && showCustomEmailCell {
             let cell = tableView.dequeueReusableCellWithIdentifier("dataEmail", forIndexPath: indexPath) as! UITableViewCell
             cell.backgroundColor = UIColor.clearColor()
             return cell
@@ -390,7 +396,7 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
         }
         
         let cell = tableView.dequeueReusableCellWithIdentifier("user", forIndexPath: indexPath) as! UserNameCell
-        cell.decorateForUser(users[index - (showPasscodeEmailCell ? 3 : 2)])
+        cell.decorateForUser(users[index - additionalCells])
         cell.backgroundColor = UIColor.clearColor()
         return cell
     }
@@ -410,7 +416,7 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
         if index == 0 {
             startNewStudentFlow()
         }
-        else if index == 1 {
+        else if index == 1 && showCustomEmailCell {
             //switch to the email creation delegate
             let newDelegate = SettingsComposeEmailDelegate(users: self.users, settingsController: settingsController)
             settingsController.switchToDelegate(newDelegate, isBack: false, atOffset: nil)
@@ -419,7 +425,7 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
             sendPasscodeEmail()
         }
         else {
-            let user = users[index - (showPasscodeEmailCell ? 3 : 2)]
+            let user = users[index - additionalCells]
             showStudentStatistics(user)
         }
     }
@@ -651,13 +657,19 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
                     let deltaTime = -date.timeIntervalSinceNow
                     
                     if deltaTime < 3600 { //less than an hour
-                        cell.setItem("\(Int(deltaTime/60.0)) minutes ago")
+                        let amount = Int(deltaTime/60.0)
+                        let plural = amount == 1 ? "" : "s"
+                        cell.setItem("\(amount) minute\(plural) ago")
                     }
                     else if deltaTime < 86400 { //less than a day
-                        cell.setItem("\(Int(deltaTime/3600.0)) hours ago")
+                        let amount = Int(deltaTime/3600.0)
+                        let plural = amount == 1 ? "" : "s"
+                        cell.setItem("\(amount) hour\(plural) ago")
                     }
                     else if deltaTime < 432000 { //less than five days
-                        cell.setItem("\(Int(deltaTime/86400.0)) days ago")
+                        let amount = Int(deltaTime/86400.0)
+                        let plural = amount == 1 ? "" : "s"
+                        cell.setItem("\(amount) day\(plural) ago")
                     }
                     else {
                         cell.setTitle("Last played ")
