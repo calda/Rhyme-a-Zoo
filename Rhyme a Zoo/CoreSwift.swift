@@ -58,6 +58,20 @@ func dismissController(controller: UIViewController, untilMatch controllerCheck:
     })
 }
 
+///get the top most view controller of the current Application
+func getTopController(application: UIApplicationDelegate) -> UIViewController? {
+    //find the top controller
+    var topController: UIViewController?
+    
+    if let window = application.window, let root = window!.rootViewController {
+        topController = root
+        while topController!.presentedViewController != nil {
+            topController = topController!.presentedViewController
+        }
+    }
+    
+    return topController
+}
 
 ///sorts any [UIView]! by view.tag
 func sortOutletCollectionByTag<T : UIView>(inout collection: [T]!) {
@@ -161,6 +175,28 @@ func downsampleImageInView(imageView: UIImageView) {
 func csvToArray(url: NSURL) -> [String] {
     let string = String(contentsOfURL: url, encoding: NSUTF8StringEncoding, error: nil)
     return split(string!){ $0 == "\r\n" }
+}
+
+
+///Crops an image to a circle (if square) or an oval (if rectangular)
+func cropImageToCircle(image: UIImage) -> UIImage {
+    UIGraphicsBeginImageContext(image.size)
+    let context = UIGraphicsGetCurrentContext()
+    
+    let radius = image.size.width / 2
+    let imageCenter = CGPointMake(image.size.width / 2, image.size.height / 2)
+    CGContextBeginPath(context)
+    CGContextAddArc(context, imageCenter.x, imageCenter.y, radius, 0, CGFloat(2*M_PI), 0)
+    CGContextClosePath(context)
+    CGContextClip(context)
+    
+    CGContextScaleCTM(context, image.scale, image.scale)
+    image.drawInRect(CGRect(origin: CGPointZero, size: image.size))
+    
+    let cropped = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+    return cropped
+    
 }
 
 //MARK: - Classes

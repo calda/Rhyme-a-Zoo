@@ -41,6 +41,10 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
         if RZShowingFavorites {
             return RZQuizDatabase.numberOfFavories()
         }
+        
+        //update current level
+        RZQuizDatabase.advanceLevelIfCurrentIsComplete()
+        
         //return RZQuizDatabase.levelCount * 5 //this line enabled all rhymes
         return RZQuizDatabase.currentLevel() * 5
     }

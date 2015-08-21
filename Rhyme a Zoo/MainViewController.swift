@@ -228,3 +228,23 @@ class TouchView: UIImageView {
     }
 
 }
+
+class HomeButton: UIButton {
+    
+    required init(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        
+        self.addTarget(self, action: "returnHome:", forControlEvents: UIControlEvents.TouchUpInside)
+    }
+    
+    func returnHome(sender: AnyObject) {
+        UAHaltPlayback()
+        
+        if let application = UIApplication.sharedApplication().delegate, let topController = getTopController(application) {
+            //close all of the controllers until we're back to the desired controller
+            //where controllerCheck(...) == true
+            dismissController(topController, untilMatch: { $0 is MainViewController })
+        }
+    }
+    
+}

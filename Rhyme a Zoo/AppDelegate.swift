@@ -52,17 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let userCount = RZUserDatabase.getLocalUsers().count
                 let controllerCheck: (UIViewController) -> Bool = (userCount == 1 ? controllerIsHome : controllerIsUser)
                 
-                //find the top controller
-                var topController: UIViewController?
-                
-                if let window = self.window, let root = window.rootViewController {
-                    topController = root
-                    while topController!.presentedViewController != nil {
-                        topController = topController!.presentedViewController
-                    }
-                }
-                
-                if let topController = topController {
+                if let topController = getTopController(self) {
                     //close all of the controllers until we're back to the desired controller
                     //where controllerCheck(...) == true
                     dismissController(topController, untilMatch: controllerCheck)

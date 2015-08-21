@@ -25,6 +25,7 @@ enum UAConcurrentAudioMode {
 
 func UAHaltPlayback() {
     UAShouldHaltPlayback = true
+    UAAudioIsPlaying = false
     delay(0.5) {
         UAShouldHaltPlayback = false
     }

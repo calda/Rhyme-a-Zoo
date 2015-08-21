@@ -20,6 +20,7 @@ class RhymeViewController : UIViewController {
     @IBOutlet weak var previousButton: UIButton!
     @IBOutlet weak var nextButton: UIButton!
     @IBOutlet weak var quizButton: UIButton!
+    var rhymeTimer: NSTimer?
     var quizBounceTimer: NSTimer?
     @IBOutlet weak var repeatButton: UIButton!
     @IBOutlet weak var repeatHeight: NSLayoutConstraint!
@@ -128,10 +129,15 @@ class RhymeViewController : UIViewController {
     override func viewDidAppear(animated: Bool) {
         delay(0.05) {
             if !self.willPlayAnimalVideo() {
-                self.playRhyme()
+                self.rhymeTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: "playRhyme", userInfo: nil, repeats: false)
             }
         }
         
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        rhymeTimer?.invalidate()
+        UAHaltPlayback()
     }
     
     //MARK: - Handling Playback of the Rhyme
@@ -294,7 +300,7 @@ class RhymeViewController : UIViewController {
         quizBounceTimer?.invalidate()
         if !rhyme.quizHasBeenPlayed() {
             self.quizBounceTimer = NSTimer.scheduledTimerWithTimeInterval(3.5, target: self, selector: "bounceQuizIcon", userInfo: nil, repeats: true)
-            delay(0.5) {
+            delay(0.25) {
                 self.quizButtonPressed(self)
             }
         }

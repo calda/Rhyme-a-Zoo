@@ -326,8 +326,12 @@ class BuildingViewController : ZookeeperGameController {
                 mainButtons.removeAtIndex(index)
             }
             
+            //play animal's sound
+            UAPlayer().play(animal, ofType: "m4a", ifConcurrent: .Interrupt)
+            let duration = UALengthOfFile(animal, ofType: "m4a")
+            
             if didAdvanceLevel {
-                delay(1.0) {
+                delay(max(duration, 1.0)) {
                     let newLevel = RZQuizDatabase.currentZooLevel()
                     if contains(2...7, newLevel) {
                         playVideo(name: "zoo-level-\(newLevel)", currentController: self, completion: {

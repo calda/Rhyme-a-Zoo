@@ -255,5 +255,6 @@ class BankViewController : UIViewController {
         for subview in coinView.subviews {
             subview.removeFromSuperview()
         }
+        UAHaltPlayback()
     }
 }

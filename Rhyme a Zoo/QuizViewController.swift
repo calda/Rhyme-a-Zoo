@@ -11,9 +11,10 @@ import UIKit
 
 class QuizViewController : UIViewController {
     
+    @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var blurredBackground: UIImageView!
     @IBOutlet weak var questionText: UILabel!
-    @IBOutlet weak var backButton: UIButton!
+    @IBOutlet weak var backToRhymeButton: UIButton!
     @IBOutlet var optionIcons: [UIImageView]!
     @IBOutlet var optionLabels: [UILabel]!
     @IBOutlet var phoneticLabels: [UILabel]!
@@ -77,11 +78,48 @@ class QuizViewController : UIViewController {
             originalContainerFrames.append(container.frame)
         }
         
+        //create dynamic back button
+        let quizNumber = quiz.number.threeCharacterString()
+        let image = UIImage(named: "thumbnail_\(quizNumber).jpg")!
+        createDynamicButtonWithImage(image)
+        
         startQuiz(quiz, playAudio: false)
     }
     
     override func viewDidAppear(animated: Bool) {
         playQuizAudio()
+    }
+    
+    func createDynamicButtonWithImage(content: UIImage) {
+        async() {
+            let scale = UIScreen.mainScreen().scale
+            let scaleTrait = UITraitCollection(displayScale: scale)
+            let foreground = UIImage(named: "button-dynamic-top")!
+            let background = UIImage(named: "button-dynamic-bottom")!
+            
+            UIGraphicsBeginImageContextWithOptions(background.size, false, 1)
+            background.drawAtPoint(CGPointZero)
+            
+            //draw zookeeper in center
+            let size = CGSizeMake(90, 90)
+            let origin = CGPointMake(5, 5)
+            
+            let cropped = cropImageToCircle(content)
+            cropped.drawInRect(CGRect(origin: origin, size: size))
+            
+            foreground.drawAtPoint(CGPointZero)
+            
+            let composite = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+            self.backToRhymeButton.setImage(composite, forState: .Normal)
+        }
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        stopAllTimers()
+        if UAIsAudioPlaying() {
+            UAHaltPlayback()
+        }
     }
     
     func startQuiz(quiz: Quiz, playAudio: Bool = true) {
@@ -134,10 +172,13 @@ class QuizViewController : UIViewController {
                     //is phonetic question
                     phoneticLabels[i].hidden = false
                     phoneticLabels[i].text = option.word
+                    if count(option.word) == 1 {
+                        phoneticLabels[i].text = "\(option.word) \(option.word.lowercaseString)"
+                    }
                     
                     //properly center the text
                     var font = UIFont(name: "TimesNewRomanPS-BoldMT", size: 120.0)!
-                    let text = phoneticLabels[i].text! as NSString
+                    let text = "UGH" as NSString
                     
                     while text.sizeWithAttributes([NSFontAttributeName : font]).width > phoneticLabels[i].frame.height {
                         font = UIFont(name: "TimesNewRomanPS-BoldMT", size: font.pointSize - 10.0)!
@@ -296,6 +337,7 @@ class QuizViewController : UIViewController {
     }
     
     func playCompletionSound() {
+        
         let encouragement = true
         let name = "encouragement_"
         let count = encouragement ? 20 : 0
@@ -399,7 +441,11 @@ class QuizViewController : UIViewController {
             }
             
             //halt question audio if it is still playing
-            if UAIsAudioPlaying() { UAHaltPlayback() }
+            if UAIsAudioPlaying() {
+                stopAllTimers()
+                UAHaltPlayback()
+            }
+            
             //play sound effect
             UAPlayer().play("correct", ofType: "mp3", ifConcurrent: .Interrupt)
             
@@ -430,7 +476,7 @@ class QuizViewController : UIViewController {
                 self.nextQuestion()
             }
             
-            //disable repeal button
+            //disable repeat button
             UIView.animateWithDuration(0.6, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.AllowUserInteraction, animations: {
                 self.repeatButton.transform = CGAffineTransformMakeScale(0.75,0.75)
                 }, completion: nil)
@@ -452,10 +498,6 @@ class QuizViewController : UIViewController {
     }
     
     @IBAction func returnToRhyme(sender: AnyObject) {
-        stopAllTimers()
-        if UAIsAudioPlaying() {
-            UAHaltPlayback()
-        }
         self.dismissViewControllerAnimated(true, completion: nil)
     }
     
