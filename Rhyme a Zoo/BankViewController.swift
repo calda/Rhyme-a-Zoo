@@ -54,6 +54,7 @@ class BankViewController : UIViewController {
         
         updateReadout()
         decorateCoins(gold: availableGold, silver: availableSilver)
+        self.coinCount.alpha = 0.0
         
         if availableBalance == 0 {
             noCoins.hidden = false
@@ -90,6 +91,7 @@ class BankViewController : UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         self.endTimers()
+        UAHaltPlayback()
     }
     
     func decorateCoins(#gold: Int, silver: Int) {
@@ -146,22 +148,37 @@ class BankViewController : UIViewController {
         if !hasSpentCoins { return }
         
         //play raining coins animation
-        
-        delay(duration) {
-            UIView.animateWithDuration(1.0) {
-                self.coinView.backgroundColor = UIColor(white: 0.0, alpha: 0.7)
-                self.availableCoinsArea.alpha = 0.3
+        coinTimers.append(NSTimer.scheduledTimerWithTimeInterval(duration, target: self, selector: "playAnimationPart:", userInfo: 1, repeats: false))
+        coinTimers.append(NSTimer.scheduledTimerWithTimeInterval(duration + 0.5, target: self, selector: "playAnimationPart:", userInfo: 2, repeats: false))
+        coinTimers.append(NSTimer.scheduledTimerWithTimeInterval(duration + 4.5, target: self, selector: "playAnimationPart:", userInfo: 3, repeats: false))
+    }
+    
+    func playAnimationPart(timer: NSTimer) {
+        if let part = timer.userInfo as? Int {
+            
+            if part == 1 {
+                UIView.animateWithDuration(1.0) {
+                    self.coinView.backgroundColor = UIColor(white: 0.0, alpha: 0.7)
+                    self.availableCoinsArea.alpha = 0.3
+                    self.coinCount.alpha = 1.0
+                }
+                self.spawnCoins()
+                
             }
-            self.spawnCoins()
-        }
-        delay(duration + 0.5) {
-            UAPlayer().play("coins-total", ofType: "mp3", ifConcurrent: .Interrupt)
-        }
-        delay(duration + 4.0) {
-            self.repeatAnimationButton.enabled = true
-            UIView.animateWithDuration(0.5) {
-                self.coinView.backgroundColor = UIColor.clearColor()
-                self.availableCoinsArea.alpha = 1.0
+                
+            else if part == 2 {
+                UAPlayer().play("coins-total", ofType: "mp3", ifConcurrent: .Interrupt)
+            }
+            
+            else if part == 3 {
+                self.repeatAnimationButton.enabled = true
+                UIView.animateWithDuration(0.5) {
+                    self.coinView.backgroundColor = UIColor.clearColor()
+                    self.availableCoinsArea.alpha = 1.0
+                }
+                UIView.animateWithDuration(1.0, delay: 2.5, options: nil, animations: {
+                    self.coinCount.alpha = 0.0
+                }, completion: nil)
             }
         }
     }
@@ -193,7 +210,6 @@ class BankViewController : UIViewController {
     }
     
     func spawnCoinOfType(timer: NSTimer) {
-        println(timer)
         if let image = timer.userInfo as? UIImage {
             if coinView.subviews.count > 500 {
                 return

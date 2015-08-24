@@ -338,9 +338,10 @@ class QuizViewController : UIViewController {
     
     func playCompletionSound() {
         
-        let encouragement = true
-        let name = "encouragement_"
-        let count = encouragement ? 20 : 0
+        let total = CGFloat(self.goldCoins) + CGFloat(self.silverCoins)
+        let encouragement = total > 2.0
+        let name = encouragement ? "encouragement_" : "do-better_"
+        let count = encouragement ? 20 : 11
         let random = Int(arc4random_uniform(UInt32(count))) + 1
         UAPlayer().play("\(name)\(random)", ofType: ".mp3", ifConcurrent: .Interrupt)
         let duration = UALengthOfFile("\(name)\(random)", ofType: ".mp3")

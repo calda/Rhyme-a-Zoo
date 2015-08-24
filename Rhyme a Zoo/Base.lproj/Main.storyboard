@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="15A235d" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="15A263e" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
@@ -1300,12 +1300,12 @@
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
-                                <exclude reference="5UZ-HC-isS"/>
-                                <exclude reference="8p4-Kk-bbV"/>
                                 <exclude reference="0We-m0-k4y"/>
                                 <exclude reference="15v-hy-Gda"/>
                                 <exclude reference="ECA-QP-sZd"/>
                                 <exclude reference="a7h-E8-cK1"/>
+                                <exclude reference="5UZ-HC-isS"/>
+                                <exclude reference="8p4-Kk-bbV"/>
                                 <exclude reference="0xA-qH-IQB"/>
                                 <exclude reference="Vks-Ty-n4n"/>
                                 <exclude reference="e4o-vI-Jnv"/>
@@ -2628,7 +2628,7 @@
                                             <action selector="back:" destination="ANo-I5-aZA" eventType="touchUpInside" id="RBL-LO-1KH"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RUZ-0Q-YO4">
+                                    <label opaque="NO" userInteractionEnabled="NO" alpha="0.0" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RUZ-0Q-YO4">
                                         <rect key="frame" x="10" y="260" width="252" height="60"/>
                                         <animations/>
                                         <constraints>
@@ -2926,16 +2926,92 @@
                                 <animations/>
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>
                             </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CRN-7J-2sd">
+                                <rect key="frame" x="10" y="260" width="252" height="60"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="AsY-WT-TBf"/>
+                                </constraints>
+                                <attributedString key="attributedText">
+                                    <fragment content="0">
+                                        <attributes>
+                                            <color key="NSColor" red="0.99265420436859131" green="0.86586689949035645" blue="0.3806612491607666" alpha="1" colorSpace="calibratedRGB"/>
+                                            <font key="NSFont" size="62" name="DINCondensed-Bold"/>
+                                            <font key="NSOriginalFont" size="75" name="DINCondensed-Bold"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" lineHeightMultiple="1.1499999999999999" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                    <fragment content=" ">
+                                        <attributes>
+                                            <color key="NSColor" red="0.99624025819999995" green="0.81428295370000003" blue="0.11515008660000001" alpha="1" colorSpace="calibratedRGB"/>
+                                            <font key="NSFont" size="62" name="DINCondensed-Bold"/>
+                                            <font key="NSOriginalFont" size="75" name="DINCondensed-Bold"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" lineHeightMultiple="1.1499999999999999" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                    <fragment content="+">
+                                        <attributes>
+                                            <color key="NSColor" red="0.87450980392156863" green="0.87450980392156863" blue="0.87450980392156863" alpha="1" colorSpace="calibratedRGB"/>
+                                            <font key="NSFont" size="62" name="DINCondensed-Bold"/>
+                                            <font key="NSOriginalFont" size="75" name="DINCondensed-Bold"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" lineHeightMultiple="1.1499999999999999" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                    <fragment content=" ">
+                                        <attributes>
+                                            <color key="NSColor" red="0.99624025819999995" green="0.81428295370000003" blue="0.11515008660000001" alpha="1" colorSpace="calibratedRGB"/>
+                                            <font key="NSFont" size="62" name="DINCondensed-Bold"/>
+                                            <font key="NSOriginalFont" size="75" name="DINCondensed-Bold"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" lineHeightMultiple="1.1499999999999999" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                    <fragment content="0">
+                                        <attributes>
+                                            <color key="NSColor" red="0.89983391759999998" green="0.89977270359999995" blue="0.89980852600000005" alpha="1" colorSpace="calibratedRGB"/>
+                                            <font key="NSFont" size="62" name="DINCondensed-Bold"/>
+                                            <font key="NSOriginalFont" size="75" name="DINCondensed-Bold"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" lineHeightMultiple="1.1499999999999999" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                    <fragment content=" ">
+                                        <attributes>
+                                            <color key="NSColor" red="0.89983391759999998" green="0.89977270359999995" blue="0.89980852600000005" alpha="1" colorSpace="calibratedRGB"/>
+                                            <font key="NSFont" size="75" name="DINCondensed-Bold"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" lineHeightMultiple="1.1499999999999999" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                    <fragment content="earned">
+                                        <attributes>
+                                            <color key="NSColor" red="1" green="0.9998849630355835" blue="0.99995571374893188" alpha="1" colorSpace="calibratedRGB"/>
+                                            <font key="NSFont" size="35" name="DINCondensed-Bold"/>
+                                            <font key="NSOriginalFont" size="50" name="DINCondensed-Bold"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" lineHeightMultiple="1.1499999999999999" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                    <fragment content=" total">
+                                        <attributes>
+                                            <color key="NSColor" red="1" green="0.9998849630355835" blue="0.99995571374893188" alpha="1" colorSpace="calibratedRGB"/>
+                                            <font key="NSFont" size="35" name="DINCondensed-Bold"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" lineHeightMultiple="1.1499999999999999" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <nil key="highlightedColor"/>
+                                <color key="shadowColor" red="0.0" green="0.0" blue="0.0" alpha="0.13103693180000001" colorSpace="calibratedRGB"/>
+                                <size key="shadowOffset" width="2" height="2"/>
+                            </label>
                         </subviews>
                         <animations/>
                         <constraints>
                             <constraint firstAttribute="centerX" secondItem="Qoq-ie-JXx" secondAttribute="centerX" id="4Kb-My-JLG"/>
                             <constraint firstItem="L7c-mE-kyb" firstAttribute="top" secondItem="nzj-CI-moe" secondAttribute="top" id="8ck-9u-jSm"/>
+                            <constraint firstItem="CRN-7J-2sd" firstAttribute="leading" secondItem="nzj-CI-moe" secondAttribute="leading" constant="10" id="99G-cy-o8W"/>
                             <constraint firstAttribute="trailing" secondItem="Cdh-5H-OxP" secondAttribute="trailing" id="9WE-3f-zzU"/>
                             <constraint firstItem="Cdh-5H-OxP" firstAttribute="top" secondItem="hin-GL-gUh" secondAttribute="bottom" id="HE1-QB-uwl"/>
                             <constraint firstAttribute="trailing" secondItem="L7c-mE-kyb" secondAttribute="trailing" id="IAQ-Dm-grm"/>
                             <constraint firstAttribute="trailing" secondItem="L7c-mE-kyb" secondAttribute="trailing" id="OWX-tc-JAt"/>
                             <constraint firstItem="uj4-su-8sa" firstAttribute="top" secondItem="L7c-mE-kyb" secondAttribute="bottom" id="Pnc-Wd-p68"/>
+                            <constraint firstItem="uj4-su-8sa" firstAttribute="top" secondItem="CRN-7J-2sd" secondAttribute="bottom" id="acj-9D-EmF"/>
                             <constraint firstItem="uj4-su-8sa" firstAttribute="top" secondItem="Cdh-5H-OxP" secondAttribute="bottom" id="ap5-gt-0Fy"/>
                             <constraint firstItem="L7c-mE-kyb" firstAttribute="top" secondItem="hin-GL-gUh" secondAttribute="bottom" id="dvA-Jz-MMy"/>
                             <constraint firstItem="uj4-su-8sa" firstAttribute="top" secondItem="L7c-mE-kyb" secondAttribute="bottom" id="eun-zh-MDu"/>
@@ -2963,7 +3039,7 @@
                         <outlet property="backButton" destination="Smi-hn-PCb" id="F2z-ih-QPR"/>
                         <outlet property="coinAreaHeight" destination="HZh-Pl-kcj" id="qnF-LN-D0p"/>
                         <outlet property="coinAreaOffset" destination="X8j-7n-AYT" id="wPF-BY-Zvg"/>
-                        <outlet property="coinCount" destination="RUZ-0Q-YO4" id="JFi-FO-0G2"/>
+                        <outlet property="coinCount" destination="CRN-7J-2sd" id="8d2-86-4wa"/>
                         <outlet property="coinPile" destination="54e-3A-Lwv" id="Kcv-Yt-O8v"/>
                         <outlet property="coinView" destination="Cdh-5H-OxP" id="D3a-nb-ZtH"/>
                         <outlet property="noCoins" destination="odt-Hd-YgP" id="EaR-Sq-3ga"/>
