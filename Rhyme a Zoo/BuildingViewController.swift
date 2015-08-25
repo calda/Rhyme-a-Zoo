@@ -16,6 +16,7 @@ class BuildingViewController : ZookeeperGameController {
     @IBOutlet weak var infoButton: UIButton!
     @IBOutlet weak var buildingButton: UIButton!
     @IBOutlet weak var backButton: UIButton!
+    @IBOutlet weak var homeButton: HomeButton!
     
     let percentageFrames = [ //each point is a percentage of the total width/height of the background image
         "giraffe" : CGRect(origin: CGPointMake(0.637, 0.0493), size: CGSizeMake(0.318, 0.921)),
@@ -175,6 +176,7 @@ class BuildingViewController : ZookeeperGameController {
         
         if mustBuy {
             backButton.enabled = false
+            homeButton.enabled = false
         }
     }
     
@@ -304,6 +306,7 @@ class BuildingViewController : ZookeeperGameController {
             RZQuizDatabase.purchaseAnimal(animal)
             let didAdvanceLevel = RZQuizDatabase.advanceCurrentLevelIfComplete(buildingAnimals[building - 1])
             backButton.enabled = true
+            homeButton.enabled = true
             
             //color in animal and play sound
             UAPlayer().play("correct", ofType: ".mp3", ifConcurrent: .Interrupt)

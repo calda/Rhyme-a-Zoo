@@ -192,6 +192,67 @@
                                             <outlet property="title" destination="eRB-cN-qtr" id="nfX-EH-ao0"/>
                                         </connections>
                                     </collectionViewCell>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Hear a Tale" id="X88-6W-cjb" customClass="HearATaleCell" customModule="Rhyme_a_Zoo" customModuleProvider="target">
+                                        <rect key="frame" x="75" y="5" width="328" height="151"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="328" height="151"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="0Qw-7b-UA2">
+                                                    <rect key="frame" x="156" y="5" width="167" height="141"/>
+                                                    <animations/>
+                                                    <attributedString key="attributedText">
+                                                        <fragment content="For more Rhymes and Stories, visit us at">
+                                                            <attributes>
+                                                                <color key="NSColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                                <font key="NSFont" size="26" name="Avenir-Black"/>
+                                                                <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="truncatingTail" baseWritingDirection="natural"/>
+                                                            </attributes>
+                                                        </fragment>
+                                                        <fragment content=" hearatale.com">
+                                                            <attributes>
+                                                                <color key="NSColor" red="0.86401152610778809" green="0.94567751884460449" blue="0.99968940019607544" alpha="1" colorSpace="calibratedRGB"/>
+                                                                <font key="NSFont" size="26" name="Avenir-HeavyOblique"/>
+                                                                <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="truncatingTail" baseWritingDirection="natural"/>
+                                                            </attributes>
+                                                        </fragment>
+                                                    </attributedString>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="einstein" translatesAutoresizingMaskIntoConstraints="NO" id="ocZ-9R-tvp">
+                                                    <rect key="frame" x="0.0" y="0.0" width="151" height="151"/>
+                                                    <animations/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" secondItem="ocZ-9R-tvp" secondAttribute="height" multiplier="1:1" id="22f-CZ-Cnf"/>
+                                                    </constraints>
+                                                </imageView>
+                                            </subviews>
+                                            <animations/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                        <animations/>
+                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.20000000000000001" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstItem="ocZ-9R-tvp" firstAttribute="leading" secondItem="X88-6W-cjb" secondAttribute="leading" id="M5h-3G-Jfp"/>
+                                            <constraint firstItem="0Qw-7b-UA2" firstAttribute="top" secondItem="X88-6W-cjb" secondAttribute="top" constant="5" id="SBr-UK-uHc"/>
+                                            <constraint firstAttribute="centerY" secondItem="ocZ-9R-tvp" secondAttribute="centerY" id="T5U-fW-Pgb"/>
+                                            <constraint firstItem="ocZ-9R-tvp" firstAttribute="leading" secondItem="X88-6W-cjb" secondAttribute="leading" constant="10" id="bNU-bA-Gyt"/>
+                                            <constraint firstAttribute="bottom" secondItem="0Qw-7b-UA2" secondAttribute="bottom" constant="5" id="gn8-HR-gG9"/>
+                                            <constraint firstAttribute="bottom" secondItem="ocZ-9R-tvp" secondAttribute="bottom" id="hNs-dJ-N7V"/>
+                                            <constraint firstItem="ocZ-9R-tvp" firstAttribute="top" secondItem="X88-6W-cjb" secondAttribute="top" id="jNy-kF-6cP"/>
+                                            <constraint firstAttribute="trailing" secondItem="0Qw-7b-UA2" secondAttribute="trailing" constant="5" id="nUJ-cS-01a"/>
+                                            <constraint firstAttribute="bottom" secondItem="0Qw-7b-UA2" secondAttribute="bottom" constant="10" id="pta-rw-tHX"/>
+                                            <constraint firstItem="0Qw-7b-UA2" firstAttribute="leading" secondItem="ocZ-9R-tvp" secondAttribute="trailing" constant="5" id="xIN-eZ-PwS"/>
+                                        </constraints>
+                                        <variation key="default">
+                                            <mask key="constraints">
+                                                <exclude reference="T5U-fW-Pgb"/>
+                                                <exclude reference="bNU-bA-Gyt"/>
+                                                <exclude reference="pta-rw-tHX"/>
+                                            </mask>
+                                        </variation>
+                                    </collectionViewCell>
                                 </cells>
                                 <connections>
                                     <outlet property="dataSource" destination="5wc-Pu-fzy" id="gev-LB-Wee"/>
@@ -2528,6 +2589,7 @@
                         <outlet property="backgroundImage" destination="c1c-PJ-2Re" id="6aM-gq-RQ4"/>
                         <outlet property="blurredBackground" destination="tL8-I5-lsk" id="YZQ-CF-W2W"/>
                         <outlet property="buildingButton" destination="hYz-sE-0oL" id="JxR-f2-vGc"/>
+                        <outlet property="homeButton" destination="7QA-3j-4Zk" id="cFj-MN-dZ1"/>
                         <outlet property="infoButton" destination="oti-KD-CNR" id="VA5-se-xhG"/>
                         <outlet property="quitZookeeperButton" destination="g73-pP-pNf" id="91Y-29-KtK"/>
                         <outletCollection property="mainButtons" destination="v8i-kg-Zmd" collectionClass="NSMutableArray" id="yad-Od-cfq"/>
@@ -3095,6 +3157,7 @@
         <image name="coin-gold-big" width="250" height="250"/>
         <image name="coin-pile" width="633" height="492"/>
         <image name="coin-silver-big" width="250" height="250"/>
+        <image name="einstein" width="820" height="820"/>
         <image name="gradient" width="1280" height="929"/>
         <image name="happy.jpg" width="256" height="256"/>
         <image name="home-bank" width="512" height="1024"/>

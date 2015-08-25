@@ -32,6 +32,12 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
     let twoRow: CGFloat = 480.0
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        if indexPath.item == collectionView.numberOfItemsInSection(0) - 1 {
+            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("Hear a Tale", forIndexPath: indexPath) as! HearATaleCell
+            cell.decorate()
+            return cell;
+        }
+        
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("rhyme", forIndexPath: indexPath) as! RhymeCell
         cell.decorate(indexPath.item, showFavorites: RZShowingFavorites)
         return cell
@@ -39,14 +45,14 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if RZShowingFavorites {
-            return RZQuizDatabase.numberOfFavories()
+            return RZQuizDatabase.numberOfFavories() + 1
         }
         
         //update current level
         RZQuizDatabase.advanceLevelIfCurrentIsComplete()
         
-        //return RZQuizDatabase.levelCount * 5 //this line enabled all rhymes
-        return RZQuizDatabase.currentLevel() * 5
+        //return RZQuizDatabase.levelCount * 5 + 1 //this line enabled all rhymes
+        return RZQuizDatabase.currentLevel() * 5 + 1
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
@@ -54,6 +60,19 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        if indexPath.item == collectionView.numberOfItemsInSection(0) - 1 { //is last, Hear a Tale cell
+            //show alert
+            let alert = UIAlertController(title: "Open Hear a Tale?", message: "You will leave the Rhyme a Zoo app.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: nil))
+            alert.addAction(UIAlertAction(title: "Open", style: .Default, handler: { _ in
+                if let url = NSURL(string: "http://hearatale.com") {
+                    UIApplication.sharedApplication().openURL(url)
+                }
+            }))
+            self.presentViewController(alert, animated: true, completion: nil)
+            return
+        }
+        
         let rhyme: Rhyme
         if RZShowingFavorites {
             let favIndex = indexPath.item
@@ -236,6 +255,17 @@ class RhymeCell : UICollectionViewCell {
                 
             })
         })
+    }
+    
+}
+
+class HearATaleCell : UICollectionViewCell {
+    
+    func decorate() {
+        self.alpha = 0.0
+        UIView.animateWithDuration(0.2, delay: 0.05, options: UIViewAnimationOptions.AllowUserInteraction, animations: {
+            self.alpha = 1.0
+        }, completion: nil)
     }
     
 }

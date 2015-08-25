@@ -127,8 +127,6 @@ class RhymeViewController : UIViewController {
     }
     
     override func viewDidAppear(animated: Bool) {
-        if !animated { return }
-        
         delay(0.05) {
             if !self.willPlayAnimalVideo() {
                 self.rhymeTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: "playRhyme", userInfo: nil, repeats: false)
@@ -138,7 +136,9 @@ class RhymeViewController : UIViewController {
     }
     
     override func viewWillDisappear(animated: Bool) {
-        rhymeTimer?.invalidate()
+        delay(0.06) {
+            rhymeTimer?.invalidate()
+        }
         UAHaltPlayback()
     }
     

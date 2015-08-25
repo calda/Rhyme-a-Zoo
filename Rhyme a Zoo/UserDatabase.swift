@@ -195,7 +195,7 @@ class UserDatabase {
         let predicate = NSPredicate(format: "distanceToLocation:fromLocation:(Location, %@) < 8047", location) //within 5 miles
         let query = CKQuery(recordType: "Classroom", predicate: predicate)
         query.sortDescriptors = [CKLocationSortDescriptor(key: "Location", relativeLocation: location)]
-        cloud.performQuery(query, inZoneWithID: nil, completionHandler: classroomQueryCompletionHandler(reverseResults: true, completion: completion))
+        cloud.performQuery(query, inZoneWithID: nil, completionHandler: classroomQueryCompletionHandler(reverseResults: false, completion: completion))
     }
     
     func getClassroomsMatchingText(text: String, location: CLLocation?, completion: [Classroom] -> ()) {

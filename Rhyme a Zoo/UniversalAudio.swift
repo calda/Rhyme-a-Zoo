@@ -26,7 +26,7 @@ enum UAConcurrentAudioMode {
 func UAHaltPlayback() {
     UAShouldHaltPlayback = true
     UAAudioIsPlaying = false
-    delay(0.5) {
+    delay(0.05) {
         UAShouldHaltPlayback = false
     }
 }
@@ -49,9 +49,12 @@ func UALengthOfFile(name: String, ofType type: String) -> NSTimeInterval {
 class UAPlayer {
 
     var player: AVAudioPlayer?
+    var name: String?
+    var shouldHalt = false
     
     func play(name: String, ofType type: String, ifConcurrent mode: UAConcurrentAudioMode = .Interrupt ) -> Bool {
         
+        self.name = name
         AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, error: nil)
         
         if let path = NSBundle.mainBundle().pathForResource(name, ofType: type) {
@@ -94,14 +97,19 @@ class UAPlayer {
             
             dispatch_async(UAAudioQueue, {
                 while(player.playing) {
-                    if UAShouldHaltPlayback && !self.fading {
+                    if self.shouldHalt && !self.fading {
                         self.doVolumeFade()
+                        return
+                    }
+                    if UAShouldHaltPlayback {
+                        self.shouldHalt = true
                         UAAudioIsPlaying = false
                     }
                 }
                 
-                player.stop()
-                UAAudioIsPlaying = false
+                if !self.shouldHalt {
+                    UAAudioIsPlaying = false
+                }
             })
         }
     }
@@ -117,6 +125,7 @@ class UAPlayer {
                     self.doVolumeFade()
                 }
             } else {
+                fading = false
                 player.stop()
             }
             
