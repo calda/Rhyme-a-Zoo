@@ -1165,6 +1165,7 @@ class SettingsComposeEmailDelegate : NSObject, SettingsViewTableDelegate, MFMail
         for user in users {
             //add user header
             emailBody += "<b>\(user.name)</b></br>"
+            user.pullDataFromCloud()
             
             //iterate through cells
             var currentCell = 1
