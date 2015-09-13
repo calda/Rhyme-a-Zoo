@@ -98,17 +98,23 @@ class UAPlayer {
             dispatch_async(UAAudioQueue, {
                 while(player.playing) {
                     if self.shouldHalt && !self.fading {
-                        self.doVolumeFade()
+                        sync {
+                            self.doVolumeFade()
+                        }
                         return
                     }
                     if UAShouldHaltPlayback {
-                        self.shouldHalt = true
-                        UAAudioIsPlaying = false
+                        sync {
+                            self.shouldHalt = true
+                            UAAudioIsPlaying = false
+                        }
                     }
                 }
                 
                 if !self.shouldHalt {
-                    UAAudioIsPlaying = false
+                    sync {
+                        UAAudioIsPlaying = false
+                    }
                 }
             })
         }
