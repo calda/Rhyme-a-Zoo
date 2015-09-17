@@ -83,6 +83,15 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
             let rhymeIndex = indexPath.item
             rhyme = RZQuizDatabase.getRhyme(rhymeIndex)
         }
+        
+        /*let quiz = Quiz(rhyme.number)
+        quiz.saveQuizResult(gold: 5, silver: 0)
+        if RZQuizDatabase.advanceLevelIfCurrentIsComplete() {
+            println("ADVANCED LEVEL")
+        }
+        collectionView.reloadData()
+        */
+        
         let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("rhyme") as! RhymeViewController
         controller.decorate(rhyme)
         self.presentViewController(controller, animated: true, completion: nil)
