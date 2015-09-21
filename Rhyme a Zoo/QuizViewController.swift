@@ -265,7 +265,7 @@ class QuizViewController : UIViewController {
             let previousLevel = RZQuizDatabase.currentLevel()
             let levelUp = RZQuizDatabase.advanceLevelIfCurrentIsComplete()
             
-            if levelUp && previousLevel == 24 {
+            if levelUp && (previousLevel == 24 || previousLevel == 25) {
                 //game is won
                 delay(3.0) {
                     playVideo(name: "game-over", currentController: self, completion: {

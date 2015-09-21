@@ -336,9 +336,14 @@ class BuildingViewController : ZookeeperGameController {
             if didAdvanceLevel {
                 delay(max(duration, 1.0)) {
                     let newLevel = RZQuizDatabase.currentZooLevel()
-                    if contains(2...7, newLevel) {
+                    if contains(2...8, newLevel) {
                         playVideo(name: "zoo-level-\(newLevel)", currentController: self, completion: {
                             self.backButton.enabled = true
+                            if self.building != 8 {
+                                let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("building") as! BuildingViewController
+                                controller.decorate(building: self.building + 1, displaySize: self.view.frame.size)
+                                self.presentViewController(controller, animated: true, completion: nil)
+                            }
                         })
                     }
                 }

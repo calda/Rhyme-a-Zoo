@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="15A235d" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="J3e-ZR-gCp">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="15A279b" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="J3e-ZR-gCp">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
@@ -45,7 +45,7 @@
                                         </collectionViewFlowLayout>
                                         <cells>
                                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" restorationIdentifier="user" reuseIdentifier="user" id="Q1J-f0-qmB" userLabel="user cell" customClass="UserCell" customModule="Rhyme_a_Zoo" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="12" width="155" height="148"/>
+                                                <rect key="frame" x="0.0" y="12" width="155" height="148"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                                     <rect key="frame" x="0.0" y="0.0" width="155" height="148"/>
@@ -88,7 +88,7 @@
                                                 </connections>
                                             </collectionViewCell>
                                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="add" id="906-iu-JR7" userLabel="add user">
-                                                <rect key="frame" x="165" y="12" width="155" height="148"/>
+                                                <rect key="frame" x="155" y="12" width="155" height="148"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                                     <rect key="frame" x="0.0" y="0.0" width="155" height="148"/>
@@ -1592,10 +1592,10 @@
                                         <color key="backgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="newUser" rowHeight="60" id="2Gi-rZ-s6m">
-                                        <rect key="frame" x="0.0" y="71" width="568" height="60"/>
+                                        <rect key="frame" x="0.0" y="327" width="568" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2Gi-rZ-s6m" id="V4a-V6-rqI">
-                                            <rect key="frame" x="0.0" y="0.0" width="535" height="59"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="568" height="59"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Add New Student" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7pp-fl-EBw">
@@ -1641,7 +1641,7 @@
                                         <color key="backgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="dataEmail" id="rr3-2R-naZ">
-                                        <rect key="frame" x="0.0" y="229" width="568" height="49"/>
+                                        <rect key="frame" x="0.0" y="387" width="568" height="49"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="rr3-2R-naZ" id="Pxs-5a-weu">
                                             <rect key="frame" x="0.0" y="0.0" width="535" height="48"/>
@@ -1666,7 +1666,7 @@
                                         <color key="backgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="passcodeEmail" id="RHq-QF-za7">
-                                        <rect key="frame" x="0.0" y="229" width="568" height="49"/>
+                                        <rect key="frame" x="0.0" y="436" width="568" height="49"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="RHq-QF-za7" id="KMR-nz-x7Y">
                                             <rect key="frame" x="0.0" y="0.0" width="535" height="48"/>
@@ -1691,10 +1691,10 @@
                                         <color key="backgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="user" id="Dwi-B8-63s" userLabel="user" customClass="UserNameCell" customModule="Rhyme_a_Zoo" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="278" width="568" height="49"/>
+                                        <rect key="frame" x="0.0" y="485" width="568" height="49"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Dwi-B8-63s" id="hbF-BX-cYW">
-                                            <rect key="frame" x="0.0" y="0.0" width="568" height="48"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="535" height="48"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BDv-Ut-r7D">
@@ -1746,10 +1746,10 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="bigUser" rowHeight="100" id="osN-OA-dAr" userLabel="bigUser" customClass="BigUserCell" customModule="Rhyme_a_Zoo" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="278" width="568" height="49"/>
+                                        <rect key="frame" x="0.0" y="534" width="568" height="100"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="osN-OA-dAr" id="WQ0-5q-e1o">
-                                            <rect key="frame" x="0.0" y="0.0" width="568" height="48"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="568" height="99"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="jDI-sY-UGP">
@@ -1809,10 +1809,10 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userInfo" id="Qlo-Dn-VhV" customClass="UserInfoCell" customModule="Rhyme_a_Zoo" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="229" width="568" height="49"/>
+                                        <rect key="frame" x="0.0" y="634" width="568" height="49"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Qlo-Dn-VhV" id="Myf-Ro-0ZV">
-                                            <rect key="frame" x="0.0" y="0.0" width="535" height="48"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="568" height="48"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" alpha="0.69999999999999973" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="746" text="Info Item" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="onw-m9-Nv8">
@@ -1855,10 +1855,10 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userInfoRight" id="MCi-Qv-rej" userLabel="userInfoRight" customClass="UserInfoCell" customModule="Rhyme_a_Zoo" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="229" width="568" height="49"/>
+                                        <rect key="frame" x="0.0" y="683" width="568" height="49"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="MCi-Qv-rej" id="dKt-pp-I08">
-                                            <rect key="frame" x="0.0" y="0.0" width="535" height="48"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="568" height="48"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" alpha="0.69999998807907104" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="746" text="Info Item" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ikh-t1-yh4">
@@ -1901,10 +1901,10 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="emailHeader" rowHeight="75" id="ZzX-BZ-lNp">
-                                        <rect key="frame" x="0.0" y="131" width="568" height="49"/>
+                                        <rect key="frame" x="0.0" y="732" width="568" height="75"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ZzX-BZ-lNp" id="eHT-l5-5Oh">
-                                            <rect key="frame" x="0.0" y="0.0" width="568" height="48"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="568" height="74"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="254" verticalHuggingPriority="251" horizontalCompressionResistancePriority="758" text="Select data for email" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7JG-fh-xX2">
@@ -1957,10 +1957,10 @@
                                         <color key="tintColor" red="1" green="0.99997437" blue="0.99999129769999995" alpha="1" colorSpace="calibratedRGB"/>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userInfoCheck" id="Y0D-zK-wYr" userLabel="userInfoCheck" customClass="UserInfoCheckCell" customModule="Rhyme_a_Zoo" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="229" width="568" height="49"/>
+                                        <rect key="frame" x="0.0" y="807" width="568" height="49"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Y0D-zK-wYr" id="PUa-q6-ez6">
-                                            <rect key="frame" x="0.0" y="0.0" width="535" height="48"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="568" height="48"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" alpha="0.69999998807907104" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="746" text="Info Item" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5m8-x4-rzf">
@@ -2016,10 +2016,10 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="sendEmail" rowHeight="75" id="j6i-s1-48U">
-                                        <rect key="frame" x="0.0" y="278" width="568" height="49"/>
+                                        <rect key="frame" x="0.0" y="856" width="568" height="75"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="j6i-s1-48U" id="EEv-89-RYb">
-                                            <rect key="frame" x="0.0" y="0.0" width="568" height="48"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="568" height="74"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Send Email to..." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Uu5-2G-3at">
@@ -2054,10 +2054,10 @@
                                         <color key="backgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="blank" rowHeight="20" id="Lu9-FG-gLJ">
-                                        <rect key="frame" x="0.0" y="229" width="568" height="49"/>
+                                        <rect key="frame" x="0.0" y="931" width="568" height="20"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Lu9-FG-gLJ" id="IDp-qq-STr">
-                                            <rect key="frame" x="0.0" y="0.0" width="535" height="48"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="568" height="19"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <animations/>
                                             <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>

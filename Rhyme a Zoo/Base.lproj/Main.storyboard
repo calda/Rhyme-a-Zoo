@@ -398,15 +398,6 @@
                                             <constraint firstAttribute="width" secondItem="1DF-K9-0kh" secondAttribute="height" multiplier="25:32" id="KNq-XZ-1Rw"/>
                                         </constraints>
                                     </imageView>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZFC-Cn-ch8" userLabel="list" customClass="HomeButton" customModule="Rhyme_a_Zoo" customModuleProvider="target">
-                                        <rect key="frame" x="10" y="10" width="50" height="50"/>
-                                        <animations/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="50" id="0pq-HV-bWM"/>
-                                            <constraint firstAttribute="height" constant="50" id="qU9-ML-siy"/>
-                                        </constraints>
-                                        <state key="normal" image="button-home"/>
-                                    </button>
                                 </subviews>
                                 <animations/>
                                 <color key="backgroundColor" red="0.082352941176470587" green="0.40784313725490196" blue="0.85490196078431369" alpha="0.0" colorSpace="calibratedRGB"/>
@@ -415,11 +406,9 @@
                                         <variation key="heightClass=regular-widthClass=regular" constant="-3"/>
                                     </constraint>
                                     <constraint firstItem="tjy-v7-kAi" firstAttribute="top" secondItem="zoL-ym-fN8" secondAttribute="top" id="ICw-Xw-inq"/>
-                                    <constraint firstItem="ZFC-Cn-ch8" firstAttribute="top" secondItem="zoL-ym-fN8" secondAttribute="top" constant="10" id="SA4-Za-ekJ"/>
                                     <constraint firstItem="1DF-K9-0kh" firstAttribute="top" secondItem="zoL-ym-fN8" secondAttribute="top" id="XPr-BY-zhn"/>
                                     <constraint firstAttribute="bottom" secondItem="tjy-v7-kAi" secondAttribute="bottom" id="hQS-BG-fgG"/>
                                     <constraint firstAttribute="width" constant="70" id="jbY-aW-bfr"/>
-                                    <constraint firstItem="ZFC-Cn-ch8" firstAttribute="leading" secondItem="zoL-ym-fN8" secondAttribute="leading" constant="10" id="mKs-Lj-3JP"/>
                                     <constraint firstItem="tjy-v7-kAi" firstAttribute="leading" secondItem="zoL-ym-fN8" secondAttribute="leading" id="qge-tM-ZEI"/>
                                     <constraint firstAttribute="bottom" secondItem="1DF-K9-0kh" secondAttribute="bottom" id="y8s-9y-HD5"/>
                                 </constraints>
@@ -598,6 +587,15 @@
                                     <action selector="previousRhyme:" destination="nae-Zu-XIT" eventType="touchUpInside" id="HaI-BC-c10"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZFC-Cn-ch8" userLabel="list" customClass="HomeButton" customModule="Rhyme_a_Zoo" customModuleProvider="target">
+                                <rect key="frame" x="10" y="10" width="50" height="50"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="0pq-HV-bWM"/>
+                                    <constraint firstAttribute="height" constant="50" id="qU9-ML-siy"/>
+                                </constraints>
+                                <state key="normal" image="button-home"/>
+                            </button>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -615,7 +613,9 @@
                             <constraint firstItem="mNT-iH-xTD" firstAttribute="leading" secondItem="1Cf-T5-ZyN" secondAttribute="leading" id="Agx-c6-ZEj"/>
                             <constraint firstItem="aVt-ry-ZQQ" firstAttribute="top" secondItem="4u4-He-ONq" secondAttribute="top" constant="20" id="Cnk-zb-orc"/>
                             <constraint firstItem="mNT-iH-xTD" firstAttribute="top" secondItem="4u4-He-ONq" secondAttribute="top" id="DE8-xc-K2c"/>
+                            <constraint firstItem="ZFC-Cn-ch8" firstAttribute="leading" secondItem="4u4-He-ONq" secondAttribute="leading" constant="10" id="EUb-93-JvQ"/>
                             <constraint firstAttribute="bottom" secondItem="mNT-iH-xTD" secondAttribute="bottom" id="FhW-DH-pUX"/>
+                            <constraint firstItem="ZFC-Cn-ch8" firstAttribute="top" secondItem="4u4-He-ONq" secondAttribute="top" constant="10" id="HjJ-52-ZPy"/>
                             <constraint firstItem="TG6-pm-Mmm" firstAttribute="leading" secondItem="zoL-ym-fN8" secondAttribute="trailing" id="KYK-BW-EaV">
                                 <variation key="heightClass=regular-widthClass=regular" constant="15"/>
                             </constraint>

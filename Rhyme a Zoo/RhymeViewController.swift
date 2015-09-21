@@ -117,13 +117,14 @@ class RhymeViewController : UIViewController {
         let attributes = [NSParagraphStyleAttributeName : paragraphStyle, NSFontAttributeName : rhymeText.font]
         let idealSize = (rhymeString as NSString).boundingRectWithSize(CGSizeMake(width, 1000), options: .UsesLineFragmentOrigin | .UsesFontLeading, attributes: attributes, context: nil)
         
-        let difference = abs(idealSize.height - scrollContent.frame.height)
+        let difference = abs(idealSize.height - scrollView.frame.height)
         if difference > 6.0 && idealSize.height > scrollView.frame.height {
             scrollContentHeight.constant = difference * 1.2
             self.view.layoutIfNeeded()
         } else {
             scrollContentHeight.constant = 0.0
         }
+        
     }
     
     override func viewDidAppear(animated: Bool) {

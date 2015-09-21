@@ -121,7 +121,7 @@
 380,What sound is at the beginning of “kettle” and middle of “Sukey” and end of “take”?,K,N,D,P
 384,What sounds are in the end of “saddle” and “cradle” and “ladle”?,DL,CH,UM,NG
 387,What sound is at the beginning of “grid iron” and in the middle of “agree?,G,M,O,F
-392,What sound is in the middle of “sat” and “ran”?,A,U,O,P
+392,What sound is in the middle of “sat” and “ran”?,sound-A-short,U,O,P
 396,What sound is at the end of “say” and “away”?,A,E,U,O
 398,What sound is at the beginning of “bumpety” and “bump” and “blackbird?”,B,L,H,T
 404,What sounds are at the end of “dust” and beginning of “street”?,ST,UM,NG,FL
@@ -133,13 +133,13 @@
 416,What sound is at the end of “eat” and “fat” and in the middle of “between”?,T,S,V,K
 420,What sound is in the middle of “diet” and “quiet”?,I,A,O,U
 421,What sound is at the end of “say” and “day” and “pray”?,A,I,O,U
-424,What sound somes at the end of “news” and “please” and “has”?,S,V,F,J
+424,What sound somes at the end of “news” and “please” and “has”?,sound-S-z,V,F,J
 428,What sound is at the beginning of “there” and “they”?,TH,PL,IG,UM
 432,What sound is at the beginning of “had” and “he” and “her”?,H,S,P,T
 433,What sound is at the beginning of “wilderness” and “wood”?,W,F,J,T
-438,What sound is in the middle of “bark” and “hark” and the beginning of “rags” ?,R,L,N,J
+438,What sound is in the middle of “bark” and “hark” and the beginning of “rags”?,R,L,N,V
 439,What sound is in the middle of “gown” and “town” ?,OW,RM,BL,IG
-440,What sound is in the middle of “beggars” and the beginning of “gown”?,G,F,D,L
+440,What sound is in the middle of “beggars” and “rags” and “tags” and at the beginning of “gown”?,G,F,D,L
 444,What sound is at the beginning of “cat” and “kit”?,K,L,M,R
 448,What sound is at the beginning of “husband” and “handkerchief” and “hose”?,H,P,J,L
 452,What sound is at the beginning of “cat” and “cupboard”?,K,N,F,M

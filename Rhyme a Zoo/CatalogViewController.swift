@@ -89,8 +89,8 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
         if RZQuizDatabase.advanceLevelIfCurrentIsComplete() {
             println("ADVANCED LEVEL")
         }
-        collectionView.reloadData()
-        */
+        collectionView.reloadData()*/
+
         
         let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("rhyme") as! RhymeViewController
         controller.decorate(rhyme)
@@ -98,25 +98,22 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
     }
     
     func getSize() -> CGSize {
-        let screenWidth = self.view.frame.width
-        let heightDivisor: CGFloat
-        let widthDivisor: CGFloat
-        
-        if screenWidth == fourRow {
-            heightDivisor = 4.0
-            widthDivisor = 3.15
-        } else if screenWidth <= twoRow {
-            heightDivisor = 2.0
-            widthDivisor = 1.4
-        } else {
-            heightDivisor = 3.0
-            widthDivisor = 2.2
-        }
-        
-        
+        let (heightDivisor, widthDivisor) = multipliersForCell()
         var height = (collectionView.frame.height - (5.0 * (heightDivisor + 1))) / heightDivisor
         let width = collectionView.frame.width / widthDivisor
         return CGSizeMake(width, height)
+    }
+    
+    func multipliersForCell() -> (height: CGFloat, width: CGFloat) {
+        let screenWidth = UIScreen.mainScreen().bounds.width
+        
+        if screenWidth == fourRow {
+            return (4.0, 3.15)
+        } else if screenWidth <= twoRow {
+            return (2.0, 1.4)
+        } else {
+            return (3.0, 2.2)
+        }
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
@@ -147,9 +144,13 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
                 }
             }
             
-            var col = CGFloat(unplayedIndex / 3) - 1
+            let divisors = multipliersForCell()
+            let heightDivisor = Int(divisors.height)
+            let widthDivisor = divisors.width
+            
+            var col = CGFloat(unplayedIndex / heightDivisor) - 1
             col = max(col, 0)
-            let width = UIScreen.mainScreen().bounds.width / 2.2
+            let width = UIScreen.mainScreen().bounds.width / widthDivisor
             var x = (width * (col)) + (5.0 * (col + 1))
             
             canHideButtonGradient = false
