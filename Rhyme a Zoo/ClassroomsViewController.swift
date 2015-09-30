@@ -294,7 +294,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
             let name = nameTextField.text
             
             //name must be longer than four letters long
-            if (name as NSString).length <= 4 {
+            if (name as NSString).length < 4 {
                 self.requestNewClassroomName(location, previousNameAttempt: name)
                 return
             }
