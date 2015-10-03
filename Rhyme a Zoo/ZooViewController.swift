@@ -82,7 +82,10 @@ class ZooViewController : ZookeeperGameController {
             let frame = buttonFrames[j]
             if frame.contains(touch) {
                 
-                let building = j + 1
+                var building = j + 1
+                if building == 8 && RZQuizDatabase.currentZooLevel() != 8 {
+                    building = 7
+                }
                 openBuildingIfPossible(building)
                 
             }

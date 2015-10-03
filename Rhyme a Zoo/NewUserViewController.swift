@@ -119,6 +119,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
     
     override func viewWillDisappear(animated: Bool) {
         instructionsTimer?.invalidate()
+        UAHaltPlayback()
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {

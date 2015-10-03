@@ -1556,6 +1556,14 @@
 		2E907B731B781C5A00B8656C /* zookeeper-girl36.png in Resources */ = {isa = PBXBuildFile; fileRef = 2E907B2B1B781C5A00B8656C /* zookeeper-girl36.png */; };
 		2EA00DF61B7C5405003715DF /* leather.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2EA00DF51B7C5405003715DF /* leather.jpg */; };
 		2EA044AB1B4BB93B005AE1B4 /* moreMoney.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2EA044AA1B4BB93B005AE1B4 /* moreMoney.mp3 */; };
+		2EB04BA71BBF702E00704A10 /* centaur.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2EB04BA11BBF702E00704A10 /* centaur.m4a */; };
+		2EB04BA81BBF702E00704A10 /* mermaid.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2EB04BA21BBF702E00704A10 /* mermaid.m4a */; };
+		2EB04BA91BBF702E00704A10 /* pterodactyl.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2EB04BA31BBF702E00704A10 /* pterodactyl.m4a */; };
+		2EB04BAA1BBF702E00704A10 /* stegasaurus.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2EB04BA41BBF702E00704A10 /* stegasaurus.m4a */; };
+		2EB04BAB1BBF702E00704A10 /* trex.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2EB04BA51BBF702E00704A10 /* trex.m4a */; };
+		2EB04BAC1BBF702E00704A10 /* triceratop.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2EB04BA61BBF702E00704A10 /* triceratop.m4a */; };
+		2EB04BB61BBF722B00704A10 /* building7.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2EB04BB41BBF722B00704A10 /* building7.mp3 */; };
+		2EB04BB71BBF722B00704A10 /* building8.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2EB04BB51BBF722B00704A10 /* building8.mp3 */; };
 		2EBA6CB21B4691110047D1EA /* QuizViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EBA6CB11B4691100047D1EA /* QuizViewController.swift */; };
 		2EBB787C1B41154100DEE989 /* ZooViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EBB787B1B41154100DEE989 /* ZooViewController.swift */; };
 		2EBB788E1B41222500DEE989 /* BuildingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EBB788D1B41222500DEE989 /* BuildingViewController.swift */; };
@@ -4195,6 +4203,14 @@
 		2E907B2B1B781C5A00B8656C /* zookeeper-girl36.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zookeeper-girl36.png"; sourceTree = "<group>"; };
 		2EA00DF51B7C5405003715DF /* leather.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = leather.jpg; sourceTree = "<group>"; };
 		2EA044AA1B4BB93B005AE1B4 /* moreMoney.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = moreMoney.mp3; path = Zoo/moreMoney.mp3; sourceTree = "<group>"; };
+		2EB04BA11BBF702E00704A10 /* centaur.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = centaur.m4a; path = "Zoo/animal sounds/centaur.m4a"; sourceTree = "<group>"; };
+		2EB04BA21BBF702E00704A10 /* mermaid.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = mermaid.m4a; path = "Zoo/animal sounds/mermaid.m4a"; sourceTree = "<group>"; };
+		2EB04BA31BBF702E00704A10 /* pterodactyl.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = pterodactyl.m4a; path = "Zoo/animal sounds/pterodactyl.m4a"; sourceTree = "<group>"; };
+		2EB04BA41BBF702E00704A10 /* stegasaurus.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = stegasaurus.m4a; path = "Zoo/animal sounds/stegasaurus.m4a"; sourceTree = "<group>"; };
+		2EB04BA51BBF702E00704A10 /* trex.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = trex.m4a; path = "Zoo/animal sounds/trex.m4a"; sourceTree = "<group>"; };
+		2EB04BA61BBF702E00704A10 /* triceratop.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = triceratop.m4a; path = "Zoo/animal sounds/triceratop.m4a"; sourceTree = "<group>"; };
+		2EB04BB41BBF722B00704A10 /* building7.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = building7.mp3; path = "Zoo/animal audio/building7.mp3"; sourceTree = "<group>"; };
+		2EB04BB51BBF722B00704A10 /* building8.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = building8.mp3; path = "Zoo/animal audio/building8.mp3"; sourceTree = "<group>"; };
 		2EBA6CB11B4691100047D1EA /* QuizViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizViewController.swift; sourceTree = "<group>"; };
 		2EBB787B1B41154100DEE989 /* ZooViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZooViewController.swift; sourceTree = "<group>"; };
 		2EBB788D1B41222500DEE989 /* BuildingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuildingViewController.swift; sourceTree = "<group>"; };
@@ -7634,6 +7650,12 @@
 		2E612DA81B6482660055CF08 /* animal sounds */ = {
 			isa = PBXGroup;
 			children = (
+				2EB04BA11BBF702E00704A10 /* centaur.m4a */,
+				2EB04BA21BBF702E00704A10 /* mermaid.m4a */,
+				2EB04BA31BBF702E00704A10 /* pterodactyl.m4a */,
+				2EB04BA41BBF702E00704A10 /* stegasaurus.m4a */,
+				2EB04BA51BBF702E00704A10 /* trex.m4a */,
+				2EB04BA61BBF702E00704A10 /* triceratop.m4a */,
 				2E612DAC1B6482750055CF08 /* alligator.m4a */,
 				2E612DAD1B6482750055CF08 /* baboon.m4a */,
 				2E612DAE1B6482750055CF08 /* chimp.m4a */,
@@ -7672,6 +7694,8 @@
 				2E6F5BB61B4233AC00E37B65 /* building4.mp3 */,
 				2E6F5BB71B4233AC00E37B65 /* building5.mp3 */,
 				2E6F5BEB1B4233AC00E37B65 /* building6.mp3 */,
+				2EB04BB41BBF722B00704A10 /* building7.mp3 */,
+				2EB04BB51BBF722B00704A10 /* building8.mp3 */,
 				2E6F5BAD1B4233AC00E37B65 /* alligator_1.mp3 */,
 				2E6F5BAE1B4233AC00E37B65 /* alligator_2.mp3 */,
 				2E6F5BAF1B4233AC00E37B65 /* alligator_3.mp3 */,
@@ -8136,6 +8160,7 @@
 				2E45E7261B42BBBA00A8A802 /* rhyme_151.mp3 in Resources */,
 				2E45E6351B42BB9700A8A802 /* question_464.mp3 in Resources */,
 				2EFCF12A1BB4BACB002FFD4B /* Flower.mp3 in Resources */,
+				2EB04BB71BBF722B00704A10 /* building8.mp3 in Resources */,
 				2E45E7F61B42BBD900A8A802 /* thumbnail_116.jpg in Resources */,
 				2EFCF1EE1BB4BACB002FFD4B /* Oink-oink.mp3 in Resources */,
 				2EC1AB471B41477C00A635AB /* seal.png in Resources */,
@@ -8165,6 +8190,7 @@
 				2E45E2371B42BB7F00A8A802 /* illustration_077.jpg in Resources */,
 				2E7DFDDC1B7C464F0037AC68 /* bowl.jpg in Resources */,
 				2E7DFF0C1B7C464F0037AC68 /* soup.jpg in Resources */,
+				2EB04BAC1BBF702E00704A10 /* triceratop.m4a in Resources */,
 				2EC1AB3A1B41477C00A635AB /* monkey#color.png in Resources */,
 				2ECAD65B1B79B2190025B32D /* s52.jpeg in Resources */,
 				2E45E4B91B42BB9700A8A802 /* question_084.mp3 in Resources */,
@@ -8321,6 +8347,7 @@
 				2EFCF1D61BB4BACB002FFD4B /* Morning.mp3 in Resources */,
 				2E7DFE1B1B7C464F0037AC68 /* dishes.jpg in Resources */,
 				2E45E50C1B42BB9700A8A802 /* question_167.mp3 in Resources */,
+				2EB04BA81BBF702E00704A10 /* mermaid.m4a in Resources */,
 				2EFCF2CF1BB4BACB002FFD4B /* Soup.mp3 in Resources */,
 				2ECAD62C1B79B2190025B32D /* s5.jpeg in Resources */,
 				2E7DFEB21B7C464F0037AC68 /* noimage.png in Resources */,
@@ -8390,6 +8417,7 @@
 				2E7DFF341B7C464F0037AC68 /* town.jpg in Resources */,
 				2E45E4801B42BB9700A8A802 /* question_027.mp3 in Resources */,
 				2EFCF1B91BB4BACB002FFD4B /* Luis.mp3 in Resources */,
+				2EB04BA71BBF702E00704A10 /* centaur.m4a in Resources */,
 				2E7DFDB61B7C464F0037AC68 /* alone.jpg in Resources */,
 				2E7DFE5B1B7C464F0037AC68 /* grandfather.jpg in Resources */,
 				2EFCF1631BB4BACB002FFD4B /* Hill.mp3 in Resources */,
@@ -9049,6 +9077,7 @@
 				2E7DFEAF1B7C464F0037AC68 /* Naps.jpg in Resources */,
 				2E907B381B781C5A00B8656C /* zookeeper-boy13.png in Resources */,
 				2EC1AB4C1B41477C00A635AB /* squid#color.png in Resources */,
+				2EB04BA91BBF702E00704A10 /* pterodactyl.m4a in Resources */,
 				2E7DFEDA1B7C464F0037AC68 /* R.jpg in Resources */,
 				2EFCF1201BB4BACB002FFD4B /* Fire.mp3 in Resources */,
 				2E45E2841B42BB7F00A8A802 /* illustration_167.jpg in Resources */,
@@ -9169,6 +9198,7 @@
 				2E45E7151B42BBBA00A8A802 /* rhyme_134.mp3 in Resources */,
 				2EE4DBA51B4A5B5700F9578C /* encouragement_2.mp3 in Resources */,
 				2E6F5C0E1B4233AC00E37B65 /* alligator_2.mp3 in Resources */,
+				2EB04BAB1BBF702E00704A10 /* trex.m4a in Resources */,
 				2E45E5B71B42BB9700A8A802 /* question_338.mp3 in Resources */,
 				2EFCF34D1BB4BACB002FFD4B /* Windy.mp3 in Resources */,
 				2EFCF1DB1BB4BACB002FFD4B /* Mouth.mp3 in Resources */,
@@ -9619,6 +9649,7 @@
 				2E45E2761B42BB7F00A8A802 /* illustration_153.jpg in Resources */,
 				2EFCF1EC1BB4BACB002FFD4B /* Norridge.mp3 in Resources */,
 				2E45E6341B42BB9700A8A802 /* question_463.mp3 in Resources */,
+				2EB04BAA1BBF702E00704A10 /* stegasaurus.m4a in Resources */,
 				2E907B601B781C5A00B8656C /* zookeeper-girl17.png in Resources */,
 				2EFCF03B1BB4BACB002FFD4B /* 15.mp3 in Resources */,
 				2E7DFE821B7C464F0037AC68 /* jump.jpg in Resources */,
@@ -9963,6 +9994,7 @@
 				2EFCF0801BB4BACB002FFD4B /* Blue.mp3 in Resources */,
 				2EFCF2371BB4BACB002FFD4B /* Robin.mp3 in Resources */,
 				2E45E58C1B42BB9700A8A802 /* question_295.mp3 in Resources */,
+				2EB04BB61BBF722B00704A10 /* building7.mp3 in Resources */,
 				2EFCF26B1BB4BACB002FFD4B /* Snowy.mp3 in Resources */,
 				2ECAD6651B79B2190025B32D /* zoo-level-2.mp3 in Resources */,
 				2E6F5C201B4233AC00E37B65 /* dolphin_3.mp3 in Resources */,
