@@ -196,7 +196,8 @@ class BuildingViewController : ZookeeperGameController {
         
         if !owned {
             let coinSize = iPad() ? "medium" : "small"
-            let coinName = "coin-20-\(coinSize)"
+            let animalCost = RZQuizDatabase.currentZooLevel() == 8 ? 10 : 20
+            let coinName = "coin-\(animalCost)-\(coinSize)"
             button.setImage(UIImage(named: coinName), forState: .Normal)
             button.addTarget(self, action: "purchasePressed:", forControlEvents: .TouchUpInside)
             

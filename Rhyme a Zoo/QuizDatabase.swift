@@ -265,13 +265,17 @@ class QuizDatabase {
     }
     
     func canAffordAnimal() -> Bool {
-        return getPlayerBalance() >= 20.0
+        let zooLevel = currentZooLevel()
+        let requiredBalance = zooLevel == 8 ? 10.0 : 20.0
+        return getPlayerBalance() >= requiredBalance
     }
     
     func purchaseAnimal(animal: String) {
         if !canAffordAnimal() { return }
         
-        changePlayerBalanceBy(-20.0)
+        let zooLevel = currentZooLevel()
+        let requiredBalance = zooLevel == 8 ? 10.0 : 20.0
+        changePlayerBalanceBy(-requiredBalance)
         var animals = getOwnedAnimals()
         animals.append(animal)
         data.setValue(animals, forKey: userKey(RZAnimalsKey))

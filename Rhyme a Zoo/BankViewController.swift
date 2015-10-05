@@ -145,12 +145,27 @@ class BankViewController : UIViewController {
         UAPlayer().play("coins-available", ofType: "mp3", ifConcurrent: .Interrupt)
         let duration = UALengthOfFile("coins-total", ofType: "mp3")
         
-        if !hasSpentCoins { return }
+        //TODO: FIX
+        //if !hasSpentCoins { return }
         
-        //play raining coins animation
-        coinTimers.append(NSTimer.scheduledTimerWithTimeInterval(duration, target: self, selector: "playAnimationPart:", userInfo: 1, repeats: false))
-        coinTimers.append(NSTimer.scheduledTimerWithTimeInterval(duration + 0.5, target: self, selector: "playAnimationPart:", userInfo: 2, repeats: false))
-        coinTimers.append(NSTimer.scheduledTimerWithTimeInterval(duration + 4.5, target: self, selector: "playAnimationPart:", userInfo: 3, repeats: false))
+        let (totalGold, totalSilver) = RZQuizDatabase.getTotalMoneyEarned()
+        let totalEarned = totalGold + totalSilver
+        let animationLoops = (totalEarned / 100) + 1
+        
+        for i in 1...animationLoops {
+            let loop: Double = Double(i) - 1
+            //play raining coins animation
+            coinTimers.append(NSTimer.scheduledTimerWithTimeInterval(duration + (loop * 4.5), target: self, selector: "playAnimationPart:", userInfo: 1, repeats: false))
+            
+            if i == 1 { //only play the audio on the first loop
+                coinTimers.append(NSTimer.scheduledTimerWithTimeInterval(duration + 0.5 + (loop * 4.5), target: self, selector: "playAnimationPart:", userInfo: 2, repeats: false))
+            }
+            
+            //only fade the background on the last loop
+            if i == animationLoops {
+                coinTimers.append(NSTimer.scheduledTimerWithTimeInterval(duration + 4.5 + (loop * 4.5), target: self, selector: "playAnimationPart:", userInfo: 3, repeats: false))
+            }
+        }
     }
     
     func playAnimationPart(timer: NSTimer) {
@@ -184,7 +199,9 @@ class BankViewController : UIViewController {
     }
     
     func spawnCoins() {
-        let (totalGold, totalSilver) = RZQuizDatabase.getTotalMoneyEarned()
+        var (totalGold, totalSilver) = RZQuizDatabase.getTotalMoneyEarned()
+        totalGold = min(100, totalGold)
+        totalSilver = min(100, totalSilver)
         
         dispatch_async(RZAsyncQueue) {
             for _ in 0 ..< min(300, totalGold) {

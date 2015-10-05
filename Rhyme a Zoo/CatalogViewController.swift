@@ -32,8 +32,14 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
     let twoRow: CGFloat = 480.0
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        if indexPath.item == collectionView.numberOfItemsInSection(0) - 1 {
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("Hear a Tale", forIndexPath: indexPath) as! HearATaleCell
+        if indexPath.item == hearATaleCellIndex {
+            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("Hear a Tale", forIndexPath: indexPath) as! DecorationCell
+            cell.decorate()
+            return cell;
+        }
+        
+        if indexPath.item == celebrationCellIndex {
+            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("Celebration", forIndexPath: indexPath) as! DecorationCell
             cell.decorate()
             return cell;
         }
@@ -43,6 +49,9 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
         return cell
     }
     
+    var hearATaleCellIndex: Int? = nil
+    var celebrationCellIndex: Int? = nil
+    
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if RZShowingFavorites {
             return RZQuizDatabase.numberOfFavories() + 1
@@ -51,8 +60,19 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
         //update current level
         RZQuizDatabase.advanceLevelIfCurrentIsComplete()
         
-        //return RZQuizDatabase.levelCount * 5 + 1 //this line enabled all rhymes
-        return RZQuizDatabase.currentLevel() * 5 + 1
+        let availableRhymes = RZQuizDatabase.currentLevel() * 5
+        var displayedCells = availableRhymes + 1 //Hear a Tale cell
+        hearATaleCellIndex = displayedCells - 1
+        
+        let rhymeCount = RZQuizDatabase.levelCount * 5
+        let completedRhymes = RZQuizDatabase.getQuizData().count
+        if completedRhymes == rhymeCount {
+            displayedCells += 1 //add Celebration cell
+            hearATaleCellIndex = displayedCells - 1
+            celebrationCellIndex = displayedCells - 2
+        } else { celebrationCellIndex = nil }
+        
+        return displayedCells
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
@@ -60,7 +80,7 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        if indexPath.item == collectionView.numberOfItemsInSection(0) - 1 { //is last, Hear a Tale cell
+        if indexPath.item == hearATaleCellIndex { //is Hear a Tale cell
             //show alert
             let alert = UIAlertController(title: "Open Hear a Tale?", message: "You will leave the Rhyme a Zoo app.", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: nil))
@@ -71,6 +91,11 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
             }))
             self.presentViewController(alert, animated: true, completion: nil)
             return
+        }
+        
+        if indexPath.item == celebrationCellIndex { //is celebration cell
+            //play celebration video
+            playVideo(name: "game-over", currentController: self, completion: nil)
         }
         
         let rhyme: Rhyme
@@ -225,6 +250,7 @@ class RhymeCell : UICollectionViewCell {
             
             if showFavorites {
                 let favs = data.arrayForKey(userKey(RZFavoritesKey)) as! [Int]
+                if index >= favs.count { return }
                 let number = favs[index]
                 rhyme = Rhyme(number)
             } else {
@@ -269,7 +295,7 @@ class RhymeCell : UICollectionViewCell {
     
 }
 
-class HearATaleCell : UICollectionViewCell {
+class DecorationCell : UICollectionViewCell {
     
     func decorate() {
         self.alpha = 0.0

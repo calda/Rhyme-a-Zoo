@@ -9,6 +9,7 @@
     <customFonts key="customFonts">
         <mutableArray key="Avenir.ttc">
             <string>Avenir-Black</string>
+            <string>Avenir-Black</string>
         </mutableArray>
     </customFonts>
     <scenes>
@@ -192,14 +193,79 @@
                                             <outlet property="title" destination="eRB-cN-qtr" id="nfX-EH-ao0"/>
                                         </connections>
                                     </collectionViewCell>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Hear a Tale" id="X88-6W-cjb" customClass="HearATaleCell" customModule="Rhyme_a_Zoo" customModuleProvider="target">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Celebration" id="X88-6W-cjb" customClass="DecorationCell" customModule="Rhyme_a_Zoo" customModuleProvider="target">
                                         <rect key="frame" x="75" y="5" width="328" height="151"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="328" height="151"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="0Qw-7b-UA2">
+                                                <imageView userInteractionEnabled="NO" alpha="0.29999999999999999" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="s60.jpeg" translatesAutoresizingMaskIntoConstraints="NO" id="ocZ-9R-tvp">
+                                                    <rect key="frame" x="0.0" y="0.0" width="328" height="151"/>
+                                                    <animations/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" secondItem="ocZ-9R-tvp" secondAttribute="height" multiplier="1:1" id="22f-CZ-Cnf"/>
+                                                    </constraints>
+                                                    <variation key="default">
+                                                        <mask key="constraints">
+                                                            <exclude reference="22f-CZ-Cnf"/>
+                                                        </mask>
+                                                    </variation>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You won! Congratulations!" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="0Qw-7b-UA2">
+                                                    <rect key="frame" x="13" y="5" width="310" height="141"/>
+                                                    <animations/>
+                                                    <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="35"/>
+                                                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="button-play" translatesAutoresizingMaskIntoConstraints="NO" id="qEa-Lz-SVF">
+                                                    <rect key="frame" x="8" y="8" width="30" height="30"/>
+                                                    <animations/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="30" id="2gU-0C-RNK"/>
+                                                        <constraint firstAttribute="height" constant="30" id="uJY-tf-6rs"/>
+                                                    </constraints>
+                                                </imageView>
+                                            </subviews>
+                                            <animations/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                        <animations/>
+                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.20000000000000001" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstItem="0Qw-7b-UA2" firstAttribute="leading" secondItem="X88-6W-cjb" secondAttribute="leadingMargin" constant="5" id="JTL-SR-78P"/>
+                                            <constraint firstItem="ocZ-9R-tvp" firstAttribute="leading" secondItem="X88-6W-cjb" secondAttribute="leading" id="M5h-3G-Jfp"/>
+                                            <constraint firstItem="qEa-Lz-SVF" firstAttribute="top" secondItem="X88-6W-cjb" secondAttribute="topMargin" id="MyT-aj-BwS"/>
+                                            <constraint firstItem="0Qw-7b-UA2" firstAttribute="top" secondItem="X88-6W-cjb" secondAttribute="top" constant="5" id="SBr-UK-uHc"/>
+                                            <constraint firstAttribute="centerY" secondItem="ocZ-9R-tvp" secondAttribute="centerY" id="T5U-fW-Pgb"/>
+                                            <constraint firstItem="ocZ-9R-tvp" firstAttribute="leading" secondItem="X88-6W-cjb" secondAttribute="leading" constant="10" id="bNU-bA-Gyt"/>
+                                            <constraint firstAttribute="trailing" secondItem="ocZ-9R-tvp" secondAttribute="trailing" id="eU1-sy-fnD"/>
+                                            <constraint firstAttribute="bottom" secondItem="0Qw-7b-UA2" secondAttribute="bottom" constant="5" id="gn8-HR-gG9"/>
+                                            <constraint firstAttribute="bottom" secondItem="ocZ-9R-tvp" secondAttribute="bottom" id="hNs-dJ-N7V"/>
+                                            <constraint firstItem="ocZ-9R-tvp" firstAttribute="top" secondItem="X88-6W-cjb" secondAttribute="top" id="jNy-kF-6cP"/>
+                                            <constraint firstAttribute="trailing" secondItem="0Qw-7b-UA2" secondAttribute="trailing" constant="5" id="nUJ-cS-01a"/>
+                                            <constraint firstAttribute="bottom" secondItem="0Qw-7b-UA2" secondAttribute="bottom" constant="10" id="pta-rw-tHX"/>
+                                            <constraint firstItem="qEa-Lz-SVF" firstAttribute="leading" secondItem="X88-6W-cjb" secondAttribute="leadingMargin" id="rbc-iy-OJg"/>
+                                            <constraint firstItem="0Qw-7b-UA2" firstAttribute="leading" secondItem="ocZ-9R-tvp" secondAttribute="trailing" constant="5" id="xIN-eZ-PwS"/>
+                                        </constraints>
+                                        <variation key="default">
+                                            <mask key="constraints">
+                                                <exclude reference="T5U-fW-Pgb"/>
+                                                <exclude reference="bNU-bA-Gyt"/>
+                                                <exclude reference="pta-rw-tHX"/>
+                                                <exclude reference="xIN-eZ-PwS"/>
+                                            </mask>
+                                        </variation>
+                                    </collectionViewCell>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Hear a Tale" id="EKw-th-9PF" customClass="DecorationCell" customModule="Rhyme_a_Zoo" customModuleProvider="target">
+                                        <rect key="frame" x="75" y="5" width="328" height="151"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="328" height="151"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="p3Z-YC-oCd">
                                                     <rect key="frame" x="156" y="5" width="167" height="141"/>
                                                     <animations/>
                                                     <attributedString key="attributedText">
@@ -220,11 +286,11 @@
                                                     </attributedString>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="einstein" translatesAutoresizingMaskIntoConstraints="NO" id="ocZ-9R-tvp">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="einstein" translatesAutoresizingMaskIntoConstraints="NO" id="tLy-rM-mHn">
                                                     <rect key="frame" x="0.0" y="0.0" width="151" height="151"/>
                                                     <animations/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" secondItem="ocZ-9R-tvp" secondAttribute="height" multiplier="1:1" id="22f-CZ-Cnf"/>
+                                                        <constraint firstAttribute="width" secondItem="tLy-rM-mHn" secondAttribute="height" multiplier="1:1" id="AvM-wn-nGi"/>
                                                     </constraints>
                                                 </imageView>
                                             </subviews>
@@ -234,22 +300,22 @@
                                         <animations/>
                                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.20000000000000001" colorSpace="calibratedRGB"/>
                                         <constraints>
-                                            <constraint firstItem="ocZ-9R-tvp" firstAttribute="leading" secondItem="X88-6W-cjb" secondAttribute="leading" id="M5h-3G-Jfp"/>
-                                            <constraint firstItem="0Qw-7b-UA2" firstAttribute="top" secondItem="X88-6W-cjb" secondAttribute="top" constant="5" id="SBr-UK-uHc"/>
-                                            <constraint firstAttribute="centerY" secondItem="ocZ-9R-tvp" secondAttribute="centerY" id="T5U-fW-Pgb"/>
-                                            <constraint firstItem="ocZ-9R-tvp" firstAttribute="leading" secondItem="X88-6W-cjb" secondAttribute="leading" constant="10" id="bNU-bA-Gyt"/>
-                                            <constraint firstAttribute="bottom" secondItem="0Qw-7b-UA2" secondAttribute="bottom" constant="5" id="gn8-HR-gG9"/>
-                                            <constraint firstAttribute="bottom" secondItem="ocZ-9R-tvp" secondAttribute="bottom" id="hNs-dJ-N7V"/>
-                                            <constraint firstItem="ocZ-9R-tvp" firstAttribute="top" secondItem="X88-6W-cjb" secondAttribute="top" id="jNy-kF-6cP"/>
-                                            <constraint firstAttribute="trailing" secondItem="0Qw-7b-UA2" secondAttribute="trailing" constant="5" id="nUJ-cS-01a"/>
-                                            <constraint firstAttribute="bottom" secondItem="0Qw-7b-UA2" secondAttribute="bottom" constant="10" id="pta-rw-tHX"/>
-                                            <constraint firstItem="0Qw-7b-UA2" firstAttribute="leading" secondItem="ocZ-9R-tvp" secondAttribute="trailing" constant="5" id="xIN-eZ-PwS"/>
+                                            <constraint firstAttribute="centerY" secondItem="tLy-rM-mHn" secondAttribute="centerY" id="C1S-GG-eyl"/>
+                                            <constraint firstAttribute="bottom" secondItem="tLy-rM-mHn" secondAttribute="bottom" id="DQY-u8-VEO"/>
+                                            <constraint firstItem="tLy-rM-mHn" firstAttribute="top" secondItem="EKw-th-9PF" secondAttribute="top" id="DTg-gb-C1j"/>
+                                            <constraint firstAttribute="bottom" secondItem="p3Z-YC-oCd" secondAttribute="bottom" constant="5" id="YxB-JX-eNc"/>
+                                            <constraint firstItem="tLy-rM-mHn" firstAttribute="leading" secondItem="EKw-th-9PF" secondAttribute="leading" constant="10" id="cqI-4w-tQt"/>
+                                            <constraint firstItem="p3Z-YC-oCd" firstAttribute="top" secondItem="EKw-th-9PF" secondAttribute="top" constant="5" id="gxc-vx-lET"/>
+                                            <constraint firstItem="tLy-rM-mHn" firstAttribute="leading" secondItem="EKw-th-9PF" secondAttribute="leading" id="hRj-FB-cLe"/>
+                                            <constraint firstAttribute="bottom" secondItem="p3Z-YC-oCd" secondAttribute="bottom" constant="10" id="jNr-k3-gfv"/>
+                                            <constraint firstAttribute="trailing" secondItem="p3Z-YC-oCd" secondAttribute="trailing" constant="5" id="kqi-8B-uBe"/>
+                                            <constraint firstItem="p3Z-YC-oCd" firstAttribute="leading" secondItem="tLy-rM-mHn" secondAttribute="trailing" constant="5" id="tFe-XF-B94"/>
                                         </constraints>
                                         <variation key="default">
                                             <mask key="constraints">
-                                                <exclude reference="T5U-fW-Pgb"/>
-                                                <exclude reference="bNU-bA-Gyt"/>
-                                                <exclude reference="pta-rw-tHX"/>
+                                                <exclude reference="C1S-GG-eyl"/>
+                                                <exclude reference="cqI-4w-tQt"/>
+                                                <exclude reference="jNr-k3-gfv"/>
                                             </mask>
                                         </variation>
                                     </collectionViewCell>
@@ -3148,6 +3214,7 @@
         <image name="button-logout" width="50" height="50"/>
         <image name="button-mother-goose" width="50" height="50"/>
         <image name="button-parrot" width="50" height="50"/>
+        <image name="button-play" width="50" height="50"/>
         <image name="button-question" width="50" height="50"/>
         <image name="button-repeat" width="50" height="50"/>
         <image name="button-zookeeper" width="50" height="50"/>
@@ -3168,6 +3235,7 @@
         <image name="illustration_shadow.png" width="465" height="600"/>
         <image name="iphone-cutout" width="1572" height="770"/>
         <image name="s4.jpeg" width="1334" height="750"/>
+        <image name="s60.jpeg" width="1136" height="640"/>
         <image name="sad.jpg" width="256" height="256"/>
         <image name="zookeeper-boy7.png" width="227" height="397"/>
     </resources>
