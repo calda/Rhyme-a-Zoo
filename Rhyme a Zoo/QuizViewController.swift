@@ -223,7 +223,7 @@ class QuizViewController : UIViewController {
             //calculate next delay
             let audioName = options[i].rawWord
             var duration = UALengthOfFile(audioName, ofType: "mp3")
-            if duration == 0.0 { duration = 1.0 }
+            duration = max(1.0, duration)
             
             currentDelay += duration
         }
