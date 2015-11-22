@@ -308,6 +308,7 @@ class BuildingViewController : ZookeeperGameController {
             let didAdvanceLevel = RZQuizDatabase.advanceCurrentLevelIfComplete(buildingAnimals[building - 1])
             backButton.enabled = true
             homeButton.enabled = true
+            self.mustBuy = false
             
             //color in animal and play sound
             UAPlayer().play("correct", ofType: ".mp3", ifConcurrent: .Interrupt)
