@@ -85,7 +85,7 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
             let alert = UIAlertController(title: "Open Hear a Tale?", message: "You will leave the Rhyme a Zoo app.", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: nil))
             alert.addAction(UIAlertAction(title: "Open", style: .Default, handler: { _ in
-                if let url = NSURL(string: "http://hearatale.com") {
+                if let url = NSURL(string: "http://hearatale.org") {
                     UIApplication.sharedApplication().openURL(url)
                 }
             }))

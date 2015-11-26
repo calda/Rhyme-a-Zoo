@@ -206,7 +206,7 @@ class UserDatabase {
         } else {
             query.sortDescriptors = [NSSortDescriptor(key: "Name", ascending: true)]
         }
-        cloud.performQuery(query, inZoneWithID: nil, completionHandler: classroomQueryCompletionHandler(reverseResults: location != nil, completion: completion))
+        cloud.performQuery(query, inZoneWithID: nil, completionHandler: classroomQueryCompletionHandler(reverseResults: false, completion: completion))
     }
     
     private func classroomQueryCompletionHandler(#reverseResults: Bool, completion: [Classroom] -> ()) -> ([AnyObject]!, NSError!) -> () {

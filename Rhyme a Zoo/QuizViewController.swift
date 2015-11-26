@@ -267,7 +267,7 @@ class QuizViewController : UIViewController {
             
             if levelUp && (previousLevel == 24 || previousLevel == 25) {
                 //game is won
-                delay(3.0) {
+                delay(3.5) {
                     playVideo(name: "game-over", currentController: self, completion: {
                         UAHaltPlayback()
                         self.stopAllTimers()
@@ -276,7 +276,6 @@ class QuizViewController : UIViewController {
                 }
                 self.dismissAfterPlaying = false //keep this view from dismissing itself
             }
-            
         }
         
         //disable the quiz
@@ -317,7 +316,9 @@ class QuizViewController : UIViewController {
         
         //cue audio
         UAPlayer().play(audioName, ofType: "mp3", ifConcurrent: .Interrupt)
-        let audioLength = UALengthOfFile(audioName, ofType: "mp3")
+        var audioLength = UALengthOfFile(audioName, ofType: "mp3")
+        if audioName == "quiz-over-bad" { audioLength -= 2.0 }
+        
         let timer = NSTimer.scheduledTimerWithTimeInterval(audioLength - 0.1, target: self, selector: "playCompletionSound", userInfo: count > 1, repeats: false)
         timers.append(timer)
         

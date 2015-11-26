@@ -25,10 +25,10 @@
 85,What sound is at the beginning of “bush” and in the middle of “about”?,B,K,L,J
 96,What sound is in the middle of “hickety” and “pickety”?,K,R,L,W
 97,What sound is at the end of “day” and “hay”?,A,O,U,R
-100,What sound is at the beginning of “them” and “the”?,TH,FR,ND,SM
+100,What sound is at the beginning of “them” and “the”?,sound-TH-voiced,FR,ND,SM
 104,What sound is in “children” and “winter” and “it”?,sound-I-short,U,O,A
 108,What sound is at the beginning of “Wee” and “Willie” and “Winkie”?,W,K,R,S
-112,What sound is at the end of “shoe” and “do”?,U,K,R,M
+112,What sound is at the end of “shoe” and “do”?,sound-U-oo,K,R,M
 113,What sound is at the beginning of “came” and “climbed”?,C,P,R,N
 120,What sound is at the beginning of “fourteen” and “fifteen”?,F,K,W,Z
 122,What two sounds come at the end of “stall” and “wall”?,AL,PR,SM,IT
@@ -39,7 +39,7 @@
 132,What sound comes at the end of “fire” and “fair” and “there”?,R,H,Z,D
 133,What sound comes at the beginning of “jumping” and “Joan”?,J,V,F,K
 136,What sound comes at the beginning and end of “little” and in the middle of “alone”?,L,P,X,S
-140,What two sounds come at the end of “hill” and “still”?,IL,AR,E,GR
+140,What two sounds come at the end of “hill” and “still”?,IL,AR,ET,GR
 141,What sound comes at the beginning of “says” and “simple” and “Simon”?,S,H,F,V
 144,What sound comes in the middle of “penny” and “any”?,N,S,Q,F
 148,What sound comes at the end of “rye” and “pie”?,I,O,A,U
@@ -52,19 +52,19 @@
 169,What sound is at the beginning of “went” and “wise”?,W,B,P,G
 172,What sound is at the end of “stronger” and “longer”?,ER,CH,SK,BL
 176,What sound is at the beginning of “laddy” and in the middle of “flaw” and “alone” and the end of “all”?,L,P,X,M
-178,The rhyme says one what flew back?,Cat,Bee,Frog,Bat
-180,What sound is at the end of “flew” and “two” and “do” and “you”?,U,M,Z,B
-184,What sounds come in the middle of “milking” and “silking”?,ILK,THA,M,DWE
+178,The rhyme says one what flew back?,Bird,Bee,Frog,Bat
+180,What sound is at the end of “flew” and “two” and “do” and “you”?,sound-U-oo,M,Z,B
+184,What sounds come in the middle of “milking” and “silking”?,ILK,THA,BRI,DWE
 187,What sound comes at the beginning of “sat” and “cinder”?,S,M,L,V
-191,What sounds come at the end of “beat” and “street”?,ET,Z,AR,M
+191,What sounds come at the end of “beat” and “street”?,sound-ET-eat,Z,AR,M
 196,What sounds come at the end of “crown” and “down”?,OWN,BRI,SLE,TWI
 197,What sound comes in the middle of “dillar” and “dollar” and “scholar”?,L,M,F,G
-199,What sound comes in the middle of “noon” and “soon”?,U,F,Z,Q
+199,What sound comes in the middle of “noon” and “soon”?,sound-U-oo,F,Z,Q
 200,What sound is at the beginning of “come” and “clock” and in the middle of “scholar”?,K,V,N,W
-204,What sounds come at the end of “there” and “chair”?,AR,IL,UN,OV
-208,What sound is in the middle of “pat” and “man” and “can”?,sound-A-short,O,U,E
+204,What sounds come at the end of “there” and “chair”?,sound-AR-air,IL,UN,OV
+208,What sound is in the middle of “pat” and “man” and “can”?,sound-A-ah,O,U,E
 210,What sounds are at the beginning of “blue” and “blow” ?,BL,ST,GR,WH
-215,What sound is in the middle of “moon” and “broom”?,U,E,A,I
+215,What sound is in the middle of “moon” and “broom”?,sound-U-oo,E,A,I
 219,What sounds come at the end of “early” and “fairly”?,LY,OW,AN,UT
 223,What sounds come at the end of “moon” and “soon”?,OON,EEL,ADD,ISH
 228,What sounds come at the end of “cow” and “now”?,OW,IT,ER,UL
@@ -76,16 +76,16 @@
 244,What sound comes at the beginning of “diddle” and “dumpling”?,D,K,S,R
 248,What sounds come at the end of "diddle" and "fiddle"?,DL,FR,NG,ST
 252,What sounds come at the end of “mother” and “over” and “together”?,ER,OW,UL,AK
-256,What sound comes in the middle of “bag” and “nag”,sound-A-short,E,O,U
+256,What sound comes in the middle of “bag” and “nag”,sound-A-ah,E,O,U
 260,What sound comes at the beginning of “smith” and “set”?,S,N,P,G
 264,What sound comes at the end of “flour” and “hour”?,OUR,ING,EER,ELD
 268,What sound comes at the end of “myself” and “shelf”?,ELF,DUL,ING,SON
 272,What word starts with the same letter sound as “broke” and “broad” and “boy”?,Bread,Town,Mice,Wife
 276,What sound comes at the beginning of “Robin” and “Redbreast”?,R,S,J,V
 279,What sound comes at the beginning of  “dearest” and “dress”  and “decide” ?,D,L,F,H
-281,What sound comes in the middle of “blush” and “thus” and “love”?,U,O,I,E
+281,What sound comes in the middle of “blush” and “thus” and “love”?,sound-U-short,O,I,E
 283,Jenny blushed behind her what?,Fan,Wig,Hat,Flower
-284,What word rhymes with “mind” and “kind”?,Find,Bush,Happy,Music
+284,What word rhymes with “kind”?,Mind,Bush,Happy,Music
 286,What sound comes at the end of “play” and “day”?,A,I,O,U
 287,What sound comes at the beginning of “Sunday” and “Saturday”?,S,Q,X,M
 288,What sound comes right before “day” in the words “Tuesday” and Wednesday” and “Thursday?”,Z,P,O,F
@@ -94,7 +94,7 @@
 297,What sounds come at the end of “pig” and “wig”?,IG,ER,OW,ET
 300,What sound comes at the beginning of “went” and “without” and “word”?,W,B,L,Z
 304,What sounds come at the end of “thumb” and “plum”?,UM,OT,GR,AK
-308,What sound is in the middle of “cat” and “bag”?,A,I,O,U
+308,What sound is in the middle of “cat” and “bag”?,sound-A-ah,I,O,U
 310,What sound is at the end of “day” and “away”?,A,I,O,U
 316,What sounds are at the end of “sore” and “more”?,OR,ET,IL,ST
 320,What sound is at the beginning of “goosey” and “gander”?,G,L,M,V
@@ -113,7 +113,7 @@
 357,The rhyme is about what kind of little animals?,Pigs,Mice,Birds,Spiders
 359,The words “went” and “want” and “wee” all begin with what sound?,W,K,sound-C-soft,V
 360,What sound is in the middle of “this” and “little” and “pig”?,sound-I-short,O,U,A
-363,What sound is at the beginning of “away” and “again”?,A,O,U,P
+363,What sound is at the beginning of “away” and “again”?,sound-A-ah,O,U,P
 364,What sound is at the beginning and middle of “blackbird”?,B,O,Z,M
 367,What sound comes at the end of “patch” and “hatch”?,CH,FR,PL,TH
 368,What sound is at the beginning of “patch” and “pull” and end of “up” and “cup”?,P,H,F,G
@@ -122,22 +122,22 @@
 377,What sound is at the beginning of “take” and the middle of “kettle” and at the end of “it”??,T,J,W,F
 378,What sound is at the beginning of “Polly” and “put”?,P,L,M,G
 380,What sound is at the beginning of “kettle” and middle of “Sukey” and end of “take”?,K,N,D,P
-384,What sounds are in the end of “saddle” and “cradle” and “ladle”?,DL,CH,UM,NG
+384,What sounds are in the end of “saddle” and “cradle”?,DL,CH,UM,NG
 387,What sound is at the beginning of “grid iron” and in the middle of “agree?,G,M,O,F
-392,What sound is in the middle of “sat” and “ran”?,sound-A-short,U,O,P
+392,What sound is in the middle of “sat” and “ran”?,sound-A-ah,U,O,P
 396,What sound is at the end of “say” and “away”?,A,E,U,O
 398,What sound is at the beginning of “bumpety” and “bump” and “blackbird?”,B,L,H,T
 404,What sounds are at the end of “dust” and beginning of “street”?,ST,UM,NG,FL
 405,What sounds are at the beginning of “shall” and “shear”?,SH,AN,EM,PL
 412,What sound is at the beginning of “out” and in the middle of “about”?,OU,ER,NG,PL
-413,What sound is at the beginning of “them” and “the”?,TH,PL,AW,ER
+413,What sound is at the beginning of “them” and “the”?,sound-TH-voiced,PL,AW,ER
 414,What sound is at the beginning of “eat” and in the middle of “lean” and “clean” and “between”?,E,O,U,I
 415,What sound is at the beginning of “would” and “wife” and in the middle of “between”?,W,X,L,M
 416,What sound is at the end of “eat” and “fat” and in the middle of “between”?,T,S,V,K
 420,What sound is in the middle of “diet” and “quiet”?,I,A,O,U
 421,What sound is at the end of “say” and “day” and “pray”?,A,I,O,U
-424,What sound somes at the end of “news” and “please” and “has”?,sound-S-z,V,F,J
-428,What sound is at the beginning of “there” and “they”?,TH,PL,IG,UM
+424,What sound comes at the end of “news” and “please” and “has”?,sound-S-z,V,F,J
+428,What sound is at the beginning of “there” and “they”?,sound-TH-voiced,PL,IG,UM
 432,What sound is at the beginning of “had” and “he” and “her”?,H,S,P,T
 433,What sound is at the beginning of “wilderness” and “wood”?,W,F,J,T
 438,What sound is in the middle of “bark” and “hark” and the beginning of “rags”?,R,L,N,V
@@ -156,7 +156,7 @@
 472,What sound is at the beginning of “I’ll” and “I’ve” and in the middle of “five” ?,I,O,U,A
 475,What sound is in the middle of “five” and “alive”?,I,O,U,G
 476,What sound is at the beginning of “four” and “five” ?,F,C,Z,J
-480,What sound is at the beginning of “wind” and “we” and warm”?,W,J,P,H
+480,What sound is at the beginning of "wind" and "we" and "warm"?,W,J,P,H
 481,What sound is at the beginning of “shillings” and “shoes” and “Shoreditch”?,SH,NG,PL,OU
 482,What sound is at the end of “say” and “pay” ?,A,O,U,I
 483,What sound comes at the end of “me” and “be” and in the middle and end of “sleepy”?,E,A,O,U
