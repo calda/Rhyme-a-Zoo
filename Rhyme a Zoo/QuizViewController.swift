@@ -142,7 +142,7 @@ class QuizViewController : UIViewController {
         questionNumber += 1
         answerAttempts = 0
         
-        if questionNumber == 4 {
+        if questionNumber >= 4 {
             endQuiz()
             return
         }
