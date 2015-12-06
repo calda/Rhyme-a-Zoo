@@ -2346,6 +2346,42 @@
                                     </mask>
                                 </variation>
                             </imageView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Aqh-AR-8rj" userLabel="progress bar">
+                                <rect key="frame" x="0.0" y="310" width="568" height="10"/>
+                                <subviews>
+                                    <view alpha="0.5" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XHe-7c-S6r" userLabel="white">
+                                        <rect key="frame" x="0.0" y="0.0" width="568" height="10"/>
+                                        <animations/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ung-Dk-3om" userLabel="percent">
+                                        <rect key="frame" x="0.0" y="0.0" width="570" height="10"/>
+                                        <animations/>
+                                        <color key="backgroundColor" red="0.32598137859999998" green="0.60442954299999996" blue="0.64340657000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </view>
+                                </subviews>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="centerY" secondItem="XHe-7c-S6r" secondAttribute="centerY" id="3BK-s2-YbN"/>
+                                    <constraint firstAttribute="centerY" secondItem="Ung-Dk-3om" secondAttribute="centerY" id="GfF-cE-dYp"/>
+                                    <constraint firstItem="Ung-Dk-3om" firstAttribute="height" secondItem="Aqh-AR-8rj" secondAttribute="height" id="Kqu-fi-fgL"/>
+                                    <constraint firstItem="Ung-Dk-3om" firstAttribute="leading" secondItem="Aqh-AR-8rj" secondAttribute="leading" id="O8j-uU-JvG"/>
+                                    <constraint firstAttribute="height" constant="10" id="V64-lN-6Dh"/>
+                                    <constraint firstItem="Ung-Dk-3om" firstAttribute="width" secondItem="Aqh-AR-8rj" secondAttribute="width" constant="2" id="W3X-FI-0CC"/>
+                                    <constraint firstAttribute="centerX" secondItem="Ung-Dk-3om" secondAttribute="centerX" id="bVY-eJ-bSO"/>
+                                    <constraint firstAttribute="centerX" secondItem="XHe-7c-S6r" secondAttribute="centerX" id="kU7-tL-yyL"/>
+                                    <constraint firstAttribute="width" secondItem="XHe-7c-S6r" secondAttribute="width" id="mve-6l-xT3"/>
+                                    <constraint firstAttribute="centerY" secondItem="Ung-Dk-3om" secondAttribute="centerY" id="tvX-ll-6Xt"/>
+                                    <constraint firstAttribute="height" secondItem="XHe-7c-S6r" secondAttribute="height" id="yok-CO-X9a"/>
+                                </constraints>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="bVY-eJ-bSO"/>
+                                        <exclude reference="tvX-ll-6Xt"/>
+                                    </mask>
+                                </variation>
+                            </view>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="iphone-cutout" translatesAutoresizingMaskIntoConstraints="NO" id="M0m-Wc-wlY">
                                 <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
                                 <animations/>
@@ -2357,7 +2393,8 @@
                                         <exclude reference="Nd8-X6-yKm"/>
                                     </mask>
                                 </variation>
-                                <variation key="heightClass=regular-widthClass=regular">
+                                <variation key="heightClass=regular-widthClass=regular" misplaced="YES">
+                                    <rect key="frame" x="27" y="32" width="514" height="256"/>
                                     <mask key="constraints">
                                         <include reference="Nd8-X6-yKm"/>
                                     </mask>
@@ -2434,17 +2471,21 @@
                             <constraint firstItem="fPh-9B-4Wo" firstAttribute="leading" secondItem="lDB-qg-dFL" secondAttribute="leading" id="U71-Gf-RY2"/>
                             <constraint firstItem="Kp8-Vk-E7h" firstAttribute="top" secondItem="lDB-qg-dFL" secondAttribute="top" constant="10" id="VcA-Up-AU6"/>
                             <constraint firstAttribute="trailing" secondItem="Kp8-Vk-E7h" secondAttribute="trailing" constant="10" id="WNC-Ve-tcp"/>
+                            <constraint firstItem="fPh-9B-4Wo" firstAttribute="trailing" secondItem="Aqh-AR-8rj" secondAttribute="trailing" id="YFq-zd-2Xd"/>
                             <constraint firstAttribute="centerY" secondItem="fPh-9B-4Wo" secondAttribute="centerY" id="bNH-Bh-0Rf"/>
                             <constraint firstItem="fPh-9B-4Wo" firstAttribute="top" secondItem="lDB-qg-dFL" secondAttribute="topMargin" id="cLD-Jy-DEQ"/>
                             <constraint firstAttribute="trailing" secondItem="fgt-1h-uuK" secondAttribute="trailing" id="cnx-sa-82M"/>
+                            <constraint firstItem="fPh-9B-4Wo" firstAttribute="centerX" secondItem="Aqh-AR-8rj" secondAttribute="centerX" id="dmM-MP-grE"/>
                             <constraint firstItem="fPh-9B-4Wo" firstAttribute="width" secondItem="lDB-qg-dFL" secondAttribute="width" multiplier="0.7" id="ezx-ar-eIy"/>
                             <constraint firstItem="fPh-9B-4Wo" firstAttribute="height" secondItem="M0m-Wc-wlY" secondAttribute="height" multiplier="0.873" id="fdg-lV-902">
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
                             </constraint>
+                            <constraint firstItem="fPh-9B-4Wo" firstAttribute="leading" secondItem="Aqh-AR-8rj" secondAttribute="leading" id="i8Z-Iu-0lD"/>
                             <constraint firstItem="fSM-MT-0dr" firstAttribute="top" secondItem="fPh-9B-4Wo" secondAttribute="bottom" id="u3N-v5-45a"/>
                             <constraint firstItem="fgt-1h-uuK" firstAttribute="top" secondItem="lDB-qg-dFL" secondAttribute="top" id="u9H-CG-qCA"/>
                             <constraint firstItem="fSM-MT-0dr" firstAttribute="top" secondItem="Kp8-Vk-E7h" secondAttribute="bottom" id="vvE-hU-Lsc"/>
                             <constraint firstAttribute="centerX" secondItem="M0m-Wc-wlY" secondAttribute="centerX" id="wrh-Ah-lgy"/>
+                            <constraint firstItem="fPh-9B-4Wo" firstAttribute="bottom" secondItem="Aqh-AR-8rj" secondAttribute="bottom" id="xCb-As-oC8"/>
                             <constraint firstItem="fPh-9B-4Wo" firstAttribute="width" secondItem="M0m-Wc-wlY" secondAttribute="width" id="xi2-ql-b2V"/>
                         </constraints>
                         <variation key="default">
@@ -2486,6 +2527,7 @@
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
                         <outlet property="imageView" destination="fPh-9B-4Wo" id="jom-jb-wTt"/>
+                        <outlet property="progressBar" destination="Ung-Dk-3om" id="h6v-Ft-Beb"/>
                         <outlet property="skipButton" destination="Kp8-Vk-E7h" id="jpP-yA-Gw8"/>
                     </connections>
                 </viewController>

@@ -61,15 +61,15 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
         RZQuizDatabase.advanceLevelIfCurrentIsComplete()
         
         let availableRhymes = RZQuizDatabase.currentLevel() * 5
-        var displayedCells = availableRhymes + 1 //Hear a Tale cell
-        hearATaleCellIndex = displayedCells - 1
+        var displayedCells = availableRhymes //+ 1 //Hear a Tale cell
+        //hearATaleCellIndex = displayedCells - 1
         
         let rhymeCount = RZQuizDatabase.levelCount * 5
         let completedRhymes = RZQuizDatabase.getQuizData().count
         if completedRhymes == rhymeCount {
             displayedCells += 1 //add Celebration cell
-            hearATaleCellIndex = displayedCells - 1
-            celebrationCellIndex = displayedCells - 2
+            //hearATaleCellIndex = displayedCells - 1
+            celebrationCellIndex = displayedCells - 1 //- 2
         } else { celebrationCellIndex = nil }
         
         return displayedCells

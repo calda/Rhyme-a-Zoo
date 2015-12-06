@@ -13,6 +13,7 @@ class ZookeeperGameController : UIViewController, UIGestureRecognizerDelegate {
     var zookeeperImage: UIImageView!
     @IBOutlet var quitZookeeperButton: UIButton!
     @IBOutlet var mainButtons: [UIButton]!
+    var originalButtonAlpha: [UIButton : CGFloat] = [:]
     
     func toggleZookeeper() {
         if zookeeperImage == nil {
@@ -39,6 +40,7 @@ class ZookeeperGameController : UIViewController, UIGestureRecognizerDelegate {
             }, completion: nil)
             UIView.animateWithDuration(0.3, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
                 for button in self.mainButtons {
+                    self.originalButtonAlpha[button] = button.alpha
                     button.alpha = 0.0
                 }
                 self.quitZookeeperButton.alpha = 1.0
@@ -51,7 +53,7 @@ class ZookeeperGameController : UIViewController, UIGestureRecognizerDelegate {
                 self.zookeeperImage.transform = CGAffineTransformMakeScale(self.currentKeeperScale * 0.5, self.currentKeeperScale * 0.5)
                 
                 for button in self.mainButtons {
-                    button.alpha = 1.0
+                    button.alpha = self.originalButtonAlpha[button] ?? 1.0
                 }
                 self.quitZookeeperButton.alpha = 0.0
                 }, completion: { success in

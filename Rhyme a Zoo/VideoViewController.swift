@@ -17,6 +17,8 @@ class VideoViewController : UIViewController {
     var completion: (() -> ())?
     var frames: [(imageName: String, time: Double)]?
     var timers: [NSTimer] = []
+    var videoDuration: NSTimeInterval?
+    var videoStartTime: NSDate?
     
     func loadDataForVideo() {
         /* data is in the following format:
@@ -38,11 +40,12 @@ class VideoViewController : UIViewController {
     }
     
     func playVideo() {
+        videoStartTime = NSDate()
         UAPlayer().play(videoName, ofType: "mp3", ifConcurrent: .Interrupt)
         
         //add timer for closing the view after playback
-        let duration = UALengthOfFile(videoName, ofType: "mp3")
-        let endTimer = NSTimer.scheduledTimerWithTimeInterval(duration, target: self, selector: "showImage:", userInfo: nil, repeats: false)
+        self.videoDuration = UALengthOfFile(videoName, ofType: "mp3")
+        let endTimer = NSTimer.scheduledTimerWithTimeInterval(videoDuration!, target: self, selector: "showImage:", userInfo: nil, repeats: false)
         timers.append(endTimer)
         
         //add timer for frames
@@ -55,6 +58,10 @@ class VideoViewController : UIViewController {
         else {
             self.dismissViewControllerAnimated(true, completion: nil)
         }
+        
+        //add timer for progress bar
+        let progressTimer = NSTimer.scheduledTimerWithTimeInterval(0.01, target: self, selector: "updatePercentageBar", userInfo: nil, repeats: true)
+        timers.append(progressTimer)
     }
     
     func showImage(timer: NSTimer) {
@@ -66,10 +73,19 @@ class VideoViewController : UIViewController {
         }
     }
     
+    func updatePercentageBar() {
+        if let videoStartTime = videoStartTime, let videoDuration = videoDuration {
+            let timeSinceStart = videoStartTime.timeIntervalSinceNow
+            let percent = -timeSinceStart / videoDuration
+            setProgressBarPercentage(percent)
+        }
+    }
+    
     //MARK: - Configuring the view
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var skipButton: UIVisualEffectView!
+    @IBOutlet weak var progressBar: UIView!
     
     override func viewWillAppear(animated: Bool) {
         loadDataForVideo()
@@ -83,6 +99,17 @@ class VideoViewController : UIViewController {
             skipButton.hidden = false
         }
         
+        setProgressBarPercentage(0.0001)
+    }
+    
+    func setProgressBarPercentage(percent: Double) {
+        var newTransform = CGAffineTransformMakeScale(CGFloat(percent), CGFloat(1.0))
+        
+        let width = imageView.frame.width
+        let hiddenWidth = width * CGFloat(1 - percent)
+        newTransform.tx = -hiddenWidth / 2.0 - 2.0
+        
+        progressBar.transform = newTransform
     }
     
     override func viewDidAppear(animated: Bool) {

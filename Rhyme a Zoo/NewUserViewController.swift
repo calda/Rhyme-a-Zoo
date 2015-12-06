@@ -11,7 +11,10 @@ import UIKit
 
 let RZUserIconOptions = ["bat", "Birds", "bunny", "calf", "cat", "cow", "dog", "duck", "ducks", "elephant", "fish",
     "fly", "flying squirrel", "fox", "frog", "goat", "goose", "hen", "hog", "horse", "lion", "mouse", "pig",
-    "robin", "sheep", "puppy", "turtle", "wolf", "bee", "alligator", "dogs", "giraffe", "lizard", "pelican"]
+    "robin", "sheep", "puppy", "turtle", "wolf", "bee", "alligator", "dogs", "giraffe", "lizard", "pelican",
+    "beagle", "beaver", "hound", "bull", "bulldog", "chipmunk", "collie", "crab", "dragonfly", "eagle",
+    "ferret", "gazelle", "bear", "hamster", "jellyfish", "mole", "orca", "parrot", "penguin", "rhino",
+    "skunk", "snail", "turkey", "walrus", "zebra"]
 
 func updateAvailableIconsForUsers(users: [User], inout availableIcons: [String]) {
     var userRemoved = false
