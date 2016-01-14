@@ -18,6 +18,7 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var buttonsSuperview: UIView!
     var buttonFrames: [UIButton : CGRect] = [:]
     @IBOutlet var cards: [UIButton] = []
+    @IBOutlet var topItems: [UIView] = []
     @IBOutlet var panGestureRecognizer: UIPanGestureRecognizer!
     @IBOutlet weak var userIcon: UIButton!
     @IBOutlet weak var userName: UIButton!
@@ -29,16 +30,20 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
         if self.presentedViewController == nil {
             
             var delay = 0.0
+            var animationViews = [UIView]()
+            animationViews.extend(cards as [UIView])
+            animationViews.extend(topItems)
             
-            for card in cards {
-                let origin = card.frame.origin
-                card.frame.offset(dx: 0.0, dy: 500.0)
+            for view in animationViews {
+                let origin = view.frame.origin
+                let offset: CGFloat = (topItems as NSArray).containsObject(view) ? -100 : 500.0
+                view.frame.offset(dx: 0.0, dy: offset)
                 
                 UIView.animateWithDuration(0.7, delay: delay, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.AllowUserInteraction, animations: {
-                    card.frame.origin = origin
+                    view.frame.origin = origin
                 }, completion: nil)
                 
-                delay += 0.05
+                delay += 0.03
             }
         }
         userIcon.setImage(RZCurrentUser.icon, forState: .Normal)
@@ -55,32 +60,40 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
     
     override func viewDidAppear(animated: Bool) {
         //test the database because I'm dumb and deleted the Unit Tests
-        /*    ALL OF THESE TESTS PASSED ON JUNE 30, 2015   */
+        /*         ALL OF THESE TESTS PASSED ON JUNE 30, 2015        */
         
-        /*println(RZQuizDatabase)
-        println(RZQuizDatabase.getQuiz(0).questions[0].options[0].word)
-        
-        for i in 0 ..< RZQuizDatabase.count {
+        /*for i in 0 ..< RZQuizDatabase.count {
             let quiz = RZQuizDatabase.getQuiz(i)
             for question in quiz.questions {
-                let options = question.options
+                let options = question.shuffledOptions
                 let words = options.map{ return $0.word }
                 let success = contains(words, question.answer)
                 if !success {
                     println("A question's options array does not contain the question's answer.")
                 }
+                
+                for option in options {
+                    let audioName = option.rawWord
+                    //check audio exists
+                    if UALengthOfFile(audioName, ofType: "mp3") <= 0.0 {
+                        println("\(option.word) does not have an audio file")
+                    }
+                    
+                    //check image exists
+                    var image = UIImage(named: option.rawWord + ".jpg")
+                    if image == nil {
+                        image = UIImage(named: option.rawWord.lowercaseString + ".jpg")
+                    }
+                    if image == nil && !option.rawWord.hasPrefix("sound-") {
+                        println("\(option.word) does notgoo have an image file")
+                    }
+                }
+                
             }
         }
-        
-        for i in 0 ..< 10 {
-            println(RZQuizDatabase.getQuiz(i))
-        }
-        println(RZQuizDatabase.quizesForLevel(1))
-        println(RZQuizDatabase.quizesForLevel(2))
-        println(RZQuizDatabase.quizesForLevel(3))
 
         for level in 1...RZQuizDatabase.levelCount {
-            let quizes = RZQuizDatabase.quizesForLevel(level)
+            let quizes = RZQuizDatabase.quizesInLevel(level)
             if quizes.count != 5 {
                 println("\(level) does not have 5 quizes.")
             }

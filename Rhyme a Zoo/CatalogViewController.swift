@@ -60,16 +60,16 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
         //update current level
         RZQuizDatabase.advanceLevelIfCurrentIsComplete()
         
-        let availableRhymes = RZQuizDatabase.currentLevel() * 5
-        var displayedCells = availableRhymes //+ 1 //Hear a Tale cell
-        //hearATaleCellIndex = displayedCells - 1
+        let availableRhymes = RZQuizDatabase.levelCount * 5
+        var displayedCells = availableRhymes + 1 //Hear a Tale cell
+        hearATaleCellIndex = displayedCells - 1
         
         let rhymeCount = RZQuizDatabase.levelCount * 5
         let completedRhymes = RZQuizDatabase.getQuizData().count
         if completedRhymes == rhymeCount {
             displayedCells += 1 //add Celebration cell
-            //hearATaleCellIndex = displayedCells - 1
-            celebrationCellIndex = displayedCells - 1 //- 2
+            hearATaleCellIndex = displayedCells - 1
+            celebrationCellIndex = displayedCells - 2
         } else { celebrationCellIndex = nil }
         
         return displayedCells
@@ -80,7 +80,10 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        
         if indexPath.item == hearATaleCellIndex { //is Hear a Tale cell
+            return
+            /* interaction with the Hear a Tale cell cannot exist without a parental gate
             //show alert
             let alert = UIAlertController(title: "Open Hear a Tale?", message: "You will leave the Rhyme a Zoo app.", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: nil))
@@ -91,6 +94,7 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
             }))
             self.presentViewController(alert, animated: true, completion: nil)
             return
+            */
         }
         
         if indexPath.item == celebrationCellIndex { //is celebration cell
@@ -231,6 +235,7 @@ class RhymeCell : UICollectionViewCell {
     @IBOutlet weak var thumbnail: UIImageView!
     @IBOutlet weak var favoriteIcon: UIImageView!
     @IBOutlet weak var title: UILabel!
+    @IBOutlet weak var numberLabel: UILabel!
     @IBOutlet weak var coinView: UIView!
     @IBOutlet weak var coin1: UIImageView!
     @IBOutlet weak var coin2: UIImageView!
@@ -257,6 +262,7 @@ class RhymeCell : UICollectionViewCell {
                 rhyme = RZQuizDatabase.getQuiz(index)
             }
             
+            let quizIndex = RZQuizDatabase.getIndexForRhyme(rhyme)
             let quizNumber = rhyme.number.threeCharacterString()
             let image = UIImage(named: "thumbnail_\(quizNumber).jpg")
             let name = rhyme.name.uppercaseString
@@ -267,6 +273,7 @@ class RhymeCell : UICollectionViewCell {
             dispatch_async(dispatch_get_main_queue(), {
                 self.favoriteIcon.hidden = !isFavorite
                 self.title.text = name
+                self.numberLabel.text = "\(quizIndex + 1)"
                 self.thumbnail.image = image
                 
                 //update coins
