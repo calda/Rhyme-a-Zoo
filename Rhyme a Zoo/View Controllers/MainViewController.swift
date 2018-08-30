@@ -7,10 +7,8 @@
 //
 
 import UIKit
-//import SQLite
 import CoreLocation
 
-var data = UserDefaults.standard
 let RZMainMenuTouchDownNotification = "com.hearatale.raz.main-menu-touch-down"
 
 class MainViewController: UIViewController, UIGestureRecognizerDelegate {

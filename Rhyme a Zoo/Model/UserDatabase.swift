@@ -12,7 +12,8 @@ import CoreLocation
 import CloudKit
 
 let RZUserDatabase = UserDatabase()
-var RZCurrentUser: User = User(emptyUserWithName: "DEFAULT USER // YOU SHOULD NEVER SEE THIS", iconName: "angry.jpg")
+var RZCurrentUser: User!
+
 let RZUsersKey = "com.hearatale.raz.users"
 let RZClassroomIDKey = "com.hearatale.raz.classroom"
 let RZClassroomPasscodeKey = "com.hearatale.raz.classroom.passcode"
@@ -24,7 +25,7 @@ class UserDatabase {
     func getLocalUsers() -> [User] {
         var users: [User] = []
         
-        if let userStrings = data.stringArray(forKey: RZUsersKey) {
+        if let userStrings = UserDefaults.standard.stringArray(forKey: RZUsersKey) {
             for userString in userStrings {
                 if let user = User(fromString: userString) {
                     users.append(user)
@@ -43,16 +44,16 @@ class UserDatabase {
             userStrings.append(user.toUserString())
         }
         userStrings.append(user.toUserString())
-        data.setValue(userStrings, forKey: RZUsersKey)
+        UserDefaults.standard.setValue(userStrings, forKey: RZUsersKey)
     }
     
     func deleteLocalUser(_ user: User, deleteFromClassroom: Bool) {
         let userString = user.toUserString()
         
-        if var userStrings = data.stringArray(forKey: RZUsersKey) {
+        if var userStrings = UserDefaults.standard.stringArray(forKey: RZUsersKey) {
             if let indexToRemove = userStrings.index(of: userString) {
                 userStrings.remove(at: indexToRemove)
-                data.setValue(userStrings, forKey: RZUsersKey)
+                UserDefaults.standard.setValue(userStrings, forKey: RZUsersKey)
             }
         }
         
@@ -80,10 +81,10 @@ class UserDatabase {
         user.icon = UIImage(named: newIcon)!
         let newUserString = user.toUserString()
         
-        if var userStrings = data.stringArray(forKey: RZUsersKey) {
+        if var userStrings = UserDefaults.standard.stringArray(forKey: RZUsersKey) {
             if let indexToSwitch = userStrings.index(of: oldUserString) {
                 userStrings[indexToSwitch] = newUserString
-                data.setValue(userStrings, forKey: RZUsersKey)
+                UserDefaults.standard.setValue(userStrings, forKey: RZUsersKey)
             }
         }
         
@@ -119,13 +120,13 @@ class UserDatabase {
     
     func linkToClassroom(_ classroom: Classroom) {
         let name = classroom.record.recordID.recordName
-        data.setValue(name, forKey: RZClassroomIDKey)
-        data.setValue(classroom.passcode, forKey: RZClassroomPasscodeKey)
+        UserDefaults.standard.setValue(name, forKey: RZClassroomIDKey)
+        UserDefaults.standard.setValue(classroom.passcode, forKey: RZClassroomPasscodeKey)
         self.currentClassroom = classroom
     }
     
     func hasLinkedClassroom() -> Bool {
-        return data.value(forKey: RZClassroomIDKey) != nil
+        return UserDefaults.standard.value(forKey: RZClassroomIDKey) != nil
     }
     
     func unlinkClassroom() {
@@ -135,8 +136,8 @@ class UserDatabase {
             RZUserDatabase.deleteLocalUser(user, deleteFromClassroom: false)
         }
         
-        data.setValue(nil, forKey: RZClassroomIDKey)
-        data.setValue(nil, forKey: RZClassroomPasscodeKey)
+        UserDefaults.standard.setValue(nil, forKey: RZClassroomIDKey)
+        UserDefaults.standard.setValue(nil, forKey: RZClassroomPasscodeKey)
         currentClassroom = nil
     }
     
@@ -150,11 +151,11 @@ class UserDatabase {
     }
     
     func getLinkedClassroomPasscode() -> String? {
-        return data.string(forKey: RZClassroomPasscodeKey)
+        return UserDefaults.standard.string(forKey: RZClassroomPasscodeKey)
     }
     
     func getLinkedClassroomFromCloud(_ completion: @escaping (Classroom?) -> ()) {
-        if let classroomName = data.string(forKey: RZClassroomIDKey) {
+        if let classroomName = UserDefaults.standard.string(forKey: RZClassroomIDKey) {
             let recordID = CKRecord.ID(recordName: classroomName)
             cloud.fetch(withRecordID: recordID, completionHandler: { record, error in
                 if let error = error { print(error.localizedDescription) }
@@ -304,7 +305,10 @@ class UserDatabase {
     }
     
     func saveCurrentUserToLinkedClassroom() {
-        saveUserToLinkedClassroom(RZCurrentUser)
+        if let currentUser = RZCurrentUser {
+            saveUserToLinkedClassroom(currentUser)
+        }
+        
     }
     
     func saveUserToLinkedClassroom(_ user: User) {
@@ -440,10 +444,7 @@ class User : NSObject {
     }
     
     func getUpdatedRecord(_ classroom: Classroom) -> CKRecord? {
-        //keep the default user from propegating up into the cloud
-        if self.name == "DEFAULT USER // YOU SHOULD NEVER SEE THIS" { return nil }
-        
-        let actualUser = RZCurrentUser
+        guard let actualUser = RZCurrentUser else { return nil }
         RZCurrentUser = self
         
         let record: CKRecord
@@ -575,7 +576,7 @@ struct ClassroomSetting {
         //settings are only relevant if there is a connected classroom
         if !RZUserDatabase.hasLinkedClassroom() { return nil }
         
-        if let setting = data.string(forKey: self.key) {
+        if let setting = UserDefaults.standard.string(forKey: self.key) {
             return setting == "true"
         }
         
@@ -584,7 +585,7 @@ struct ClassroomSetting {
     }
     
     func updateSetting(_ new: Bool) {
-        data.setValue("\(new)", forKey: self.key)
+        UserDefaults.standard.setValue("\(new)", forKey: self.key)
         
         RZUserDatabase.getLinkedClassroom({ classroom in
             if let classroom = classroom {
@@ -594,7 +595,7 @@ struct ClassroomSetting {
     }
     
     func updateSettingFromCloud(_ newString: String) {
-        data.setValue(newString, forKey: self.key)
+        UserDefaults.standard.setValue(newString, forKey: self.key)
     }
     
 }

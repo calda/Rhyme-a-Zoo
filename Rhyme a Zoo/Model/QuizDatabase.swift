@@ -183,46 +183,46 @@ class QuizDatabase {
     //MARK: - Player Data for Quizes
     
     func getQuizData() -> [String : String] {
-        return data.dictionary(forKey: Key.quizResults.forCurrentUser) as? [String : String] ?? [:]
+        return UserDefaults.standard.dictionary(forKey: Key.quizResults.forCurrentUser) as? [String : String] ?? [:]
     }
     
     func setQuizData(_ quizData: [String : String]) {
-        data.setValue(quizData, forKey: Key.quizResults.forCurrentUser)
+        UserDefaults.standard.setValue(quizData, forKey: Key.quizResults.forCurrentUser)
     }
     
     func getFavorites() -> [Int] {
-        return data.array(forKey: Key.favorites.forCurrentUser) as? [Int] ?? []
+        return UserDefaults.standard.array(forKey: Key.favorites.forCurrentUser) as? [Int] ?? []
     }
     
     func setFavorites(_ favs: [Int]) {
-        data.setValue(favs, forKey: Key.favorites.forCurrentUser)
+        UserDefaults.standard.setValue(favs, forKey: Key.favorites.forCurrentUser)
     }
     
     func isQuizFavorite(_ number: Int) -> Bool {
-        if let favs = data.array(forKey: Key.favorites.forCurrentUser) as? [Int] {
+        if let favs = UserDefaults.standard.array(forKey: Key.favorites.forCurrentUser) as? [Int] {
             return favs.contains(number)
         }
         return false
     }
     
     func numberOfFavories() -> Int {
-        if let favs = data.array(forKey: Key.favorites.forCurrentUser) as? [Int] {
+        if let favs = UserDefaults.standard.array(forKey: Key.favorites.forCurrentUser) as? [Int] {
             return favs.count
         }
         return 0
     }
     
     func currentLevel() -> Int {
-        let level = data.integer(forKey: Key.quizLevel.forCurrentUser)
+        let level = UserDefaults.standard.integer(forKey: Key.quizLevel.forCurrentUser)
         if level == 0 {
-            data.set(1, forKey: Key.quizLevel.forCurrentUser)
+            UserDefaults.standard.set(1, forKey: Key.quizLevel.forCurrentUser)
             return 1
         }
         return level
     }
     
     func setQuizLevel(_ level: Int) {
-        data.set(level, forKey: Key.quizLevel.forCurrentUser)
+        UserDefaults.standard.set(level, forKey: Key.quizLevel.forCurrentUser)
     }
     
     @discardableResult
@@ -232,7 +232,7 @@ class QuizDatabase {
         
         if levelIsComplete {
             let newLevel = min(current + 1, levelCount)
-            data.set(newLevel, forKey: Key.quizLevel.forCurrentUser)
+            UserDefaults.standard.set(newLevel, forKey: Key.quizLevel.forCurrentUser)
         }
         
         return levelIsComplete
@@ -241,21 +241,21 @@ class QuizDatabase {
     //MARK: - Bank
     
     func getPlayerBalance() -> Double {
-        return data.double(forKey: Key.playerBalance.forCurrentUser)
+        return UserDefaults.standard.double(forKey: Key.playerBalance.forCurrentUser)
     }
     
     func changePlayerBalanceBy(_ amount: Double) {
         let current = getPlayerBalance()
         let new = current + amount
-        data.set(new, forKey: Key.playerBalance.forCurrentUser)
+        UserDefaults.standard.set(new, forKey: Key.playerBalance.forCurrentUser)
     }
     
     func setPlayerBalance(_ value: Double) {
-        data.set(value, forKey: Key.playerBalance.forCurrentUser)
+        UserDefaults.standard.set(value, forKey: Key.playerBalance.forCurrentUser)
     }
     
     func getTotalMoneyEarned() -> (gold: Int, silver: Int) {
-        if let array = data.stringArray(forKey: Key.totalMoneyEarned.forCurrentUser) {
+        if let array = UserDefaults.standard.stringArray(forKey: Key.totalMoneyEarned.forCurrentUser) {
             let dict = arrayToDict(array)
             if let gold = Int(dict["gold"] ?? "0"), let silver = Int(dict["silver"] ?? "0") {
                 return (gold, silver)
@@ -268,7 +268,7 @@ class QuizDatabase {
     func setTotalMoneyEarned(gold: Int, silver: Int) {
         let dict = ["gold" : "\(gold)", "silver" : "\(silver)"]
         let array = dictToArray(dict)
-        data.setValue(array, forKey: Key.totalMoneyEarned.forCurrentUser)
+        UserDefaults.standard.setValue(array, forKey: Key.totalMoneyEarned.forCurrentUser)
     }
     
     func getTotalMoneyEarnedArray() -> [String] {
@@ -287,16 +287,16 @@ class QuizDatabase {
     //MARK: - Zoo Management
     
     func getOwnedAnimals() -> [String] {
-        if let array = data.array(forKey: Key.animals.forCurrentUser) as? [String] {
+        if let array = UserDefaults.standard.array(forKey: Key.animals.forCurrentUser) as? [String] {
             return array
         }
         //array doesn't exist
-        data.setValue([], forKey: Key.animals.forCurrentUser)
+        UserDefaults.standard.setValue([], forKey: Key.animals.forCurrentUser)
         return []
     }
     
     func setOwnedAnimals(_ animals: [String]) {
-        data.setValue(animals, forKey: Key.animals.forCurrentUser)
+        UserDefaults.standard.setValue(animals, forKey: Key.animals.forCurrentUser)
     }
     
     func playerOwnsAnimal(_ animal: String) -> Bool {
@@ -317,13 +317,13 @@ class QuizDatabase {
         changePlayerBalanceBy(-requiredBalance)
         var animals = getOwnedAnimals()
         animals.append(animal)
-        data.setValue(animals, forKey: Key.animals.forCurrentUser)
+        UserDefaults.standard.setValue(animals, forKey: Key.animals.forCurrentUser)
     }
     
     func currentZooLevel() -> Int {
-        let level = data.integer(forKey: Key.zooLevel.forCurrentUser)
+        let level = UserDefaults.standard.integer(forKey: Key.zooLevel.forCurrentUser)
         if level == 0 {
-            data.set(1, forKey: Key.zooLevel.forCurrentUser)
+            UserDefaults.standard.set(1, forKey: Key.zooLevel.forCurrentUser)
             return 1
         }
         return level
@@ -336,41 +336,41 @@ class QuizDatabase {
         }
         if complete {
             let currentLevel = currentZooLevel()
-            data.set(currentLevel + 1, forKey: Key.zooLevel.forCurrentUser)
+            UserDefaults.standard.set(currentLevel + 1, forKey: Key.zooLevel.forCurrentUser)
         }
         return complete
     }
     
     func setZooLevel(_ level: Int) {
-        data.set(level, forKey: Key.zooLevel.forCurrentUser)
+        UserDefaults.standard.set(level, forKey: Key.zooLevel.forCurrentUser)
     }
     
     //MARK: - Zookeeper
     
     func getKeeperGender() -> String {
-        let gender = data.string(forKey: Key.keeperGender.forCurrentUser)
+        let gender = UserDefaults.standard.string(forKey: Key.keeperGender.forCurrentUser)
         if gender == nil || (gender != "boy" && gender != "girl") {
-            data.setValue("boy", forKey: Key.keeperGender.forCurrentUser)
+            UserDefaults.standard.setValue("boy", forKey: Key.keeperGender.forCurrentUser)
             return "boy"
         }
         return gender!
     }
     
     func setKeeperGender(_ gender: String) {
-        data.setValue(gender, forKey: Key.keeperGender.forCurrentUser)
+        UserDefaults.standard.setValue(gender, forKey: Key.keeperGender.forCurrentUser)
     }
     
     func getKeeperNumber() -> Int {
-        let number = data.integer(forKey: Key.keeperNumber.forCurrentUser)
+        let number = UserDefaults.standard.integer(forKey: Key.keeperNumber.forCurrentUser)
         if number == 0 {
-            data.setValue(1, forKey: Key.keeperNumber.forCurrentUser)
+            UserDefaults.standard.setValue(1, forKey: Key.keeperNumber.forCurrentUser)
             return 1
         }
         return number
     }
     
     func setKeeperNumber(_ number: Int) {
-        data.setValue(number, forKey: Key.keeperNumber.forCurrentUser)
+        UserDefaults.standard.setValue(number, forKey: Key.keeperNumber.forCurrentUser)
     }
     
     func getKeeperString() -> String {
@@ -389,15 +389,15 @@ class QuizDatabase {
     //MARK: - User Statistics
     
     func hasWatchedWelcomeVideo() -> Bool {
-        return data.bool(forKey: Key.hasWatchedWelcomeVideo.forCurrentUser)
+        return UserDefaults.standard.bool(forKey: Key.hasWatchedWelcomeVideo.forCurrentUser)
     }
     
     func setHasWatchedWelcomeVideo(_ status: Bool) {
-        data.set(status, forKey: Key.hasWatchedWelcomeVideo.forCurrentUser)
+        UserDefaults.standard.set(status, forKey: Key.hasWatchedWelcomeVideo.forCurrentUser)
     }
     
     func getPercentCorrectArray() -> [String] {
-        if let array = data.stringArray(forKey: Key.percentCorrect.forCurrentUser) {
+        if let array = UserDefaults.standard.stringArray(forKey: Key.percentCorrect.forCurrentUser) {
             if array.count != 4 {
                 //create a new dictionary
                 let dict = ["totalComprehension" : "0", "correctComprehension" : "0", "totalPhonetic" : "0", "correctPhonetic" : "0"]
@@ -417,7 +417,7 @@ class QuizDatabase {
     }
     
     func setPercentCorrectArray(_ array: [String]) {
-        data.setValue(array, forKey: Key.percentCorrect.forCurrentUser)
+        UserDefaults.standard.setValue(array, forKey: Key.percentCorrect.forCurrentUser)
     }
     
     func getPercentCorrectDict() -> [String : Int] {
@@ -511,20 +511,20 @@ struct Quiz : CustomStringConvertible {
     }
     
     func setFavoriteStatus(_ fav: Bool) {
-        if var favs = data.array(forKey: Key.favorites.forCurrentUser) as? [Int] {
+        if var favs = UserDefaults.standard.array(forKey: Key.favorites.forCurrentUser) as? [Int] {
             if fav && !favs.contains(number) {
                 favs.append(number)
-                data.setValue(favs, forKey: Key.favorites.forCurrentUser)
+                UserDefaults.standard.setValue(favs, forKey: Key.favorites.forCurrentUser)
             } else if !fav && favs.contains(number) {
                 let index = (favs as NSArray).index(of: number)
                 favs.remove(at: index)
-                data.setValue(favs, forKey: Key.favorites.forCurrentUser)
+                UserDefaults.standard.setValue(favs, forKey: Key.favorites.forCurrentUser)
             }
         }
         else {
             //favs array doesn't exist
             let favs = [number]
-            data.setValue(favs, forKey: Key.favorites.forCurrentUser)
+            UserDefaults.standard.setValue(favs, forKey: Key.favorites.forCurrentUser)
         }
         
         RZUserDatabase.saveCurrentUserToLinkedClassroom()
@@ -536,14 +536,14 @@ struct Quiz : CustomStringConvertible {
     
     func saveQuizResult(gold: Int, silver: Int) {
         var results: [String : String] = [:]
-        if let resultsDict = data.dictionary(forKey: Key.quizResults.forCurrentUser) as? [String : String] {
+        if let resultsDict = UserDefaults.standard.dictionary(forKey: Key.quizResults.forCurrentUser) as? [String : String] {
             results = resultsDict
         }
         
         let resultString = "\(gold):\(silver)"
         results.updateValue(resultString, forKey: number.threeCharacterString)
         
-        data.setValue(results, forKey: Key.quizResults.forCurrentUser)
+        UserDefaults.standard.setValue(results, forKey: Key.quizResults.forCurrentUser)
         
         //also update player balance
         let cashInflux = Double(gold) + (Double(silver) * 0.5)
@@ -556,14 +556,14 @@ struct Quiz : CustomStringConvertible {
     }
     
     func quizHasBeenPlayed() -> Bool {
-        if let resultsDict = data.dictionary(forKey: Key.quizResults.forCurrentUser) as? [String : String] {
+        if let resultsDict = UserDefaults.standard.dictionary(forKey: Key.quizResults.forCurrentUser) as? [String : String] {
             return resultsDict.keys.contains(number.threeCharacterString)
         }
         return false
     }
     
     func getQuizResult() -> (gold: Int, silver: Int) {
-        if let resultsDict = data.dictionary(forKey: Key.quizResults.forCurrentUser) as? [String : String] {
+        if let resultsDict = UserDefaults.standard.dictionary(forKey: Key.quizResults.forCurrentUser) as? [String : String] {
             if let result = resultsDict[number.threeCharacterString] {
                 let splits = result.split{ $0 == ":" }.map { String($0) }
                 if splits.count == 2 {
@@ -590,7 +590,7 @@ struct Quiz : CustomStringConvertible {
     func getWithOffsetIndex(_ offset: Int, fromFavorites favs: Bool) -> Quiz? {
         var numbersArray = RZQuizDatabase.quizNumberMap
         
-        if let favsArray = data.array(forKey: Key.favorites.forCurrentUser) as? [Int], favs {
+        if let favsArray = UserDefaults.standard.array(forKey: Key.favorites.forCurrentUser) as? [Int], favs {
             numbersArray = favsArray
         }
         

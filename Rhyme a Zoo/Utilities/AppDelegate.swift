@@ -24,19 +24,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillResignActive(_ application: UIApplication) {
         //save the time that the app was closed
         let time = Date()
-        data.setValue(time, forKey: RZAppClosedTimeKey)
+        UserDefaults.standard.setValue(time, forKey: RZAppClosedTimeKey)
         
         RZUserDatabase.saveCurrentUserToLinkedClassroom()
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        RZCurrentUser.pullDataFromCloud()
+        RZCurrentUser?.pullDataFromCloud()
         
         //check if more than five minutes have passed since the app was closed
-        if let closedTime = data.value(forKey: RZAppClosedTimeKey) as? Date {
+        if let closedTime = UserDefaults.standard.value(forKey: RZAppClosedTimeKey) as? Date {
             let currentTime = Date()
             let diff = currentTime.timeIntervalSince(closedTime)
-            //FIXME: change to 300
+
             if diff > 300 { //300 seconds = 5 minutes
                 //return to home if only one user
                 //return to User screen if users > 1 || users == 0

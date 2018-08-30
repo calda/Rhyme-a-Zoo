@@ -358,3 +358,17 @@ fileprivate func convertToOptionalCATransitionSubtype(_ input: String?) -> CATra
 	guard let input = input else { return nil }
 	return CATransitionSubtype(rawValue: input)
 }
+
+
+// Helper for accessing safe area insets on iOS 10
+extension UIView {
+    
+    var raz_safeAreaInsets: UIEdgeInsets {
+        if #available(iOS 11.0, *) {
+            return self.safeAreaInsets
+        } else {
+            return .zero
+        }
+    }
+    
+}
