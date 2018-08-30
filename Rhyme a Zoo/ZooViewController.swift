@@ -38,7 +38,7 @@ class ZooViewController : ZookeeperGameController {
         for button in buildingButtons {
             if button.tag > level {
                 if button.tag == 7 || button.tag == 8 { button.isHidden = true }
-                button.setImage(UIImage(named: "button-\(button.tag)-dark"), for: UIControlState())
+                button.setImage(UIImage(named: "button-\(button.tag)-dark"), for: .normal)
             }
         }
         

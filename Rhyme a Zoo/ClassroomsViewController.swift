@@ -348,13 +348,13 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
     func requestClassroomPasscode(_ location: CLLocation, name: String) {
         createPasscode("Create a 4-digit passcode for \"\(name)\"", currentController: self, completion: { possiblePasscode in
             
-            if let passcode = possiblePasscode, passcode.characters.count == 4 {
+            if let passcode = possiblePasscode, passcode.count == 4 {
                 self.createClassroom(location, name: name, passcode: passcode)
             }
             else {
                 let alert = UIAlertController(title: nil, message: "You must create a 4-digit passcode for your classroom.", preferredStyle: .alert)
-                let cancel = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.destructive, handler: nil)
-                let tryAgain = UIAlertAction(title: "Try Again", style: UIAlertActionStyle.default, handler: { _ in
+                let cancel = UIAlertAction(title: "Cancel", style: .destructive, handler: nil)
+                let tryAgain = UIAlertAction(title: "Try Again", style: .default, handler: { _ in
                     self.requestClassroomPasscode(location, name: name)
                 })
                 alert.addAction(cancel)

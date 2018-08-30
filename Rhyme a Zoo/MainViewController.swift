@@ -39,16 +39,16 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
                 let offset: CGFloat = (topItems as NSArray).contains(view) ? -100 : 500.0
                 view.frame = view.frame.offsetBy(dx: 0, dy: offset)
                 
-                UIView.animate(withDuration: 0.7, delay: delay, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.allowUserInteraction, animations: {
+                UIView.animate(withDuration: 0.7, delay: delay, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: .allowUserInteraction, animations: {
                     view.frame.origin = origin
                 }, completion: nil)
                 
                 delay += 0.03
             }
         }
-        userIcon.setImage(RZCurrentUser.icon, for: UIControlState())
+        userIcon.setImage(RZCurrentUser.icon, for: .normal)
         decorateUserIcon(userIcon)
-        userName.setTitle(RZCurrentUser.name, for: UIControlState())
+        userName.setTitle(RZCurrentUser.name, for: .normal)
         
         RZUserDatabase.refreshUser(RZCurrentUser)
         
@@ -124,7 +124,7 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
                 let newImage = UIGraphicsGetImageFromCurrentImageContext()
                 UIGraphicsEndImageContext()
                 DispatchQueue.main.async(execute: {
-                    self.userIcon.setImage(newImage, for: UIControlState())
+                    self.userIcon.setImage(newImage, for: .normal)
                 })
             }
         })
@@ -141,7 +141,7 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
         
     }
     
-    func touchDownNotificationRecieved(_ notification: Notification) {
+    @objc func touchDownNotificationRecieved(_ notification: Notification) {
         if let touch = notification.object as? UITouch {
             processTouchAtLocation(touch.location(in: buttonsSuperview), state: .began)
         }
@@ -151,7 +151,7 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
         processTouchAtLocation(sender.location(in: buttonsSuperview), state: sender.state)
     }
     
-    func processTouchAtLocation(_ touch: CGPoint, state: UIGestureRecognizerState) {
+    func processTouchAtLocation(_ touch: CGPoint, state: UIGestureRecognizer.State) {
         //figure out which button this touch is in
         for (button, frame) in buttonFrames {
             if frame.contains(touch) {
@@ -223,7 +223,7 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
             
             let composite = UIGraphicsGetImageFromCurrentImageContext()
             UIGraphicsEndImageContext()
-            self.zookeeperButton.setImage(composite, for: UIControlState())
+            self.zookeeperButton.setImage(composite, for: .normal)
             self.currentZookeeper = RZQuizDatabase.getKeeperString()
         }
     }
@@ -246,10 +246,10 @@ class HomeButton: UIButton {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
-        self.addTarget(self, action: #selector(HomeButton.returnHome(_:)), for: UIControlEvents.touchUpInside)
+        self.addTarget(self, action: #selector(HomeButton.returnHome(_:)), for: .touchUpInside)
     }
     
-    func returnHome(_ sender: AnyObject) {
+    @objc func returnHome(_ sender: AnyObject) {
         UAHaltPlayback()
         
         if let application = UIApplication.shared.delegate, let topController = getTopController(application) {

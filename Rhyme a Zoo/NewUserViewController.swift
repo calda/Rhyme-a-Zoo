@@ -116,7 +116,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
         }
     }
     
-    func playInstructionAudio() {
+    @objc func playInstructionAudio() {
         UAPlayer().play("create-user", ofType: "mp3", ifConcurrent: .interrupt)
     }
     
@@ -152,8 +152,8 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
                     
                     let iconName = availableIcons[indexPath.item]
                     currentIconString = iconName + ".jpg"
-                    let splitIndex = iconName.characters.index(after: iconName.startIndex)
-                    currentIconName = iconName.substring(to: splitIndex).uppercased() + iconName.substring(from: splitIndex).lowercased()
+                    currentIconName = iconName.capitalized
+                    
                     if userInputName == "" && !requireName {
                         nameLabel.text = currentIconName
                         nameLabel.alpha = 0.5

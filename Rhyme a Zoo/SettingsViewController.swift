@@ -171,7 +171,7 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
         }
     }
     
-    func setTouchRecognizerEnabled(_ notification: Notification) {
+    @objc func setTouchRecognizerEnabled(_ notification: Notification) {
         if let enabled = notification.object as? NSNumber {
             touchRecognizer.isEnabled = enabled.boolValue
             if enabled.boolValue == false {
@@ -305,19 +305,19 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
         tableView.delegate = delegate
         tableView.dataSource = delegate
         tableView.reloadData()
-        let subtype = isBack ? kCATransitionFromLeft : kCATransitionFromRight
-        playTransitionForView(tableView, duration: 0.3, transition: kCATransitionPush, subtype: subtype)
+        let subtype = isBack ? convertFromCATransitionSubtype(.fromLeft) : convertFromCATransitionSubtype(.fromRight)
+        playTransitionForView(tableView, duration: 0.3, transition: convertFromCATransitionType(.push), subtype: subtype)
         
         //change title
         let newTitle = delegate.getTitle()
         titleLabel.text = newTitle
-        playTransitionForView(titleLabel, duration: 0.3, transition: kCATransitionPush, subtype: subtype)
+        playTransitionForView(titleLabel, duration: 0.3, transition: convertFromCATransitionType(.push), subtype: subtype)
         
         //change button
         let image = delegate.getBackButtonImage()
-        backButton.setImage(image, for: UIControlState())
+        backButton.setImage(image, for: .normal)
         self.tableView.contentOffset = offset ?? CGPoint(x: 0.0, y: -70.0)
-        playTransitionForView(backButton, duration: 0.3, transition: kCATransitionFade)
+        playTransitionForView(backButton, duration: 0.3, transition: convertFromCATransitionType(.fade))
     }
     
 }
@@ -343,7 +343,7 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
     var users: [User] = [] {
         didSet {
             tableView.reloadData()
-            playTransitionForView(tableView, duration: 0.2, transition: kCATransitionFade)
+            playTransitionForView(tableView, duration: 0.2, transition: convertFromCATransitionType(.fade))
         }
     }
     var passcodesRequired: Bool
@@ -449,7 +449,7 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
         alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
         alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { _ in
             
-            if let name = textField?.text, name.characters.count > 0 {
+            if let name = textField?.text, name.count > 0 {
                 //pick a random icon name
                 var icons = RZUserIconOptions.shuffled()
                 updateAvailableIconsForUsers(self.users, availableIcons: &icons)
@@ -478,7 +478,7 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
                  self.finishNewStudentFlow(name, iconName: iconName, passcode: passcode)
             }))
             
-            alert.addAction(UIAlertAction(title: "Custom", style: UIAlertActionStyle.default, handler: { _ in
+            alert.addAction(UIAlertAction(title: "Custom", style: UIAlertAction.Style.default, handler: { _ in
                 //show password dialog
                 createPasscode("Create a custom 4-digit passcode for \(name)", currentController: self.settingsController, completion: { passcode in
                     if let passcode = passcode {
@@ -539,9 +539,8 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
         
         for user in users {
             let name = user.name
-            var passcode: String! = user.passcode
-            if passcode == nil {
-                passcode = "No passcode set."
+            let passcode = user.passcode ?? "No passcode set."
+            if user.passcode == nil {
                 allUsersHavePasscode = false
             }
             
@@ -706,8 +705,8 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
                 if let recent = user.findHighestCompletedRhyme() {
                     user.useQuizDatabase() {
                         let quizData = RZQuizDatabase.getQuizData()
-                        if let score = quizData[recent.number.threeCharacterString()] {
-                            let splits = score.characters.split{ $0 == ":" }.map { String($0) }
+                        if let score = quizData[recent.number.threeCharacterString] {
+                            let splits = score.split{ $0 == ":" }
                             if let gold = Int(splits[0]), let silver = Int(splits[1]) {
                                 let goldPlural = gold == 1 ? "" : "s"
                                 let silverPlural = silver == 1 ? "" : "s"
@@ -953,12 +952,12 @@ class SettingsQuizScoresDelegate: NSObject, SettingsViewTableDelegate {
             
             for quizIndex in 0 ..< RZQuizDatabase.count {
                 let quiz = RZQuizDatabase.getRhyme(quizIndex)
-                let numberString = quiz.number.threeCharacterString()
+                let numberString = quiz.number.threeCharacterString
                 if let resultString = quizData[numberString] {
                     //turn result into string
                     let coinString : String
                     
-                    let splits = resultString.characters.split{ $0 == ":" }.map { String($0) }
+                    let splits = resultString.components(separatedBy: ":")
                     if let gold = Int(splits[0]), let silver = Int(splits[1]) {
                         coinString = "\(gold) gold, \(silver) silver"
                     } else {
@@ -1240,7 +1239,7 @@ class StudentsCell : UITableViewCell {
             }
             
             image.alpha = 0.0
-            UIView.animate(withDuration: 0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.curveEaseOut, animations: {
+            UIView.animate(withDuration: 0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: .curveEaseOut, animations: {
                 image.alpha = 1.0
                 image.transform = CGAffineTransform(translationX: 0.0, y: 0.0)
             }, completion: nil)
@@ -1376,7 +1375,7 @@ class UserInfoCell : UITableViewCell {
         itemLabel.text = string
         itemLabel.textColor = UIColor.white
         itemLabel.alpha = 0.7
-        itemLabel.setContentCompressionResistancePriority(750.0, for: UILayoutConstraintAxis.horizontal)
+        itemLabel.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 750.0), for: .horizontal)
     }
     
     func setIndent(_ level: Int) {
@@ -1390,7 +1389,7 @@ class UserInfoCell : UITableViewCell {
     }
     
     func makeItemResistCompression() {
-        itemLabel.setContentCompressionResistancePriority(800.0, for: UILayoutConstraintAxis.horizontal)
+        itemLabel.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 800.0), for: .horizontal)
     }
     
 }
@@ -1424,7 +1423,7 @@ class UserInfoCheckCell : UserInfoCell {
     
     override func setTitle(_ string: String) {
         if string.hasSuffix(":") {
-            let truncated = string.substring(to: string.characters.index(before: string.endIndex))
+            let truncated = string.trimmingCharacters(in: CharacterSet(charactersIn: ":"))
             super.setTitle(truncated)
         }
         else {
@@ -1436,7 +1435,7 @@ class UserInfoCheckCell : UserInfoCell {
 
 extension UITableViewCell {
     func hideSeparator() {
-        self.separatorInset = UIEdgeInsetsMake(0, self.frame.size.width, 0, 0)
+        self.separatorInset = UIEdgeInsets.init(top: 0, left: self.frame.size.width, bottom: 0, right: 0)
     }
 }
 
@@ -1487,4 +1486,14 @@ func checkAllUsersHavePasscode() {
             })
         }
     })
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromCATransitionSubtype(_ input: CATransitionSubtype) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromCATransitionType(_ input: CATransitionType) -> String {
+	return input.rawValue
 }

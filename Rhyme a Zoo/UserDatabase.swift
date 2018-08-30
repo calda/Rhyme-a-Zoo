@@ -155,7 +155,7 @@ class UserDatabase {
     
     func getLinkedClassroomFromCloud(_ completion: @escaping (Classroom?) -> ()) {
         if let classroomName = data.string(forKey: RZClassroomIDKey) {
-            let recordID = CKRecordID(recordName: classroomName)
+            let recordID = CKRecord.ID(recordName: classroomName)
             cloud.fetch(withRecordID: recordID, completionHandler: { record, error in
                 if let error = error { print(error.localizedDescription) }
                 if let record = record {
@@ -406,7 +406,7 @@ class User : NSObject {
     
     
     init?(fromString string: String) {
-        let splits = string.characters.split{ $0 == "~" }.map { String($0) }
+        let splits = string.components(separatedBy: "~")
         if splits.count != 3 {
             name = ""
             iconName = ""
@@ -456,7 +456,7 @@ class User : NSObject {
         record.setObject(toUserString() as CKRecordValue, forKey: "UserString")
         record.setObject(self.passcode! as CKRecordValue, forKey: "Passcode")
         record.setObject(dictToArray(RZQuizDatabase.getQuizData()) as CKRecordValue, forKey: "QuizData")
-        record.setObject(CKReference(record: classroom.record, action: CKReferenceAction.deleteSelf), forKey: "Classroom")
+        record.setObject(CKRecord.Reference(record: classroom.record, action: .deleteSelf), forKey: "Classroom")
         record.setObject(RZQuizDatabase.getFavorites() as CKRecordValue, forKey: "Favorites")
         record.setObject(RZQuizDatabase.getPlayerBalance() as CKRecordValue, forKey: "Balance")
         record.setObject(RZQuizDatabase.getOwnedAnimals() as CKRecordValue, forKey: "OwnedAnimals")

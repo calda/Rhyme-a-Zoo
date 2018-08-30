@@ -56,10 +56,7 @@ class UAPlayer {
     func play(_ name: String, ofType type: String, ifConcurrent mode: UAConcurrentAudioMode = .interrupt ) -> Bool {
         
         self.name = name
-        do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
-        } catch _ {
-        }
+        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio, options: [.allowAirPlay, .duckOthers, .allowBluetooth])
         
         if let path = Bundle.main.path(forResource: name, ofType: type) {
             player = try? AVAudioPlayer(data: Data(contentsOf: URL(fileURLWithPath: path)))

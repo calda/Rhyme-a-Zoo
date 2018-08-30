@@ -28,13 +28,13 @@ class VideoViewController : UIViewController {
         ... */
         if let path = Bundle.main.path(forResource: videoName, ofType: "txt") {
             let dataString = (try! NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue)) as String
-            let dataArray = dataString.characters.split{ $0 == "\n" }.map { String($0) }
+            let dataArray = dataString.split { $0 == "\n" }
             frames = []
             for frameInfo in dataArray {
-                let splits = frameInfo.characters.split{ $0 == ":" }.map { String($0) }
+                let splits = frameInfo.components(separatedBy: ":")
                 let name = splits[0] + ".jpeg"
                 let time = (splits[1] as NSString).doubleValue
-                frames?.append(imageName: name, time: time)
+                frames?.append((imageName: name, time: time))
             }
         }
     }
@@ -64,7 +64,7 @@ class VideoViewController : UIViewController {
         timers.append(progressTimer)
     }
     
-    func showImage(_ timer: Timer) {
+    @objc func showImage(_ timer: Timer) {
         if let imageName = timer.userInfo as? String {
             self.imageView.image = UIImage(named: imageName)
         }
@@ -73,7 +73,7 @@ class VideoViewController : UIViewController {
         }
     }
     
-    func updatePercentageBar() {
+    @objc func updatePercentageBar() {
         if let videoStartTime = videoStartTime, let videoDuration = videoDuration {
             let timeSinceStart = videoStartTime.timeIntervalSinceNow
             let percent = -timeSinceStart / videoDuration

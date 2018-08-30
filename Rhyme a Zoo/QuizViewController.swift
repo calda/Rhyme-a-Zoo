@@ -78,7 +78,7 @@ class QuizViewController : UIViewController {
         }
         
         //create dynamic back button
-        let quizNumber = quiz.number.threeCharacterString()
+        let quizNumber = quiz.number.threeCharacterString
         let image = UIImage(named: "thumbnail_\(quizNumber).jpg")!
         createDynamicButtonWithImage(image)
         
@@ -108,7 +108,7 @@ class QuizViewController : UIViewController {
             
             let composite = UIGraphicsGetImageFromCurrentImageContext()
             UIGraphicsEndImageContext()
-            self.backToRhymeButton.setImage(composite, for: UIControlState())
+            self.backToRhymeButton.setImage(composite, for: .normal)
         }
     }
     
@@ -124,11 +124,11 @@ class QuizViewController : UIViewController {
 
         let animateTransition = (self.quiz != nil) //is not first quiz
         self.quiz = quiz
-        let quizNumber = quiz.number.threeCharacterString()
+        let quizNumber = quiz.number.threeCharacterString
         blurredBackground.image = UIImage(named: "illustration_\(quizNumber).jpg")
         
         if animateTransition {
-            playTransitionForView(blurredBackground, duration: 1.0, transition: kCATransitionFade)
+            playTransitionForView(blurredBackground, duration: 1.0, transition: convertFromCATransitionType(.fade))
         }
         
         questionNumber = -1
@@ -169,7 +169,7 @@ class QuizViewController : UIViewController {
                     //is phonetic question
                     phoneticLabels[i].isHidden = false
                     phoneticLabels[i].text = option.word
-                    if option.word.characters.count == 1 {
+                    if option.word.count == 1 {
                         phoneticLabels[i].text = "\(option.word) \(option.word.lowercased())"
                     }
                     
@@ -177,7 +177,7 @@ class QuizViewController : UIViewController {
                     var font = UIFont(name: "TimesNewRomanPS-BoldMT", size: 120.0)!
                     let text = "UGH" as NSString
                     
-                    while text.size(attributes: [NSFontAttributeName : font]).width > phoneticLabels[i].frame.height {
+                    while text.size(withAttributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font) : font])).width > phoneticLabels[i].frame.height {
                         font = UIFont(name: "TimesNewRomanPS-BoldMT", size: font.pointSize - 10.0)!
                     }
                     
@@ -196,13 +196,13 @@ class QuizViewController : UIViewController {
     
     func playQuizAudio() {
         
-        UIView.animate(withDuration: 0.6, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.allowUserInteraction, animations: {
+        UIView.animate(withDuration: 0.6, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.0, options: .allowUserInteraction, animations: {
             self.repeatButton.transform = CGAffineTransform(scaleX: 0.75,y: 0.75)
         }, completion: nil)
         self.repeatButton.isEnabled = false
         
         //play audio
-        let audioNumber = question.number.threeCharacterString()
+        let audioNumber = question.number.threeCharacterString
         let audioName = "question_\(audioNumber)"
         UAPlayer().play(audioName, ofType: "mp3", ifConcurrent: .interrupt)
         
@@ -226,13 +226,13 @@ class QuizViewController : UIViewController {
         }
     }
     
-    func playAudioForOption(_ timer: Timer) {
+    @objc func playAudioForOption(_ timer: Timer) {
         if let option = timer.userInfo as? Int{
             self.highlightOption(option)
             if option == 4 {
                 
                 //animate in repeat button
-                UIView.animate(withDuration: 0.6, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.allowUserInteraction, animations: {
+                UIView.animate(withDuration: 0.6, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.0, options: .allowUserInteraction, animations: {
                     self.repeatButton.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
                     }, completion: nil)
                 self.repeatButton.isEnabled = true
@@ -333,7 +333,7 @@ class QuizViewController : UIViewController {
         }, completion: nil)
     }
     
-    func playCompletionSound() {
+    @objc func playCompletionSound() {
         
         let total = CGFloat(self.goldCoins) + CGFloat(self.silverCoins)
         let encouragement = total > 2.0
@@ -371,7 +371,7 @@ class QuizViewController : UIViewController {
                 stopAllTimers()
                 
                 //animate in repeat button
-                UIView.animate(withDuration: 0.6, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.allowUserInteraction, animations: {
+                UIView.animate(withDuration: 0.6, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.0, options: .allowUserInteraction, animations: {
                     self.repeatButton.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
                     }, completion: nil)
                 self.repeatButton.isEnabled = true
@@ -475,7 +475,7 @@ class QuizViewController : UIViewController {
             }
             
             //disable repeat button
-            UIView.animate(withDuration: 0.6, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.allowUserInteraction, animations: {
+            UIView.animate(withDuration: 0.6, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.0, options: .allowUserInteraction, animations: {
                 self.repeatButton.transform = CGAffineTransform(scaleX: 0.75,y: 0.75)
                 }, completion: nil)
             self.repeatButton.isEnabled = false
@@ -529,4 +529,20 @@ func setCoinsInImageViews(_ imageViews: [UIImageView], gold: Int, silver: Int, b
             imageViews[i].image = goldImage
         }
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromCATransitionType(_ input: CATransitionType) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
 }

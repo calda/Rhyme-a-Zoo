@@ -204,7 +204,7 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
     
     @IBAction func toggleFavorites(_ sender: UIButton) {
         RZShowingFavorites = !RZShowingFavorites
-        favoritesButton.setImage(UIImage(named: RZShowingFavorites ? "button-back" : "button-heart"), for: UIControlState())
+        favoritesButton.setImage(UIImage(named: RZShowingFavorites ? "button-back" : "button-heart"), for: .normal)
         if RZShowingFavorites {
             offsetBeforeSwitch = collectionView.contentOffset
             gradientVisibleBeforeSwitch = buttonGradientLeading.constant > -70.0
@@ -263,7 +263,7 @@ class RhymeCell : UICollectionViewCell {
             }
             
             let quizIndex = RZQuizDatabase.getIndexForRhyme(rhyme)
-            let quizNumber = rhyme.number.threeCharacterString()
+            let quizNumber = rhyme.number.threeCharacterString
             let image = UIImage(named: "thumbnail_\(quizNumber).jpg")
             let name = rhyme.name.uppercased()
             let isFavorite = rhyme.isFavorite()
@@ -286,10 +286,12 @@ class RhymeCell : UICollectionViewCell {
                 
                 self.coinContainer.isHidden = !hasBeenPlayed
                 self.coinContainer.removeConstraint(self.coinContainerAspect)
-                self.coinContainerAspect = NSLayoutConstraint(item: self.coinContainer, attribute: .width, relatedBy: .equal, toItem: self.coinContainer, attribute: .height, multiplier: CGFloat(countToShow), constant: 0.0)
-                self.coinContainer.addConstraint(self.coinContainerAspect)
                 
-                UIView.animate(withDuration: 0.2, delay: 0.0, options: UIViewAnimationOptions.allowUserInteraction, animations: {
+                let coinContainerAspect = self.coinContainer.widthAnchor.constraint(equalTo: self.coinContainer.heightAnchor, multiplier: CGFloat(countToShow))
+                coinContainerAspect.isActive = true
+                self.coinContainerAspect = coinContainerAspect
+                
+                UIView.animate(withDuration: 0.2, delay: 0.0, options: UIView.AnimationOptions.allowUserInteraction, animations: {
                     self.alpha = 1.0
                 }, completion: nil)
                 
@@ -306,7 +308,7 @@ class DecorationCell : UICollectionViewCell {
     
     func decorate() {
         self.alpha = 0.0
-        UIView.animate(withDuration: 0.2, delay: 0.05, options: UIViewAnimationOptions.allowUserInteraction, animations: {
+        UIView.animate(withDuration: 0.2, delay: 0.05, options: .allowUserInteraction, animations: {
             self.alpha = 1.0
         }, completion: nil)
     }

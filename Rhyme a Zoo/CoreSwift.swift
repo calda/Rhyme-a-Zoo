@@ -28,8 +28,8 @@ func playTransitionForView(_ view: UIView, duration: Double, transition transiti
     let subtype = subtype
     let transition = CATransition()
     transition.duration = duration
-    transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
-    transition.type = transitionName
+    transition.timingFunction = CAMediaTimingFunction(name: .easeOut)
+    transition.type = convertToCATransitionType(transitionName)
     
     //run fix for transition subtype
     //subtypes don't take device orientation into account
@@ -41,7 +41,7 @@ func playTransitionForView(_ view: UIView, duration: Double, transition transiti
         //else if subtype == kCATransitionFromBottom { subtype = kCATransitionFromTop }
     //}
     
-    transition.subtype = subtype
+    transition.subtype = convertToOptionalCATransitionSubtype(subtype)
     view.layer.add(transition, forKey: nil)
 }
 
@@ -75,7 +75,7 @@ func getTopController(_ application: UIApplicationDelegate) -> UIViewController?
 }
 
 ///sorts any [UIView]! by view.tag
-func sortOutletCollectionByTag<T : UIView>(_ collection: inout [T]!) {
+func sortOutletCollectionByTag<T : UIView>(_ collection: inout [T]) {
     collection = (collection as NSArray).sortedArray(using: [NSSortDescriptor(key: "tag", ascending: true)]) as! [T]
 }
 
@@ -112,7 +112,7 @@ func arrayToDict(_ array: [String]) -> [String : String] {
     var dict: [String : String] = [:]
     
     for item in array {
-        let splits = item.characters.split{ $0 == "~" }.map { String($0) }
+        let splits = item.components(separatedBy: "~")
         let first = splits[0].replacingOccurrences(of: "|(#)|", with: "~", options: [], range: nil)
         let second = splits[1].replacingOccurrences(of: "|(#)|", with: "~", options: [], range: nil)
         dict.updateValue(second, forKey: first)
@@ -135,7 +135,7 @@ func async(_ closure: @escaping () -> ()) {
 
 ///open to this app's iOS Settings
 func openSettings() {
-    UIApplication.shared.openURL(URL(string:UIApplicationOpenSettingsURLString)!)
+    UIApplication.shared.open(URL(string:UIApplication.openSettingsURLString)!, options: [:], completionHandler: nil)
 }
 
 
@@ -174,8 +174,8 @@ func downsampleImageInView(_ imageView: UIImageView) {
 
 ///Converts a URL to a CSV into an array of all of the lines in the CSV.
 func csvToArray(_ url: URL) -> [String] {
-    let string = try? String(contentsOf: url, encoding: String.Encoding.utf8)
-    return (string!).characters.split{ $0 == "\r\n" }.map { String($0) }
+    let string = (try? String(contentsOf: url, encoding: .utf8)) ?? ""
+    return string.components(separatedBy: "\r\n")
 }
 
 
@@ -331,27 +331,12 @@ struct Stack<T> {
 
 //MARK: - Standard Library Extensions
 
-extension Array {
-    ///Returns a copy of the array in random order
-    func shuffled() -> [Element] {
-        var list = self
-        for i in 0..<(list.count - 1) {
-            let j = Int(arc4random_uniform(UInt32(list.count - i))) + i
-            if (i != j) {
-                swap(&list[i], &list[j])
-            }
-        }
-        return list
-    }
-}
-
 extension Int {
     ///Converts an integer to a standardized three-character string. 1 -> 001. 99 -> 099. 123 -> 123.
-    func threeCharacterString() -> String {
+    var threeCharacterString: String {
         let start = "\(self)"
-        let length = start.characters.count
-        if length == 1 { return "00\(start)" }
-        else if length == 2 { return "0\(start)" }
+        if start.count == 1 { return "00\(start)" }
+        else if start.count == 2 { return "0\(start)" }
         else { return start }
     }
 }
@@ -361,4 +346,15 @@ extension NSObject {
     func observeNotification(_ name: String, selector: Selector) {
         NotificationCenter.default.addObserver(self, selector: selector, name: NSNotification.Name(rawValue: name), object: nil)
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToCATransitionType(_ input: String) -> CATransitionType {
+	return CATransitionType(rawValue: input)
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToOptionalCATransitionSubtype(_ input: String?) -> CATransitionSubtype? {
+	guard let input = input else { return nil }
+	return CATransitionSubtype(rawValue: input)
 }

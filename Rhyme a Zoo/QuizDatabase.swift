@@ -84,7 +84,7 @@ class QuizDatabase {
         let overrideFile = Bundle.main.url(forResource: "DB Override", withExtension: "csv")!
         let csv = csvToArray(overrideFile)
         for line in csv {
-            let splits = line.characters.split{ $0 == "," }.map { String($0) }
+            let splits = line.split{ $0 == "," }.map { String($0) }
             let number = splits[0]
             let text = splits[1]
             let options = [splits[2], splits[3], splits[4], splits[5]]
@@ -341,7 +341,7 @@ class QuizDatabase {
     }
     
     func setKeeperWithString(_ string: String) {
-        let splits = string.characters.split{ $0 == "~" }.map { String($0) }
+        let splits = string.split{ $0 == "~" }.map { String($0) }
         let gender = splits[0]
         setKeeperGender(gender)
         if let number = Int(splits[1]) {
@@ -507,7 +507,7 @@ struct Quiz : CustomStringConvertible {
         }
         
         let resultString = "\(gold):\(silver)"
-        results.updateValue(resultString, forKey: number.threeCharacterString())
+        results.updateValue(resultString, forKey: number.threeCharacterString)
         
         data.setValue(results, forKey: userKey(RZQuizResultsKey))
         
@@ -523,15 +523,15 @@ struct Quiz : CustomStringConvertible {
     
     func quizHasBeenPlayed() -> Bool {
         if let resultsDict = data.dictionary(forKey: userKey(RZQuizResultsKey)) as? [String : String] {
-            return resultsDict.keys.contains(number.threeCharacterString())
+            return resultsDict.keys.contains(number.threeCharacterString)
         }
         return false
     }
     
     func getQuizResult() -> (gold: Int, silver: Int) {
         if let resultsDict = data.dictionary(forKey: userKey(RZQuizResultsKey)) as? [String : String] {
-            if let result = resultsDict[number.threeCharacterString()] {
-                let splits = result.characters.split{ $0 == ":" }.map { String($0) }
+            if let result = resultsDict[number.threeCharacterString] {
+                let splits = result.split{ $0 == ":" }.map { String($0) }
                 if splits.count == 2 {
                     let gold = Int(splits[0])
                     let silver = Int(splits[1])
@@ -692,7 +692,7 @@ struct Option: CustomStringConvertible {
         //or: sound-P
         
         if rawWord.hasPrefix("sound-") {
-            let splits = rawWord.characters.split{ $0 == "-" }.map { String($0) }
+            let splits = rawWord.split{ $0 == "-" }.map { String($0) }
             return splits[1]
         }
         else { return rawWord }

@@ -151,7 +151,7 @@ class BuildingViewController : ZookeeperGameController {
             }
             
             let button = UIButton(frame: buttonFrame)
-            button.setImage(image, for: UIControlState())
+            button.setImage(image, for: .normal)
             button.isUserInteractionEnabled = false
             backgroundImage.addSubview(button)
             animalButtons.updateValue(button, forKey: animal)
@@ -178,7 +178,7 @@ class BuildingViewController : ZookeeperGameController {
         }
         
         let dark = (building > RZQuizDatabase.currentZooLevel() ? "-dark" : "")
-        buildingButton.setImage(UIImage(named: "button-\(building)\(dark)"), for: UIControlState())
+        buildingButton.setImage(UIImage(named: "button-\(building)\(dark)"), for: .normal)
         
         if mustBuy {
             backButton.isEnabled = false
@@ -198,13 +198,13 @@ class BuildingViewController : ZookeeperGameController {
         frame = frame.offsetBy(dx: offset, dy: 0)
         
         let button = UIButton(frame: frame)
-        button.imageView!.contentMode = UIViewContentMode.scaleAspectFit
+        button.imageView!.contentMode = .scaleAspectFit
         
         if !owned {
             let coinSize = iPad() ? "medium" : "small"
             let animalCost = RZQuizDatabase.currentZooLevel() == 8 ? 10 : 20
             let coinName = "coin-\(animalCost)-\(coinSize)"
-            button.setImage(UIImage(named: coinName), for: UIControlState())
+            button.setImage(UIImage(named: coinName), for: .normal)
             button.addTarget(self, action: #selector(BuildingViewController.purchasePressed(_:)), for: .touchUpInside)
             
             if !RZQuizDatabase.canAffordAnimal() {
@@ -214,7 +214,7 @@ class BuildingViewController : ZookeeperGameController {
             buyButtons.append(button)
             
         } else {
-            button.setImage(UIImage(named: "button-play"), for: UIControlState())
+            button.setImage(UIImage(named: "button-play"), for: .normal)
             button.addTarget(self, action: #selector(BuildingViewController.playAnimalSound(_:)), for: .touchUpInside)
             
             //fade button if file doesn't exist
@@ -295,6 +295,8 @@ class BuildingViewController : ZookeeperGameController {
     }
     
     @IBAction func infoPress(_ sender: AnyObject) {
+        guard let building = building else { return }
+        
         let audioName = "building\(building)"
         UAPlayer().play(audioName, ofType: ".mp3", ifConcurrent: .ignore)
     }
@@ -304,7 +306,7 @@ class BuildingViewController : ZookeeperGameController {
         self.dismiss(animated: true, completion: nil)
     }
     
-    func purchasePressed(_ sender: UIButton) {
+    @objc func purchasePressed(_ sender: UIButton) {
         if !RZQuizDatabase.canAffordAnimal() {
             UAPlayer().play("moreMoney", ofType: ".mp3", ifConcurrent: .ignore)
             return
@@ -320,7 +322,7 @@ class BuildingViewController : ZookeeperGameController {
             UAPlayer().play("correct", ofType: ".mp3", ifConcurrent: .interrupt)
             let animalButton = animalButtons[animal]!
             let colored = UIImage(named: "\(animal)#color")
-            animalButton.setImage(colored, for: UIControlState())
+            animalButton.setImage(colored, for: .normal)
             
             //disable buy buttons if the user can't afford another animal
             if !RZQuizDatabase.canAffordAnimal() {
@@ -361,7 +363,7 @@ class BuildingViewController : ZookeeperGameController {
         }
     }
     
-    func playAnimalSound(_ sender: UIButton) {
+    @objc func playAnimalSound(_ sender: UIButton) {
         if let animal = sender.restorationIdentifier {
             if !UAIsAudioPlaying() {
                 UAPlayer().play(animal, ofType: "m4a", ifConcurrent: .interrupt)

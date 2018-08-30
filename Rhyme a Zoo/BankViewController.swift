@@ -168,7 +168,7 @@ class BankViewController : UIViewController {
         }
     }
     
-    func playAnimationPart(_ timer: Timer) {
+    @objc func playAnimationPart(_ timer: Timer) {
         if let part = timer.userInfo as? Int {
             
             if part == 1 {
@@ -226,7 +226,7 @@ class BankViewController : UIViewController {
         
     }
     
-    func spawnCoinOfType(_ timer: Timer) {
+    @objc func spawnCoinOfType(_ timer: Timer) {
         if let image = timer.userInfo as? UIImage {
             if coinView.subviews.count > 500 {
                 return
@@ -263,14 +263,14 @@ class BankViewController : UIViewController {
         
         let text = initialCoinString.mutableCopy() as! NSMutableAttributedString
         let current = text.string
-        var splits = current.characters.split{ $0 == " " }.map { String($0) }.map { String($0) }
+        var splits = current.split{ $0 == " " }
         
         if totalSilver == 0 {
-            text.replaceCharacters(in: NSMakeRange((splits[0]?.characters.count)!, (splits[2]?.characters.count)! + 3), with: "")
+            text.replaceCharacters(in: NSMakeRange((splits[0].count), (splits[2].count) + 3), with: "")
         } else {
-            text.replaceCharacters(in: NSMakeRange((splits[0]?.characters.count)! + 3, (splits[2]?.characters.count)!), with: "\(totalSilver)")
+            text.replaceCharacters(in: NSMakeRange((splits[0].count) + 3, (splits[2].count)), with: "\(totalSilver)")
         }
-        text.replaceCharacters(in: NSMakeRange(0, (splits[0]?.characters.count)!), with: "\(totalGold)")
+        text.replaceCharacters(in: NSMakeRange(0, (splits[0].count)), with: "\(totalGold)")
         coinCount.attributedText = text
     }
     

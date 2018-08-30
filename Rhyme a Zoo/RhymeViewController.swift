@@ -42,7 +42,7 @@ class RhymeViewController : UIViewController {
     
     func decorateForRhyme(_ rhyme: Rhyme, updateBackground: Bool = true) {
         //decorate cell for rhyme
-        let number = rhyme.number.threeCharacterString()
+        let number = rhyme.number.threeCharacterString
         let illustration = UIImage(named: "illustration_\(number).jpg")
         rhymePage.image = illustration
         if updateBackground { blurredPage.image = illustration }
@@ -57,7 +57,7 @@ class RhymeViewController : UIViewController {
         
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.paragraphSpacing = 9.5
-        let attributed = NSAttributedString(string: rhymeString, attributes: [NSParagraphStyleAttributeName : paragraphStyle])
+        let attributed = NSAttributedString(string: rhymeString, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle) : paragraphStyle]))
         rhymeText.attributedText = attributed
         
         //set up buttons
@@ -67,11 +67,11 @@ class RhymeViewController : UIViewController {
         nextButton.isHidden = nextRhyme == nil
         
         let quizPlayed = rhyme.quizHasBeenPlayed()
-        quizButton.setImage(UIImage(named: (quizPlayed ? "button-check" : "button-question")), for: UIControlState())
+        quizButton.setImage(UIImage(named: (quizPlayed ? "button-check" : "button-question")), for: .normal)
         quizButton.isEnabled = false
         
         let favorite = rhyme.isFavorite()
-        likeButton.setImage(UIImage(named: (favorite ? "button-unlike" : "button-heart")), for: UIControlState())
+        likeButton.setImage(UIImage(named: (favorite ? "button-unlike" : "button-heart")), for: .normal)
         
     }
     
@@ -101,7 +101,7 @@ class RhymeViewController : UIViewController {
         //set up buttons
         likeBottom.constant = 10
         repeatHeight.constant = 0
-        repeatButton.imageView!.contentMode = UIViewContentMode.scaleAspectFit
+        repeatButton.imageView!.contentMode = .scaleAspectFit
         self.view.layoutIfNeeded()
         
         updateScrollView()
@@ -113,8 +113,8 @@ class RhymeViewController : UIViewController {
         let width = scrollView.frame.width
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.paragraphSpacing = 9.5
-        let attributes = [NSParagraphStyleAttributeName : paragraphStyle, NSFontAttributeName : rhymeText.font] as [String : Any]
-        let idealSize = (rhymeString as NSString).boundingRect(with: CGSize(width: width, height: 1000), options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: attributes, context: nil)
+        let attributes = [convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle) : paragraphStyle, convertFromNSAttributedStringKey(NSAttributedString.Key.font) : rhymeText.font] as [String : Any]
+        let idealSize = (rhymeString as NSString).boundingRect(with: CGSize(width: width, height: 1000), options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes), context: nil)
         
         let difference = abs(idealSize.height - scrollView.frame.height)
         if difference > 6.0 && idealSize.height > scrollView.frame.height {
@@ -146,13 +146,13 @@ class RhymeViewController : UIViewController {
     
     var rhymeTimers: [Timer]?
     
-    func playRhyme() {
+    @objc func playRhyme() {
         quizBounceTimer?.invalidate()
         
         //disable quiz button if it hasn't been played yet
         quizButton.isEnabled = false
         
-        let number = rhyme.number.threeCharacterString()
+        let number = rhyme.number.threeCharacterString
         let audioName = "rhyme_\(number)"
         let success = UAPlayer().play(audioName, ofType: "mp3", ifConcurrent: .ignore)
         
@@ -170,7 +170,7 @@ class RhymeViewController : UIViewController {
         }
     }
     
-    func updateWord(_ timer: Timer) {
+    @objc func updateWord(_ timer: Timer) {
         if let word = timer.userInfo as? Int {
             updateAttributedTextForCurrentWord(word)
         }
@@ -221,10 +221,10 @@ class RhymeViewController : UIViewController {
             let color = colors[i]
             let part = rawParts[i]
             let attributes = [
-                NSForegroundColorAttributeName : color,
-                NSParagraphStyleAttributeName : paragraphStyle
+                convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor) : color,
+                convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle) : paragraphStyle
             ]
-            let attributed = NSAttributedString(string: part, attributes: attributes)
+            let attributed = NSAttributedString(string: part, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
             finalString.append(attributed)
         }
         
@@ -295,7 +295,7 @@ class RhymeViewController : UIViewController {
         likeBottom.constant = 70
         repeatHeight.constant = 50
         quizButton.isEnabled = true
-        UIView.animate(withDuration: 0.7, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.allowUserInteraction, animations: {
+        UIView.animate(withDuration: 0.7, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: .allowUserInteraction, animations: {
             self.view.layoutIfNeeded()
         }, completion: nil)
         
@@ -308,7 +308,7 @@ class RhymeViewController : UIViewController {
         }
     }
     
-    func bounceQuizIcon() {
+    @objc func bounceQuizIcon() {
         if !quizButton.isEnabled {
             quizBounceTimer?.invalidate()
             return
@@ -338,7 +338,7 @@ class RhymeViewController : UIViewController {
         let favorite = !rhyme.isFavorite()
         rhyme.setFavoriteStatus(favorite)
         
-        self.likeButton.setImage(UIImage(named: (favorite ? "button-unlike" : "button-heart")), for: UIControlState())
+        self.likeButton.setImage(UIImage(named: (favorite ? "button-unlike" : "button-heart")), for: .normal)
         playTransitionForView(self.likeButton, duration: 2.0, transition: "rippleEffect")
     }
     
@@ -400,7 +400,7 @@ class RhymeViewController : UIViewController {
         playTransitionForView(self.view, duration: 0.5, transition: transition)
         delay(0.5) {
             self.blurredPage.image = self.rhymePage.image
-            playTransitionForView(self.blurredPage, duration: 1.0, transition: kCATransitionFade)
+            playTransitionForView(self.blurredPage, duration: 1.0, transition: convertFromCATransitionType(.fade))
             delay(0.6) {
                 self.playRhyme()
                 self.nextButton.isEnabled = true
@@ -449,10 +449,10 @@ func getLinesArrayOfStringInLabel(_ text: NSString, label:UILabel) -> [String] {
     
     let myFont = CTFontCreateWithName(font.fontName as CFString, font.pointSize, nil)
     let attStr:NSMutableAttributedString = NSMutableAttributedString(string: text as String)
-    attStr.addAttribute(String(kCTFontAttributeName), value:myFont, range: NSMakeRange(0, attStr.length))
+    attStr.addAttribute(convertToNSAttributedStringKey(String(kCTFontAttributeName)), value:myFont, range: NSMakeRange(0, attStr.length))
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.paragraphSpacing = 9.5
-    attStr.addAttribute(NSParagraphStyleAttributeName, value: paragraphStyle, range: NSMakeRange(0, attStr.length))
+    attStr.addAttribute(NSAttributedString.Key.paragraphStyle, value: paragraphStyle, range: NSMakeRange(0, attStr.length))
     
     let frameSetter = CTFramesetterCreateWithAttributedString(attStr as CFAttributedString)
     
@@ -469,4 +469,25 @@ func getLinesArrayOfStringInLabel(_ text: NSString, label:UILabel) -> [String] {
     }
     
     return linesArray
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromCATransitionType(_ input: CATransitionType) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToNSAttributedStringKey(_ input: String) -> NSAttributedString.Key {
+	return NSAttributedString.Key(rawValue: input)
 }

@@ -71,7 +71,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
                 
                 self.classroomLabel.isHidden = false
                 self.classroomLabel.titleLabel!.text = classroom.name
-                self.classroomLabel.setTitle(classroom.name, for: UIControlState())
+                self.classroomLabel.setTitle(classroom.name, for: .normal)
                 self.classroomIcon.isHidden = false
                 self.coverGradient.alpha = 0.0
                 self.collectionViewPosition.constant = 30.0

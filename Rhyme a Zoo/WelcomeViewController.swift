@@ -43,7 +43,7 @@ class WelcomeViewController : UIViewController {
         welcomeTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(WelcomeViewController.playWelcomeAnimation), userInfo: nil, repeats: false)
     }
     
-    func playWelcomeAnimation() {
+    @objc func playWelcomeAnimation() {
         //play welcome animation
         UIView.animate(withDuration: 1.5, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: [], animations: {
             self.welcome.alpha = 1.0
@@ -69,7 +69,7 @@ class WelcomeViewController : UIViewController {
                 self.view.layoutIfNeeded()
                 }, completion: { success in
                     self.largeAreaContinueButton.isEnabled = true
-                    self.bounceTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: "startArrowBounce", userInfo: nil, repeats: false)
+                    self.bounceTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(WelcomeViewController.startArrowBounce), userInfo: nil, repeats: false)
             })
             
         }
@@ -80,16 +80,16 @@ class WelcomeViewController : UIViewController {
         welcomeTimer?.invalidate()
     }
     
-    func startArrowBounce() {
+    @objc func startArrowBounce() {
         self.bounceNextArrow()
         self.bounceTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(WelcomeViewController.bounceNextArrow), userInfo: nil, repeats: true)
     }
     
-    func bounceNextArrow() {
+    @objc func bounceNextArrow() {
         UIView.animate(withDuration: 0.6, delay: 0.0, options: .allowUserInteraction, animations: {
             self.nextArrow.transform = CGAffineTransform(translationX: 75.0, y: 0.0)
         }, completion: { success in
-            UIView.animate(withDuration: 0.6, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.allowUserInteraction, animations: {
+            UIView.animate(withDuration: 0.6, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: .allowUserInteraction, animations: {
                 self.nextArrow.transform = CGAffineTransform(translationX: 0.0, y: 0.0)
             }, completion: nil)
         })
