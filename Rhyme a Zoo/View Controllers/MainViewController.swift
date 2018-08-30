@@ -109,18 +109,18 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
         
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.touchDownNotificationRecieved(_:)), name: NSNotification.Name(rawValue: RZMainMenuTouchDownNotification), object: nil)
         
+        //replace icon image with aliased version
+        let newSize = self.userIcon.frame.size
+        let screenScale = UIScreen.main.scale
+        let scaleSize = CGSize(width: newSize.width * screenScale, height: newSize.height * screenScale)
+        
         RZAsyncQueue.async(execute: {
-            //replace icon image with aliased version
-            let newSize = self.userIcon.frame.size
-            let screenScale = UIScreen.main.scale
-            let scaleSize = CGSize(width: newSize.width * screenScale, height: newSize.height * screenScale)
-            
             if let original = RZCurrentUser.icon, original.size.width > scaleSize.width {
                 UIGraphicsBeginImageContext(scaleSize)
                 let context = UIGraphicsGetCurrentContext()
-                context?.interpolationQuality = CGInterpolationQuality.high
+                context?.interpolationQuality = .high
                 context?.setShouldAntialias(true)
-                original.draw(in: CGRect(origin: CGPoint.zero, size: scaleSize))
+                original.draw(in: CGRect(origin: .zero, size: scaleSize))
                 let newImage = UIGraphicsGetImageFromCurrentImageContext()
                 UIGraphicsEndImageContext()
                 DispatchQueue.main.async(execute: {
