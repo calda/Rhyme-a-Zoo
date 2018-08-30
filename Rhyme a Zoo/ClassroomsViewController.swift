@@ -33,7 +33,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
         checkUserLoggedIn(showIntroAlert: true, delayAlertPresentation: false)
     }
     
-    func checkUserLoggedIn(#showIntroAlert: Bool, delayAlertPresentation: Bool = false) {
+    func checkUserLoggedIn(showIntroAlert showIntroAlert: Bool, delayAlertPresentation: Bool = false) {
         RZUserDatabase.userLoggedIn({ loggedIn in
             if !loggedIn {
                 
@@ -67,7 +67,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
         })
     }
     
-    func searchForNearbyClassrooms(#showIntroAlert: Bool) {
+    func searchForNearbyClassrooms(showIntroAlert showIntroAlert: Bool) {
         searching = true
         repeatButton.enabled = false
         
@@ -100,7 +100,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
         })
     }
     
-    func dataLoaded(#showIntroAlert: Bool) {
+    func dataLoaded(showIntroAlert showIntroAlert: Bool) {
         if showIntroAlert { self.showIntroAlert() }
         
         searching = false
@@ -112,7 +112,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
         //animate
         let originalIndicatorOrigin = self.activityIndicator.frame.origin
         let newIndicatorOrigin = CGPointMake(self.activityIndicator.frame.origin.x, self.activityIndicator.frame.origin.y + 100)
-        UIView.animateWithDuration(0.5, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+        UIView.animateWithDuration(0.5, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
             
             self.activityIndicator.frame.origin = newIndicatorOrigin
             self.activityIndicator.alpha = 0.0
@@ -181,7 +181,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
             animateSelection(nil)
         }
         
-        for cell in tableView.visibleCells() as! [ClassroomCell] {
+        for cell in tableView.visibleCells as! [ClassroomCell] {
             let touch = sender.locationInView(cell.superview!)
             if cell.frame.contains(touch) {
                 
@@ -209,7 +209,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
     }
     
     func animateSelection(index: Int?) {
-        for cell in tableView.visibleCells() as! [ClassroomCell] {
+        for cell in tableView.visibleCells as! [ClassroomCell] {
             
             if let indexPath = tableView.indexPathForCell(cell) where indexPath.item == index && touchRecognizer.enabled {
                 UIView.animateWithDuration(0.15) {
@@ -226,7 +226,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
     }
     
     func openPasscodeForClassroom(classroom: Classroom) {
-        requestPasscode(classroom.passcode, "Passcode for \"\(classroom.name)\"", currentController: self, completion: {
+        requestPasscode(classroom.passcode, description: "Passcode for \"\(classroom.name)\"", currentController: self, completion: {
             self.joinClassroom(classroom)
         })
     }
@@ -291,7 +291,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
         
         let next = UIAlertAction(title: "Next", style: .Default, handler: { _ in
         
-            let name = nameTextField.text
+            let name = nameTextField.text ?? ""
             
             //name must be longer than four letters long
             if (name as NSString).length < 4 {
@@ -322,9 +322,9 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
     }
     
     func requestClassroomPasscode(location: CLLocation, name: String) {
-        createPasscode("Create a 4-digit passcode for \"\(name)\"", currentController: self, { possiblePasscode in
+        createPasscode("Create a 4-digit passcode for \"\(name)\"", currentController: self, completion: { possiblePasscode in
             
-            if let passcode = possiblePasscode where count(passcode) == 4 {
+            if let passcode = possiblePasscode where passcode.characters.count == 4 {
                 self.createClassroom(location, name: name, passcode: passcode)
             }
             else {
@@ -380,7 +380,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
         let search = UIAlertAction(title: "Search", style: .Default, handler: { action in
             if let searchTextField = searchTextField {
                 
-                let text = searchTextField.text
+                let text = searchTextField.text ?? ""
                 self.processSearchText(text)
                 
             }
@@ -419,9 +419,9 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
         cancelButton.alpha = 0.0
         activityIndicator.alpha = 0.0
         let originalIndicatorOrigin = self.activityIndicator.frame.origin
-        self.activityIndicator.frame.offset(dx: 0, dy: 100)
+        self.activityIndicator.frame.offsetInPlace(dx: 0, dy: 100)
         
-        UIView.animateWithDuration(0.6, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: nil, animations: {
+        UIView.animateWithDuration(0.6, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: [], animations: {
             self.cancelButton.alpha = 1.0
             self.cancelButton.transform = CGAffineTransformMakeScale(1.0, 1.0)
             self.activityIndicator.frame.origin = originalIndicatorOrigin
@@ -439,8 +439,8 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
     @IBAction func cancelSearch(sender: AnyObject) {
         //animate
         let originalIndicatorOrigin = self.activityIndicator.frame.origin
-        self.activityIndicator.frame.offset(dx: 0, dy: 100)
-        UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.0, options: nil, animations: {
+        self.activityIndicator.frame.offsetInPlace(dx: 0, dy: 100)
+        UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.0, options: [], animations: {
             self.cancelButton.alpha = 0.0
             self.cancelButton.transform = CGAffineTransformMakeScale(0.1, 0.1)
             self.activityIndicator.frame.origin = originalIndicatorOrigin
@@ -477,7 +477,7 @@ class ClassroomCell : UITableViewCell {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var distanceLabel: UILabel!
     
-    func decorate(#name: String, distance: Double?) {
+    func decorate(name name: String, distance: Double?) {
         nameLabel.text = name
         self.backgroundColor = UIColor.clearColor()
         if let distance = distance {

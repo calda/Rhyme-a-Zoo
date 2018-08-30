@@ -74,13 +74,13 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
         
         //remove unavailable icons and shuffle remaining
         availableIcons = availableIcons.shuffled()
-        updateAvailableIconsForUsers(RZUserDatabase.getLocalUsers(), &self.availableIcons)
+        updateAvailableIconsForUsers(RZUserDatabase.getLocalUsers(), availableIcons: &self.availableIcons)
         
         RZUserDatabase.getLinkedClassroom({ classroom in
             if let classroom = classroom {
                 self.requireName = true
                 RZUserDatabase.getUsersForClassroom(classroom, completion: { users in
-                    updateAvailableIconsForUsers(users, &self.availableIcons)
+                    updateAvailableIconsForUsers(users, availableIcons: &self.availableIcons)
                     self.collectionView.reloadData()
                 })
             }
@@ -112,7 +112,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
         }
         
         if !editMode {
-            instructionsTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: "playInstructionAudio", userInfo: nil, repeats: false)
+            instructionsTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: #selector(NewUserViewController.playInstructionAudio), userInfo: nil, repeats: false)
         }
     }
     
@@ -181,14 +181,14 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
         self.hiddenInput.becomeFirstResponder()
         
         finishEditingButton.transform = CGAffineTransformMakeScale(0.5, 0.5)
-        UIView.animateWithDuration(0.8, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: nil, animations: {
+        UIView.animateWithDuration(0.8, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: [], animations: {
             self.finishEditingButton.alpha = 1.0
             self.finishEditingButton.transform = CGAffineTransformMakeScale(1.1, 1.1)
         }, completion: nil)
     }
     
     @IBAction func hiddenInputChanged(sender: UITextField) {
-        userInputName = sender.text
+        userInputName = sender.text ?? ""
         if userInputName == " " {
             sender.text = ""
             userInputName = ""
@@ -211,7 +211,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
 
     
     @IBAction func editingEnded(sender: UITextField) {
-        UIView.animateWithDuration(0.5, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+        UIView.animateWithDuration(0.5, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
             self.finishEditingButton.alpha = 0.0
             self.finishEditingButton.transform = CGAffineTransformMakeScale(0.5, 0.5)
         }, completion: nil)
@@ -232,7 +232,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
     @IBAction func continuePressed(sender: AnyObject) {
         self.resignFirstResponder()
         if RZSettingRequirePasscode.currentSetting() == true {
-            createPasscode("Create a passcode for \(nameLabel.text!)", currentController: self, { passcode in
+            createPasscode("Create a passcode for \(nameLabel.text!)", currentController: self, completion: { passcode in
                 if let passcode = passcode {
                     self.createNewUser(passcode)
                 }
@@ -252,7 +252,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
         RZUserDatabase.addLocalUser(user)
         RZCurrentUser = user
         
-        let mainMenu = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController() as! UIViewController
+        let mainMenu = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController()!
         self.presentViewController(mainMenu, animated: true, completion: nil)
     }
     
@@ -317,13 +317,13 @@ class UserIconCell : UICollectionViewCell {
     }
     
     func animateSelection() {
-        UIView.animateWithDuration(0.5, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+        UIView.animateWithDuration(0.5, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
             self.iconImage.transform = CGAffineTransformMakeScale(0.85, 0.85)
         }, completion: nil)
     }
     
     func animateDeselection() {
-        UIView.animateWithDuration(0.3, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+        UIView.animateWithDuration(0.3, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
             self.iconImage.transform = CGAffineTransformMakeScale(0.95, 0.95)
         }, completion: nil)
     }
@@ -331,7 +331,7 @@ class UserIconCell : UICollectionViewCell {
 }
 
 func decorateUserIcon(view: UIView) {
-    decorateUserIcon(view, view.frame.height)
+    decorateUserIcon(view, height: view.frame.height)
 }
 
 func decorateUserIcon(view: UIView, height: CGFloat) {

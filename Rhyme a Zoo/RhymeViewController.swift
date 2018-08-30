@@ -49,10 +49,10 @@ class RhymeViewController : UIViewController {
         
         let rawText = rhyme.rhymeText
         //add new lines
-        var text = rawText.stringByReplacingOccurrencesOfString("/", withString: "\n", options: nil, range: nil)
-        text = text.stringByReplacingOccurrencesOfString(";", withString: ",", options: nil, range: nil)
-        text = text.stringByReplacingOccurrencesOfString("\'", withString: "'", options: nil, range: nil)
-        text = text.stringByReplacingOccurrencesOfString("/", withString: "\n", options: nil, range: nil)
+        var text = rawText.stringByReplacingOccurrencesOfString("/", withString: "\n", options: [], range: nil)
+        text = text.stringByReplacingOccurrencesOfString(";", withString: ",", options: [], range: nil)
+        text = text.stringByReplacingOccurrencesOfString("\'", withString: "'", options: [], range: nil)
+        text = text.stringByReplacingOccurrencesOfString("/", withString: "\n", options: [], range: nil)
         rhymeString = text
         
         let paragraphStyle = NSMutableParagraphStyle()
@@ -115,7 +115,7 @@ class RhymeViewController : UIViewController {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.paragraphSpacing = 9.5
         let attributes = [NSParagraphStyleAttributeName : paragraphStyle, NSFontAttributeName : rhymeText.font]
-        let idealSize = (rhymeString as NSString).boundingRectWithSize(CGSizeMake(width, 1000), options: .UsesLineFragmentOrigin | .UsesFontLeading, attributes: attributes, context: nil)
+        let idealSize = (rhymeString as NSString).boundingRectWithSize(CGSizeMake(width, 1000), options: [.UsesLineFragmentOrigin, .UsesFontLeading], attributes: attributes, context: nil)
         
         let difference = abs(idealSize.height - scrollView.frame.height)
         if difference > 6.0 && idealSize.height > scrollView.frame.height {
@@ -138,7 +138,7 @@ class RhymeViewController : UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         delay(0.06) {
-            rhymeTimer?.invalidate()
+            self.rhymeTimer?.invalidate()
         }
         UAHaltPlayback()
     }
@@ -179,9 +179,9 @@ class RhymeViewController : UIViewController {
     
     func updateAttributedTextForCurrentWord(currentWord: Int) {
         
-        var text = rhymeString
-        let replacedLineBreaks = text.stringByReplacingOccurrencesOfString("\n", withString: "~\n", options: nil, range: nil)
-        let noSpaces = replacedLineBreaks.stringByReplacingOccurrencesOfString(" ", withString: "\n", options: nil, range: nil)
+        let text = rhymeString
+        let replacedLineBreaks = text.stringByReplacingOccurrencesOfString("\n", withString: "~\n", options: [], range: nil)
+        let noSpaces = replacedLineBreaks.stringByReplacingOccurrencesOfString(" ", withString: "\n", options: [], range: nil)
         let words = noSpaces.componentsSeparatedByString("\n")
         var before: String = ""
         var current: String = ""
@@ -195,9 +195,9 @@ class RhymeViewController : UIViewController {
         }
         
         //add line breaks back in
-        before = before.stringByReplacingOccurrencesOfString("~ ", withString: "\n", options: nil, range: nil)
-        current = current.stringByReplacingOccurrencesOfString("~ ", withString: "\n", options: nil, range: nil)
-        after = after.stringByReplacingOccurrencesOfString("~ ", withString: "\n", options: nil, range: nil)
+        before = before.stringByReplacingOccurrencesOfString("~ ", withString: "\n", options: [], range: nil)
+        current = current.stringByReplacingOccurrencesOfString("~ ", withString: "\n", options: [], range: nil)
+        after = after.stringByReplacingOccurrencesOfString("~ ", withString: "\n", options: [], range: nil)
         
         if current == "" {
             //current was empty so this is the end of the audio
@@ -213,7 +213,7 @@ class RhymeViewController : UIViewController {
         let afterColor = UIColor(white: 0.14, alpha: 0.6)
         let colors = [beforeColor, currentColor, afterColor]
         let rawParts = [before, current, after]
-        var finalString = NSMutableAttributedString(string: "")
+        let finalString = NSMutableAttributedString(string: "")
         
         for i in 0...2 {
             let paragraphStyle = NSMutableParagraphStyle()
@@ -240,7 +240,7 @@ class RhymeViewController : UIViewController {
             
             let availableHeight = scrollView.frame.height
             let text = rhymeString
-            let lines = getLinesArrayOfStringInLabel(text, rhymeText)
+            let lines = getLinesArrayOfStringInLabel(text, label: rhymeText)
             
             //get line with current
             var lineWithCurrent = -1
@@ -318,7 +318,7 @@ class RhymeViewController : UIViewController {
         UIView.animateWithDuration(0.3, animations: {
             self.quizButton.transform = CGAffineTransformMakeTranslation(0.0, -50.0)
             }, completion: { success in
-                UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: nil, animations: {
+                UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: [], animations: {
                     self.quizButton.transform = CGAffineTransformMakeTranslation(0.0, 0.0)
                     }, completion: nil)
         })
@@ -449,7 +449,7 @@ func getLinesArrayOfStringInLabel(text: NSString, label:UILabel) -> [String] {
     let rect:CGRect = label.frame
     
     let myFont:CTFontRef = CTFontCreateWithName(font.fontName, font.pointSize, nil)
-    var attStr:NSMutableAttributedString = NSMutableAttributedString(string: text as String)
+    let attStr:NSMutableAttributedString = NSMutableAttributedString(string: text as String)
     attStr.addAttribute(String(kCTFontAttributeName), value:myFont, range: NSMakeRange(0, attStr.length))
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.paragraphSpacing = 9.5
@@ -457,7 +457,7 @@ func getLinesArrayOfStringInLabel(text: NSString, label:UILabel) -> [String] {
     
     let frameSetter:CTFramesetterRef = CTFramesetterCreateWithAttributedString(attStr as CFAttributedStringRef)
     
-    var path:CGMutablePathRef = CGPathCreateMutable()
+    let path:CGMutablePathRef = CGPathCreateMutable()
     CGPathAddRect(path, nil, CGRectMake(0, 0, rect.size.width, 100000))
     let frame:CTFrameRef = CTFramesetterCreateFrame(frameSetter, CFRangeMake(0, 0), path, nil)
     let lines = CTFrameGetLines(frame) as! [CTLineRef]

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import SQLite
+//import SQLite
 import CoreLocation
 
 var data = NSUserDefaults.standardUserDefaults()
@@ -31,13 +31,13 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
             
             var delay = 0.0
             var animationViews = [UIView]()
-            animationViews.extend(cards as [UIView])
-            animationViews.extend(topItems)
+            animationViews.appendContentsOf(cards as [UIView])
+            animationViews.appendContentsOf(topItems)
             
             for view in animationViews {
                 let origin = view.frame.origin
                 let offset: CGFloat = (topItems as NSArray).containsObject(view) ? -100 : 500.0
-                view.frame.offset(dx: 0.0, dy: offset)
+                view.frame.offsetInPlace(dx: 0.0, dy: offset)
                 
                 UIView.animateWithDuration(0.7, delay: delay, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.AllowUserInteraction, animations: {
                     view.frame.origin = origin
@@ -118,7 +118,7 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
             if let original = RZCurrentUser.icon where original.size.width > scaleSize.width {
                 UIGraphicsBeginImageContext(scaleSize)
                 let context = UIGraphicsGetCurrentContext()
-                CGContextSetInterpolationQuality(context, kCGInterpolationHigh)
+                CGContextSetInterpolationQuality(context, CGInterpolationQuality.High)
                 CGContextSetShouldAntialias(context, true)
                 original.drawInRect(CGRect(origin: CGPointZero, size: scaleSize))
                 let newImage = UIGraphicsGetImageFromCurrentImageContext()
@@ -233,10 +233,10 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
 
 class TouchView: UIImageView {
 
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         super.touchesBegan(touches, withEvent: event)
         //gesture recognizers can't handle touch down on their own
-        let touch = touches.first as! UITouch
+        guard let touch = touches.first else { return }
         NSNotificationCenter.defaultCenter().postNotificationName(RZMainMenuTouchDownNotification, object: touch, userInfo: nil)
     }
 
@@ -244,7 +244,7 @@ class TouchView: UIImageView {
 
 class HomeButton: UIButton {
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
         self.addTarget(self, action: "returnHome:", forControlEvents: UIControlEvents.TouchUpInside)

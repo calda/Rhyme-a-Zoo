@@ -159,7 +159,7 @@ class ZooViewController : ZookeeperGameController {
             frame = CGRectMake(x - 30.0, y - 30.0, 60.0, 60.0)
         }
         let backgroundOrigin = backgroundImage.frame.origin
-        frame.offset(dx: backgroundOrigin.x, dy: backgroundOrigin.y)
+        frame.offsetInPlace(dx: backgroundOrigin.x, dy: backgroundOrigin.y)
         
         let icon = UIImageView(frame: frame)
         let dark = buildingNumber > level ? "-dark" : ""
@@ -171,7 +171,7 @@ class ZooViewController : ZookeeperGameController {
             icon.alpha = 1.0
             }, completion: { success in
                 
-                UIView.animateWithDuration(1.0, delay: 3.0, options: nil, animations: {
+                UIView.animateWithDuration(1.0, delay: 3.0, options: [], animations: {
                     icon.alpha = 0.0
                     }, completion: { success in
                         icon.removeFromSuperview()

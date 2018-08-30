@@ -105,7 +105,7 @@ class BuildingViewController : ZookeeperGameController {
     
     //MARK: - Decorating the view with animals and buttons
     
-    func decorate(#building: Int, displaySize: CGSize) {
+    func decorate(building building: Int, displaySize: CGSize) {
         self.building = building
         self.displaySize = displaySize
     }
@@ -189,7 +189,7 @@ class BuildingViewController : ZookeeperGameController {
         let screenWidth = UIScreen.mainScreen().bounds.width
         let unusedWidth = screenWidth - sceneSize.width
         let offset = unusedWidth / 2
-        frame.offset(dx: offset, dy: 0)
+        frame.offsetInPlace(dx: offset, dy: 0)
         
         let button = UIButton(frame: frame)
         button.imageView!.contentMode = UIViewContentMode.ScaleAspectFit
@@ -327,7 +327,7 @@ class BuildingViewController : ZookeeperGameController {
             addButtonForAnimal(animal, playerOwns: true)
             //remove current button from superview
             sender.removeFromSuperview()
-            if let index = find(mainButtons, sender) {
+            if let index = mainButtons.indexOf(sender) {
                 mainButtons.removeAtIndex(index)
             }
             
@@ -340,7 +340,7 @@ class BuildingViewController : ZookeeperGameController {
             if didAdvanceLevel {
                 delay(max(duration + 0.5, 1.0)) {
                     let newLevel = RZQuizDatabase.currentZooLevel()
-                    if contains(2...8, newLevel) {
+                    if (2...8).contains(newLevel) {
                         playVideo(name: "zoo-level-\(newLevel)", currentController: self, completion: {
                             self.backButton.enabled = true
                             if self.building != 8 {

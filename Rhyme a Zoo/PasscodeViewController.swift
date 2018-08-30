@@ -55,14 +55,14 @@ class PasscodeViewController : UIViewController {
     }
     
     func showDescriptionNow() {
-        UIView.animateWithDuration(0.5, delay: 0.0, options: nil, animations: {
+        UIView.animateWithDuration(0.5, delay: 0.0, options: [], animations: {
             self.descriptionLabel.alpha = 1.0
             self.displayView.alpha = 0.0
         }, completion: nil)
     }
     
     func hideDescription() {
-        UIView.animateWithDuration(0.2, delay: 0.0, options: nil, animations: {
+        UIView.animateWithDuration(0.2, delay: 0.0, options: [], animations: {
             self.descriptionLabel.alpha = 0.0
             self.displayView.alpha = 1.0
         }, completion: nil)
@@ -89,10 +89,10 @@ class PasscodeViewController : UIViewController {
         
     }
     
-    func animateButtons(#selected: Int?) {
+    func animateButtons(selected selected: Int?) {
         for button in inputButtons {
             let scale: CGFloat = (selected != nil && selected! == button.tag ? 1.2 : 1.0)
-            UIView.animateWithDuration(0.3, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+            UIView.animateWithDuration(0.3, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
                 button.transform = CGAffineTransformMakeScale(scale, scale)
             }, completion: nil)
         }
@@ -117,7 +117,7 @@ class PasscodeViewController : UIViewController {
         for button in outputButtons {
             button.alpha = (button.tag <= input.length ? 1.0 : 0.5)
             let scale = button.alpha
-            UIView.animateWithDuration(0.3, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: nil, animations: {
+            UIView.animateWithDuration(0.3, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: [], animations: {
                 button.transform = CGAffineTransformMakeScale(scale, scale)
             }, completion: nil)
         }
@@ -162,7 +162,7 @@ class PasscodeViewController : UIViewController {
         }
     }
     
-    func clearInput(#shake: Bool, waitForDescription: Bool) {
+    func clearInput(shake shake: Bool, waitForDescription: Bool) {
         if shake { shakeView(displayView) }
         UIView.animateWithDuration(0.3, animations: {
             for button in self.outputButtons {
@@ -213,14 +213,14 @@ func requestPasscode(correctPasscode: String, description: String, currentContro
     let offscreenOrigin = CGPointMake(0, current.view.frame.height * 1.2)
     passcode.view.frame.origin = offscreenOrigin
     
-    UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+    UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
         passcode.view.frame.origin = CGPointZero
     }, completion: { _ in
         current.view.userInteractionEnabled = true
     })
     
     passcode.completion = { success in
-        UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+        UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
             passcode.view.frame.origin = offscreenOrigin
         }, completion: { _ in
             passcode.view.removeFromSuperview()
@@ -244,14 +244,14 @@ func requestPasscdoe(correctPasscode: String, description: String, currentContro
     let offscreenOrigin = CGPointMake(0, current.view.frame.height * 1.2)
     passcode.view.frame.origin = offscreenOrigin
     
-    UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+    UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
         passcode.view.frame.origin = CGPointZero
     }, completion: { _ in
             current.view.userInteractionEnabled = true
     })
     
     passcode.completion = { success in
-        UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+        UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
             passcode.view.frame.origin = offscreenOrigin
             }, completion: { _ in
                 passcode.view.removeFromSuperview()
@@ -273,14 +273,14 @@ func createPasscode(description: String, currentController current: UIViewContro
     let offscreenOrigin = CGPointMake(0, current.view.frame.height * 1.2)
     passcode.view.frame.origin = offscreenOrigin
     
-    UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+    UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
         passcode.view.frame.origin = CGPointZero
     }, completion: { _ in
             current.view.userInteractionEnabled = true
     })
     
     passcode.creationComplation = { newPasscode in
-        UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+        UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
             passcode.view.frame.origin = offscreenOrigin
             }, completion: { _ in
                 passcode.view.removeFromSuperview()

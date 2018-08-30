@@ -24,7 +24,7 @@ class UserDatabase {
     func getLocalUsers() -> [User] {
         var users: [User] = []
         
-        if let userStrings = data.stringArrayForKey(RZUsersKey) as? [String] {
+        if let userStrings = data.stringArrayForKey(RZUsersKey) {
             for userString in userStrings {
                 if let user = User(fromString: userString) {
                     users.append(user)
@@ -36,7 +36,7 @@ class UserDatabase {
     }
     
     func addLocalUser(user: User) {
-        var users = getLocalUsers()
+        let users = getLocalUsers()
         var userStrings: [String] = []
         
         for user in users {
@@ -49,8 +49,8 @@ class UserDatabase {
     func deleteLocalUser(user: User, deleteFromClassroom: Bool) {
         let userString = user.toUserString()
         
-        if var userStrings = data.stringArrayForKey(RZUsersKey) as? [String] {
-            if let indexToRemove = find(userStrings, userString) {
+        if var userStrings = data.stringArrayForKey(RZUsersKey) {
+            if let indexToRemove = userStrings.indexOf(userString) {
                 userStrings.removeAtIndex(indexToRemove)
                 data.setValue(userStrings, forKey: RZUsersKey)
             }
@@ -65,7 +65,7 @@ class UserDatabase {
                 let operation = CKModifyRecordsOperation(recordsToSave: nil, recordIDsToDelete: [record.recordID])
                 operation.modifyRecordsCompletionBlock = { _, _, error in
                     if error != nil {
-                        println(error)
+                        print(error)
                     }
                 }
                 self.cloud.addOperation(operation)
@@ -81,8 +81,8 @@ class UserDatabase {
         user.icon = UIImage(named: newIcon)!
         let newUserString = user.toUserString()
         
-        if var userStrings = data.stringArrayForKey(RZUsersKey) as? [String] {
-            if let indexToSwitch = find(userStrings, oldUserString) {
+        if var userStrings = data.stringArrayForKey(RZUsersKey) {
+            if let indexToSwitch = userStrings.indexOf(oldUserString) {
                 userStrings[indexToSwitch] = newUserString
                 data.setValue(userStrings, forKey: RZUsersKey)
             }
@@ -103,12 +103,13 @@ class UserDatabase {
         record.setObject(passcode, forKey: "Passcode")
         record.setObject(location, forKey: "Location")
         cloud.saveRecord(record, completionHandler: { record, error in
-            if record == nil {
+            guard let record = record else {
                 sync() {
                     completion?(nil)
                 }
                 return
             }
+            
             let classroom = Classroom(record: record)
             sync() {
                 completion?(classroom)
@@ -157,8 +158,8 @@ class UserDatabase {
         if let classroomName = data.stringForKey(RZClassroomIDKey) {
             let recordID = CKRecordID(recordName: classroomName)
             cloud.fetchRecordWithID(recordID, completionHandler: { record, error in
-                if error != nil { println(error) }
-                if record != nil {
+                if error != nil { print(error) }
+                if let record = record {
                     let classroom = Classroom(record: record)
                     self.currentClassroom = classroom
                     sync() {
@@ -166,7 +167,7 @@ class UserDatabase {
                     }
                 } else {
                     
-                    if error != nil && error.code == 11 {
+                    if let error = error where error.code == 11 {
                         //11 = "Unknown Item" (11/2003)
                         //classroom was not in cloud, meaning the classroom was deleted on another device
                         RZUserDatabase.unlinkClassroom()
@@ -209,22 +210,22 @@ class UserDatabase {
         cloud.performQuery(query, inZoneWithID: nil, completionHandler: classroomQueryCompletionHandler(reverseResults: false, completion: completion))
     }
     
-    private func classroomQueryCompletionHandler(#reverseResults: Bool, completion: [Classroom] -> ()) -> ([AnyObject]!, NSError!) -> () {
+    private func classroomQueryCompletionHandler(reverseResults reverseResults: Bool, completion: [Classroom] -> ()) -> ([CKRecord]?, NSError?) -> () {
         
-        func classroomQueryCompletionHandler(results: [AnyObject]!, error: NSError!) {
+        func classroomQueryCompletionHandler(results: [CKRecord]?, error: NSError?) {
             
             if error != nil {
-                println(error)
+                print(error)
             }
             
-            if let records = results as? [CKRecord] {
+            if let records = results {
                 var classrooms: [Classroom] = []
                 for record in records {
                     classrooms.append(Classroom(record: record))
                 }
                 
                 if reverseResults {
-                    classrooms = classrooms.reverse()
+                    classrooms = Array(classrooms.reverse())
                 }
                 
                 sync() {
@@ -248,7 +249,7 @@ class UserDatabase {
         let operation = CKModifyRecordsOperation(recordsToSave: [record], recordIDsToDelete: nil)
         operation.modifyRecordsCompletionBlock = { _, _, error in
             if error != nil {
-                println(error)
+                print(error)
             }
         }
         self.cloud.addOperation(operation)
@@ -258,8 +259,8 @@ class UserDatabase {
         if let currentClassroom = self.currentClassroom {
             getLinkedClassroomFromCloud({ classroom in
                 if let classroom = classroom {
-                    let previousModified = currentClassroom.record.modificationDate.timeIntervalSince1970
-                    let currentModified = classroom.record.modificationDate.timeIntervalSince1970
+                    let previousModified = (currentClassroom.record.modificationDate ?? .distantPast()).timeIntervalSince1970
+                    let currentModified = (classroom.record.modificationDate ?? .distantPast()) .timeIntervalSince1970
                     completion?(classroom: classroom, changesFound: currentModified > previousModified)
                 }
             })
@@ -271,7 +272,7 @@ class UserDatabase {
         let operation = CKModifyRecordsOperation(recordsToSave: nil, recordIDsToDelete: [record.recordID])
         operation.modifyRecordsCompletionBlock = { _, _, error in
             if error != nil {
-                println(error)
+                print(error)
             }
         }
         self.cloud.addOperation(operation)
@@ -287,7 +288,7 @@ class UserDatabase {
             
             var users: [User] = []
             
-            if let records = results as? [CKRecord] {
+            if let records = results {
                 for record in records {
                     if let user = User(record: record) {
                         users.append(user)
@@ -314,7 +315,7 @@ class UserDatabase {
                     let operation = CKModifyRecordsOperation(recordsToSave: [record], recordIDsToDelete: nil)
                     operation.modifyRecordsCompletionBlock = { _, _, error in
                         if error != nil {
-                            println(error)
+                            print(error)
                         }
                     }
                     self.cloud.addOperation(operation)
@@ -352,9 +353,9 @@ class UserDatabase {
     func refreshUser(user: User) {
         if let currentRecord = user.record {
             cloud.fetchRecordWithID(currentRecord.recordID, completionHandler: { record, error in
-                if record != nil {
-                    let previousModified = currentRecord.modificationDate.timeIntervalSince1970
-                    let currentModified = record.modificationDate.timeIntervalSince1970
+                if let record = record {
+                    let previousModified = (currentRecord.modificationDate ?? .distantPast()).timeIntervalSince1970
+                    let currentModified = (record.modificationDate ?? .distantPast()).timeIntervalSince1970
                     if currentModified > previousModified {
                         user.record = record
                         user.pullDataFromCloud()
@@ -406,7 +407,7 @@ class User : NSObject {
     
     
     init?(fromString string: String) {
-        let splits = split(string){ $0 == "~" }
+        let splits = string.characters.split{ $0 == "~" }.map { String($0) }
         if splits.count != 3 {
             name = ""
             iconName = ""
@@ -531,7 +532,7 @@ class User : NSObject {
             var highestIndex: Int = 0
             
             for (numberString, _) in RZQuizDatabase.getQuizData() {
-                if let number = numberString.toInt() {
+                if let number = Int(numberString) {
                     let rhyme = Rhyme(number)
                     let index = RZQuizDatabase.getIndexForRhyme(rhyme)
                     if index > highestIndex {

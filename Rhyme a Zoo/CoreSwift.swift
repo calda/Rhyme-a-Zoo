@@ -19,12 +19,12 @@ func delay(delay: Double, closure: ()->()) {
 
 
 ///play a CATransition for a UIView
-func playTransitionForView(view: UIView, #duration: Double, transition transitionName: String) {
+func playTransitionForView(view: UIView, duration: Double, transition transitionName: String) {
     playTransitionForView(view, duration: duration, transition: transitionName, subtype: nil)
 }
 
 ///play a CATransition for a UIView
-func playTransitionForView(view: UIView, #duration: Double, transition transitionName: String, var subtype: String? = nil) {
+func playTransitionForView(view: UIView, duration: Double, transition transitionName: String, var subtype: String?) {
     let transition = CATransition()
     transition.duration = duration
     transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
@@ -85,7 +85,7 @@ func shakeView(view: UIView) {
     for i in 0 ..< animations.count {
         let frameOrigin = CGPointMake(view.frame.origin.x + animations[i], view.frame.origin.y)
         
-        UIView.animateWithDuration(0.1, delay: NSTimeInterval(0.1 * Double(i)), options: nil, animations: {
+        UIView.animateWithDuration(0.1, delay: NSTimeInterval(0.1 * Double(i)), options: [], animations: {
            view.frame.origin = frameOrigin
         }, completion: nil)
     }
@@ -97,8 +97,8 @@ func dictToArray(dict: [String : String]) -> [String] {
     var array: [String] = []
     
     for item in dict {
-        let first = item.0.stringByReplacingOccurrencesOfString("~", withString: "|(#)|", options: nil, range: nil)
-        let second = item.1.stringByReplacingOccurrencesOfString("~", withString: "|(#)|", options: nil, range: nil)
+        let first = item.0.stringByReplacingOccurrencesOfString("~", withString: "|(#)|", options: [], range: nil)
+        let second = item.1.stringByReplacingOccurrencesOfString("~", withString: "|(#)|", options: [], range: nil)
         let combined = "\(first)~\(second)"
         array.append(combined)
     }
@@ -111,9 +111,9 @@ func arrayToDict(array: [String]) -> [String : String] {
     var dict: [String : String] = [:]
     
     for item in array {
-        let splits = split(item){ $0 == "~" }
-        let first = splits[0].stringByReplacingOccurrencesOfString("|(#)|", withString: "~", options: nil, range: nil)
-        let second = splits[1].stringByReplacingOccurrencesOfString("|(#)|", withString: "~", options: nil, range: nil)
+        let splits = item.characters.split{ $0 == "~" }.map { String($0) }
+        let first = splits[0].stringByReplacingOccurrencesOfString("|(#)|", withString: "~", options: [], range: nil)
+        let second = splits[1].stringByReplacingOccurrencesOfString("|(#)|", withString: "~", options: [], range: nil)
         dict.updateValue(second, forKey: first)
     }
     
@@ -159,7 +159,7 @@ func downsampleImageInView(imageView: UIImageView) {
         if let original = imageView.image where original.size.width > scaleSize.width {
             UIGraphicsBeginImageContext(scaleSize)
             let context = UIGraphicsGetCurrentContext()
-            CGContextSetInterpolationQuality(context, kCGInterpolationHigh)
+            CGContextSetInterpolationQuality(context, CGInterpolationQuality.High)
             CGContextSetShouldAntialias(context, true)
             original.drawInRect(CGRect(origin: CGPointZero, size: scaleSize))
             let newImage = UIGraphicsGetImageFromCurrentImageContext()
@@ -173,8 +173,8 @@ func downsampleImageInView(imageView: UIImageView) {
 
 ///Converts a URL to a CSV into an array of all of the lines in the CSV.
 func csvToArray(url: NSURL) -> [String] {
-    let string = String(contentsOfURL: url, encoding: NSUTF8StringEncoding, error: nil)
-    return split(string!){ $0 == "\r\n" }
+    let string = try? String(contentsOfURL: url, encoding: NSUTF8StringEncoding)
+    return (string!).characters.split{ $0 == "\r\n" }.map { String($0) }
 }
 
 
@@ -204,17 +204,17 @@ func cropImageToCircle(image: UIImage) -> UIImage {
 ///A touch gesture recognizer that sends events on both .Began (down) and .Ended (up)
 class UITouchGestureRecognizer : UIGestureRecognizer {
     
-    override func touchesBegan(touches: Set<NSObject>!, withEvent event: UIEvent!) {
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent) {
         super.touchesBegan(touches, withEvent: event)
         self.state = .Began
     }
     
-    override func touchesMoved(touches: Set<NSObject>!, withEvent event: UIEvent!) {
+    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent) {
         super.touchesMoved(touches, withEvent: event)
         self.state = .Began
     }
     
-    override func touchesEnded(touches: Set<NSObject>!, withEvent event: UIEvent!) {
+    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent) {
         super.touchesEnded(touches, withEvent: event)
         self.state = .Ended
     }
@@ -256,7 +256,7 @@ class LocationManager : NSObject, CLLocationManagerDelegate {
         getCurrentLocation(completion, failure: { error in })
     }
     
-    func locationManager(manager: CLLocationManager!, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+    func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
         for (completion, failure) in waitingForAuthorization {
             if status == .AuthorizedWhenInUse {
                 updateLocationIfEnabled(completion, failure: failure)
@@ -278,7 +278,7 @@ class LocationManager : NSObject, CLLocationManagerDelegate {
         manager.startUpdatingLocation()
     }
     
-    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
+    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations[0] as? CLLocation {
             for (completion, _) in waitingForUpdate {
                 completion(location)
@@ -288,7 +288,7 @@ class LocationManager : NSObject, CLLocationManagerDelegate {
         manager.stopUpdatingLocation()
     }
     
-    func locationManager(manager: CLLocationManager!, didFailWithError error: NSError!) {
+    func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
         for (_, failure) in waitingForUpdate {
             failure(.Error(error))
         }
@@ -332,11 +332,13 @@ struct Stack<T> {
 
 extension Array {
     ///Returns a copy of the array in random order
-    func shuffled() -> [T] {
+    func shuffled() -> [Element] {
         var list = self
         for i in 0..<(list.count - 1) {
             let j = Int(arc4random_uniform(UInt32(list.count - i))) + i
-            swap(&list[i], &list[j])
+            if (i != j) {
+                swap(&list[i], &list[j])
+            }
         }
         return list
     }
@@ -346,7 +348,7 @@ extension Int {
     ///Converts an integer to a standardized three-character string. 1 -> 001. 99 -> 099. 123 -> 123.
     func threeCharacterString() -> String {
         let start = "\(self)"
-        let length = count(start)
+        let length = start.characters.count
         if length == 1 { return "00\(start)" }
         else if length == 2 { return "0\(start)" }
         else { return start }

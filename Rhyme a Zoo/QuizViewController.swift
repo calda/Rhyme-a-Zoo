@@ -135,7 +135,7 @@ class QuizViewController : UIViewController {
         }
         
         questionNumber = -1
-        nextQuestion(playAudio: playAudio)
+        nextQuestion(playAudio)
     }
     
     func nextQuestion(playAudio: Bool = true) {
@@ -172,7 +172,7 @@ class QuizViewController : UIViewController {
                     //is phonetic question
                     phoneticLabels[i].hidden = false
                     phoneticLabels[i].text = option.word
-                    if count(option.word) == 1 {
+                    if option.word.characters.count == 1 {
                         phoneticLabels[i].text = "\(option.word) \(option.word.lowercaseString)"
                     }
                     
@@ -331,7 +331,7 @@ class QuizViewController : UIViewController {
         nextButton.hidden = nextButton.hidden || hideButtons
         previousButton.hidden = previousButton.hidden || hideButtons
         
-        UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.0, options: nil, animations: {
+        UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.0, options: [], animations: {
             self.quizOverViewTop.constant = 0.0
             self.view.layoutIfNeeded()
         }, completion: nil)
@@ -462,11 +462,11 @@ class QuizViewController : UIViewController {
             
             //animate self to center
             let center = CGPointMake(self.questionContainer.frame.width / 2.0, self.questionContainer.frame.height / 2.0)
-            UIView.animateWithDuration(0.3, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+            UIView.animateWithDuration(0.3, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
                 self.optionContainers[guess].center = center
                 }, completion: nil)
             
-            UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 0.3, initialSpringVelocity: 0.0, options: nil, animations: {
+            UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 0.3, initialSpringVelocity: 0.0, options: [], animations: {
                 self.optionContainers[guess].transform = CGAffineTransformMakeScale(1.3, 1.3)
                 }, completion: nil) 
             
@@ -515,7 +515,7 @@ class QuizViewController : UIViewController {
     
 }
 
-func setCoinsInImageViews(imageViews: [UIImageView], #gold: Int, #silver: Int, #big: Bool) {
+func setCoinsInImageViews(_ imageViews: [UIImageView], gold: Int, silver: Int, big: Bool) {
     let goldImage = UIImage(named: big ? "coin-gold-big" : iPad() ? "coin-gold-medium" : "coin-gold")
     let silverImage = UIImage(named: big ? "coin-silver-big" : iPad() ? "coin-silver-medium" : "coin-silver")
     

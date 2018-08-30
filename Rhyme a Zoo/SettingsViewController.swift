@@ -107,7 +107,7 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
             return row
         }
         
-        let row = tableView.dequeueReusableCellWithIdentifier(cell.identifier, forIndexPath: indexPath) as! UITableViewCell
+        let row = tableView.dequeueReusableCellWithIdentifier(cell.identifier, forIndexPath: indexPath) 
         row.backgroundColor = UIColor.clearColor()
         return row
     }
@@ -131,7 +131,7 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
             animateSelection(nil)
         }
         
-        for cell in tableView.visibleCells() as! [UITableViewCell] {
+        for cell in tableView.visibleCells {
             let touch = sender.locationInView(cell.superview!)
             if cell.frame.contains(touch) {
                 
@@ -165,9 +165,9 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        postNotification(RZSetTouchDelegateEnabledNotification, false)
+        postNotification(RZSetTouchDelegateEnabledNotification, object: false)
         delay(0.5) {
-            postNotification(RZSetTouchDelegateEnabledNotification, true)
+            postNotification(RZSetTouchDelegateEnabledNotification, object: true)
         }
     }
     
@@ -181,7 +181,7 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
     }
     
     func animateSelection(index: Int?) {
-        for cell in tableView.visibleCells() as! [UITableViewCell] {
+        for cell in tableView.visibleCells {
             
             if let indexPath = tableView.indexPathForCell(cell) where indexPath.item == index && touchRecognizer.enabled {
                 UIView.animateWithDuration(0.15) {
@@ -200,7 +200,7 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
     //MARK: - Functions for Table View Cells
     
     func changePasscode() {
-        createPasscode("Create a new 4-Digit passcode for \"\(classroom.name)\"", currentController: self, { newPasscode in
+        createPasscode("Create a new 4-Digit passcode for \"\(classroom.name)\"", currentController: self, completion: { newPasscode in
             
             if let newPasscode = newPasscode {
                 self.classroom.passcode = newPasscode
@@ -246,7 +246,7 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
         alert.addAction(UIAlertAction(title: "Nevermind", style: .Default, handler: nil))
         alert.addAction(UIAlertAction(title: "Delete", style: .Destructive, handler: { _ in
             
-            requestPasscode(self.classroom.passcode, "Verify passcode to delete Classroom.", currentController: self, completion: {
+            requestPasscode(self.classroom.passcode, description: "Verify passcode to delete Classroom.", currentController: self, completion: {
                 let classroomName = self.classroom.name
                 RZUserDatabase.deleteClassroom(self.classroom)
                 RZUserDatabase.unlinkClassroom()
@@ -378,19 +378,19 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var index = indexPath.item
+        let index = indexPath.item
         if index == 0 {
-            let cell = tableView.dequeueReusableCellWithIdentifier("newUser", forIndexPath: indexPath) as! UITableViewCell
+            let cell = tableView.dequeueReusableCellWithIdentifier("newUser", forIndexPath: indexPath) 
             cell.backgroundColor = UIColor.clearColor()
             return cell
         }
         if index == 1 && showCustomEmailCell {
-            let cell = tableView.dequeueReusableCellWithIdentifier("dataEmail", forIndexPath: indexPath) as! UITableViewCell
+            let cell = tableView.dequeueReusableCellWithIdentifier("dataEmail", forIndexPath: indexPath) 
             cell.backgroundColor = UIColor.clearColor()
             return cell
         }
         if index == 2 && showPasscodeEmailCell {
-            let cell = tableView.dequeueReusableCellWithIdentifier("passcodeEmail", forIndexPath: indexPath) as! UITableViewCell
+            let cell = tableView.dequeueReusableCellWithIdentifier("passcodeEmail", forIndexPath: indexPath) 
             cell.backgroundColor = UIColor.clearColor()
             return cell
         }
@@ -406,9 +406,9 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        postNotification(RZSetTouchDelegateEnabledNotification, false)
+        postNotification(RZSetTouchDelegateEnabledNotification, object: false)
         delay(0.5) {
-            postNotification(RZSetTouchDelegateEnabledNotification, true)
+            postNotification(RZSetTouchDelegateEnabledNotification, object: true)
         }
     }
     
@@ -449,15 +449,15 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
         alert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: nil))
         alert.addAction(UIAlertAction(title: "Done", style: .Default, handler: { _ in
             
-            if let name = textField?.text where count(name) > 0 {
+            if let name = textField?.text where name.characters.count > 0 {
                 //pick a random icon name
                 var icons = RZUserIconOptions.shuffled()
-                updateAvailableIconsForUsers(self.users, &icons)
+                updateAvailableIconsForUsers(self.users, availableIcons: &icons)
                 let icon = icons[0] + ".jpg"
                 self.getPasscodeForNewStudentFlow(name, iconName: icon)
             }
             else {
-                self.startNewStudentFlow(message: "You must type a name.")
+                self.startNewStudentFlow("You must type a name.")
             }
             
         }))
@@ -480,7 +480,7 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
             
             alert.addAction(UIAlertAction(title: "Custom", style: UIAlertActionStyle.Default, handler: { _ in
                 //show password dialog
-                createPasscode("Create a custom 4-digit passcode for \(name)", currentController: self.settingsController, { passcode in
+                createPasscode("Create a custom 4-digit passcode for \(name)", currentController: self.settingsController, completion: { passcode in
                     if let passcode = passcode {
                         self.finishNewStudentFlow(name, iconName: iconName, passcode: passcode)
                     } else {
@@ -562,7 +562,7 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
         
     }
     
-    func mailComposeController(controller: MFMailComposeViewController!, didFinishWithResult result: MFMailComposeResult, error: NSError!) {
+    func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
     
@@ -635,7 +635,7 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
             }
             }, tap: { user, settingsController in
                 let new = user.passcode != nil ? " new " : " "
-                createPasscode("Create a\(new)4-digit Passcode for \(user.name)", currentController: settingsController, { passcode in
+                createPasscode("Create a\(new)4-digit Passcode for \(user.name)", currentController: settingsController, completion: { passcode in
                     if let passcode = passcode {
                         user.passcode = passcode
                         RZUserDatabase.saveUserToLinkedClassroom(user)
@@ -707,8 +707,8 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
                     user.useQuizDatabase() {
                         let quizData = RZQuizDatabase.getQuizData()
                         if let score = quizData[recent.number.threeCharacterString()] {
-                            let splits = split(score){ $0 == ":" }
-                            if let gold = splits[0].toInt(), let silver = splits[1].toInt() {
+                            let splits = score.characters.split{ $0 == ":" }.map { String($0) }
+                            if let gold = Int(splits[0]), let silver = Int(splits[1]) {
                                 let goldPlural = gold == 1 ? "" : "s"
                                 let silverPlural = silver == 1 ? "" : "s"
                                 cell.setItem("\(gold) gold coin\(goldPlural) and \(silver) silver coin\(silverPlural)")
@@ -901,7 +901,7 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cellInfo = SettingsUserStatisticsDelegate.cells[indexPath.item]
-        let row = tableView.dequeueReusableCellWithIdentifier(cellInfo.identifier, forIndexPath: indexPath) as! UITableViewCell
+        let row = tableView.dequeueReusableCellWithIdentifier(cellInfo.identifier, forIndexPath: indexPath) 
         cellInfo.decorate?(row, self.user)
         row.backgroundColor = UIColor.clearColor()
         return row
@@ -926,9 +926,9 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        postNotification(RZSetTouchDelegateEnabledNotification, false)
+        postNotification(RZSetTouchDelegateEnabledNotification, object: false)
         delay(0.5) {
-            postNotification(RZSetTouchDelegateEnabledNotification, true)
+            postNotification(RZSetTouchDelegateEnabledNotification, object: true)
         }
     }
     
@@ -958,8 +958,8 @@ class SettingsQuizScoresDelegate: NSObject, SettingsViewTableDelegate {
                     //turn result into string
                     let coinString : String
                     
-                    let splits = split(resultString){ $0 == ":" }
-                    if let gold = splits[0].toInt(), let silver = splits[1].toInt() {
+                    let splits = resultString.characters.split{ $0 == ":" }.map { String($0) }
+                    if let gold = Int(splits[0]), let silver = Int(splits[1]) {
                         coinString = "\(gold) gold, \(silver) silver"
                     } else {
                         coinString = resultString
@@ -984,9 +984,9 @@ class SettingsQuizScoresDelegate: NSObject, SettingsViewTableDelegate {
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        postNotification(RZSetTouchDelegateEnabledNotification, false)
+        postNotification(RZSetTouchDelegateEnabledNotification, object: false)
         delay(0.5) {
-            postNotification(RZSetTouchDelegateEnabledNotification, true)
+            postNotification(RZSetTouchDelegateEnabledNotification, object: true)
         }
     }
     
@@ -1041,12 +1041,12 @@ class SettingsComposeEmailDelegate : NSObject, SettingsViewTableDelegate, MFMail
         for (identifier, decorate, tap) in SettingsUserStatisticsDelegate.cells {
             if tap != nil { continue } //ignore cells with functions
             if identifier != "userInfo" && identifier != "blank" { continue }
-            cells.append(identifier: identifier == "userInfo" ? "userInfoCheck" : identifier, decorate: decorate, selected: false)
+            cells.append((identifier: identifier == "userInfo" ? "userInfoCheck" : identifier, decorate: decorate, selected: false))
         }
         
         //add another blank at the end
         let blank = cells[0]
-        cells.append(identifier: "blank", decorate: blank.decorate, selected: false)
+        cells.append((identifier: "blank", decorate: blank.decorate, selected: false))
         
     }
     
@@ -1064,18 +1064,18 @@ class SettingsComposeEmailDelegate : NSObject, SettingsViewTableDelegate, MFMail
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         if indexPath.item == 0 {
-            let cell = tableView.dequeueReusableCellWithIdentifier("emailHeader", forIndexPath: indexPath) as! UITableViewCell
+            let cell = tableView.dequeueReusableCellWithIdentifier("emailHeader", forIndexPath: indexPath) 
             cell.backgroundColor = UIColor.clearColor()
             return cell
         }
         if indexPath.item == cells.count + 1 {
-            let cell = tableView.dequeueReusableCellWithIdentifier("sendEmail", forIndexPath: indexPath) as! UITableViewCell
+            let cell = tableView.dequeueReusableCellWithIdentifier("sendEmail", forIndexPath: indexPath) 
             cell.backgroundColor = UIColor.clearColor()
             return cell
         }
         
         let cellInfo = cells[indexPath.item - 1]
-        let row = tableView.dequeueReusableCellWithIdentifier(cellInfo.identifier, forIndexPath: indexPath) as! UITableViewCell
+        let row = tableView.dequeueReusableCellWithIdentifier(cellInfo.identifier, forIndexPath: indexPath) 
         cellInfo.decorate?(row, users[0])
         if let row = row as? UserInfoCheckCell {
             row.setChecked(cellInfo.selected, animated: false)
@@ -1123,9 +1123,9 @@ class SettingsComposeEmailDelegate : NSObject, SettingsViewTableDelegate, MFMail
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        postNotification(RZSetTouchDelegateEnabledNotification, false)
+        postNotification(RZSetTouchDelegateEnabledNotification, object: false)
         delay(0.5) {
-            postNotification(RZSetTouchDelegateEnabledNotification, true)
+            postNotification(RZSetTouchDelegateEnabledNotification, object: true)
         }
     }
     
@@ -1190,7 +1190,7 @@ class SettingsComposeEmailDelegate : NSObject, SettingsViewTableDelegate, MFMail
         return emailBody
     }
     
-    func mailComposeController(controller: MFMailComposeViewController!, didFinishWithResult result: MFMailComposeResult, error: NSError!) {
+    func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
     
@@ -1206,7 +1206,7 @@ class StudentsCell : UITableViewCell {
     
     func decorateForUsers(usersArray: [User]) {
         let contentView = label.superview!
-        let users = usersArray.reverse() //reverse user array since we draw it backwards
+        let users = Array(usersArray.reverse()) //reverse user array since we draw it backwards
         
         label.text = users.count == 0 ? "Add Students" : "View All Students"
         
@@ -1407,7 +1407,7 @@ class UserInfoCheckCell : UserInfoCell {
         let alpha: CGFloat = checked ? 1.0 : 0.75
         
         if animated {
-            UIView.animateWithDuration(0.6, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: nil, animations: {
+            UIView.animateWithDuration(0.6, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: [], animations: {
                 self.check.transform = transform
                 self.check.alpha = alpha
             }, completion: nil)

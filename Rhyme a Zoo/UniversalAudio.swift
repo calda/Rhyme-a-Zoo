@@ -37,7 +37,7 @@ func UAIsAudioPlaying() -> Bool {
 
 func UALengthOfFile(name: String, ofType type: String) -> NSTimeInterval {
     if let path = NSBundle.mainBundle().pathForResource(name, ofType: type) {
-        let URL = NSURL(fileURLWithPath: path)!
+        let URL = NSURL(fileURLWithPath: path)
         let asset = AVURLAsset(URL: URL, options: nil)
         
         let time = asset.duration
@@ -55,12 +55,13 @@ class UAPlayer {
     func play(name: String, ofType type: String, ifConcurrent mode: UAConcurrentAudioMode = .Interrupt ) -> Bool {
         
         self.name = name
-        AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, error: nil)
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+        } catch _ {
+        }
         
         if let path = NSBundle.mainBundle().pathForResource(name, ofType: type) {
-            let data = NSData(contentsOfFile: path)
-            
-            player = AVAudioPlayer(data: data, error: nil)
+            player = try? AVAudioPlayer(data: NSData(contentsOfFile: path)!)
             
             if mode == .Interrupt {
                 startPlayback()

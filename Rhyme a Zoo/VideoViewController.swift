@@ -27,11 +27,11 @@ class VideoViewController : UIViewController {
         s3:2.0 
         ... */
         if let path = NSBundle.mainBundle().pathForResource(videoName, ofType: "txt") {
-            let dataString = NSString(contentsOfFile: path, encoding: NSUTF8StringEncoding, error: nil) as! String
-            let dataArray = split(dataString){ $0 == "\n" }
+            let dataString = (try! NSString(contentsOfFile: path, encoding: NSUTF8StringEncoding)) as String
+            let dataArray = dataString.characters.split{ $0 == "\n" }.map { String($0) }
             frames = []
             for frameInfo in dataArray {
-                let splits = split(frameInfo){ $0 == ":" }
+                let splits = frameInfo.characters.split{ $0 == ":" }.map { String($0) }
                 let name = splits[0] + ".jpeg"
                 let time = (splits[1] as NSString).doubleValue
                 frames?.append(imageName: name, time: time)
@@ -134,7 +134,7 @@ class VideoViewController : UIViewController {
     
 }
 
-func playVideo(#name: String, #currentController: UIViewController, #completion: (() -> ())?) {
+func playVideo(name name: String, currentController: UIViewController, completion: (() -> ())?) {
     let videoController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("video") as! VideoViewController
     videoController.videoName = name
     videoController.completion = completion

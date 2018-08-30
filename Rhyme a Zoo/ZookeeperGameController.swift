@@ -34,11 +34,11 @@ class ZookeeperGameController : UIViewController, UIGestureRecognizerDelegate {
             //animate
             zookeeperImage.alpha = 0.0
             zookeeperImage.transform = CGAffineTransformMakeScale(0.5, 0.5)
-            UIView.animateWithDuration(0.6, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: nil, animations: {
+            UIView.animateWithDuration(0.6, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: [], animations: {
                 self.zookeeperImage.alpha = 1.0
                 self.zookeeperImage.transform = CGAffineTransformMakeScale(1.0, 1.0)
             }, completion: nil)
-            UIView.animateWithDuration(0.3, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+            UIView.animateWithDuration(0.3, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
                 for button in self.mainButtons {
                     self.originalButtonAlpha[button] = button.alpha
                     button.alpha = 0.0
@@ -48,7 +48,7 @@ class ZookeeperGameController : UIViewController, UIGestureRecognizerDelegate {
         }
             
         else {
-            UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+            UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
                 self.zookeeperImage.alpha = 0.0
                 self.zookeeperImage.transform = CGAffineTransformMakeScale(self.currentKeeperScale * 0.5, self.currentKeeperScale * 0.5)
                 

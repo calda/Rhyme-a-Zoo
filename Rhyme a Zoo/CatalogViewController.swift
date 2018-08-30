@@ -128,7 +128,7 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
     
     func getSize() -> CGSize {
         let (heightDivisor, widthDivisor) = multipliersForCell()
-        var height = (collectionView.frame.height - (5.0 * (heightDivisor + 1))) / heightDivisor
+        let height = (collectionView.frame.height - (5.0 * (heightDivisor + 1))) / heightDivisor
         let width = collectionView.frame.width / widthDivisor
         return CGSizeMake(width, height)
     }
@@ -180,7 +180,7 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
             var col = CGFloat(unplayedIndex / heightDivisor) - 1
             col = max(col, 0)
             let width = UIScreen.mainScreen().bounds.width / widthDivisor
-            var x = (width * (col)) + (5.0 * (col + 1))
+            let x = (width * (col)) + (5.0 * (col + 1))
             
             canHideButtonGradient = false
             delay(0.1) {

@@ -75,7 +75,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
                 self.classroomIcon.hidden = false
                 self.coverGradient.alpha = 0.0
                 self.collectionViewPosition.constant = 30.0
-                UIView.animateWithDuration(0.5, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+                UIView.animateWithDuration(0.5, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
                     self.view.layoutIfNeeded()
                     self.classroomLabel.alpha = 1.0
                     self.classroomIcon.alpha = 1.0
@@ -120,7 +120,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
                 
                 self.decorateForLoadedUsers()
                 
-                UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+                UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
                     self.reloadButton.alpha = 0.0
                 }, completion: nil)
                 
@@ -137,7 +137,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
         }
     }
     
-    func connectionIssues(#duringLoad: Bool) {
+    func connectionIssues(duringLoad duringLoad: Bool) {
         let alert = UIAlertController(title: "We're having trouble connecting to the internet.", message: " Classrooms require an internet connection.", preferredStyle: .Alert)
         alert.addAction(UIAlertAction(title: "Try Again", style: .Default, handler: { _ in
             self.loadUsers()
@@ -169,7 +169,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
             //confirm with passcode
             if let passcode = RZUserDatabase.getLinkedClassroomPasscode() {
                 
-                requestPasscdoe(passcode, "Verify passcode to leave classroom on this device.", currentController: self) { success in
+                requestPasscdoe(passcode, description: "Verify passcode to leave classroom on this device.", currentController: self) { success in
                     if success {
                         RZUserDatabase.unlinkClassroom()
                     }
@@ -227,7 +227,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
         //animate
         if collectionView.alpha == 0.0 {
             collectionView.transform = CGAffineTransformMakeScale(0.5, 0.5)
-            UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: nil, animations: {
+            UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: [], animations: {
                 self.collectionView.transform = CGAffineTransformMakeScale(1.0, 1.0)
             }, completion: nil)
             
@@ -248,12 +248,12 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     func readyToChangeViews() {
         if coverGradient.alpha == 1.0 {
             if users.count == 0 { //present welcome view if there are no users
-                let welcome = UIStoryboard(name: "User", bundle: nil).instantiateViewControllerWithIdentifier("welcome") as! UIViewController
+                let welcome = UIStoryboard(name: "User", bundle: nil).instantiateViewControllerWithIdentifier("welcome") 
                 self.presentViewController(welcome, animated: false, completion: nil)
             }
             else if users.count == 1 && !cloudUsers && !viewAppearingAnimated { //present main view if there is only one user
                 RZCurrentUser = RZUserDatabase.getLocalUsers()[0]
-                let home = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController() as! UIViewController
+                let home = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController()!
                 self.presentViewController(home, animated: false, completion: nil)
             } else {
                 coverGradient.alpha = 0.0
@@ -277,7 +277,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         if indexPath.item == users.count { //add user button as last cell
-            return collectionView.dequeueReusableCellWithReuseIdentifier("add", forIndexPath: indexPath) as! UICollectionViewCell
+            return collectionView.dequeueReusableCellWithReuseIdentifier("add", forIndexPath: indexPath) 
         }
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("user", forIndexPath: indexPath) as! UserCell
         let user = users[indexPath.item]
@@ -304,7 +304,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     
     func checkUserPasscode(user: User) {
         if let passcode = user.passcode where RZSettingRequirePasscode.currentSetting() == true {
-            requestPasscdoe(passcode, "Enter the passcode for \(user.name)", currentController: self, forKids: true, { success in
+            requestPasscdoe(passcode, description: "Enter the passcode for \(user.name)", currentController: self, forKids: true, successCompletion: { success in
                 if success {
                     self.logInToUser(user)
                 }
@@ -318,7 +318,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     func logInToUser(user: User) {
         RZCurrentUser = user
         user.pullDataFromCloud()
-        let mainMenu = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController() as! UIViewController
+        let mainMenu = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController()!
         self.presentViewController(mainMenu, animated: true, completion: nil)
         
         if !RZUserDatabase.hasLinkedClassroom() { return }
@@ -359,30 +359,27 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
             pannedDuringTouch = false
         }
         
-        for visible in collectionView.visibleCells() {
-            if let cell = visible as? UICollectionViewCell {
-                
-                let screenFrame = cell.superview!.convertRect(cell.frame, toView: self.view)
-                if screenFrame.contains(touch) && !pannedDuringTouch {
-                    if sender.state == .Ended {
-                        //select the cell
-                        deselectCell(cell)
-                        if let cell = cell as? UserCell {
-                            if let user = cell.user where !pannedDuringTouch {
-                                checkUserPasscode(user)
-                            }
+        for cell in collectionView.visibleCells() {
+            let screenFrame = cell.superview!.convertRect(cell.frame, toView: self.view)
+            if screenFrame.contains(touch) && !pannedDuringTouch {
+                if sender.state == .Ended {
+                    //select the cell
+                    deselectCell(cell)
+                    if let cell = cell as? UserCell {
+                        if let user = cell.user where !pannedDuringTouch {
+                            checkUserPasscode(user)
                         }
-                        else {
-                            //is Add User cell
-                            let newUser = UIStoryboard(name: "User", bundle: nil).instantiateViewControllerWithIdentifier("newUser") as! NewUserViewController
-                            self.presentViewController(newUser, animated: true, completion: nil)
-                        }
-                    } else {
-                        selectCell(cell)
+                    }
+                    else {
+                        //is Add User cell
+                        let newUser = UIStoryboard(name: "User", bundle: nil).instantiateViewControllerWithIdentifier("newUser") as! NewUserViewController
+                        self.presentViewController(newUser, animated: true, completion: nil)
                     }
                 } else {
-                    deselectCell(cell)
+                    selectCell(cell)
                 }
+            } else {
+                deselectCell(cell)
             }
         }
     }
@@ -396,22 +393,20 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     func scrollViewDidScroll(scrollView: UIScrollView) {
         pannedDuringTouch = true
         
-        for visible in collectionView.visibleCells() {
-            if let cell = visible as? UICollectionViewCell {
-                deselectCell(cell)
-            }
+        for cell in collectionView.visibleCells() {
+            deselectCell(cell)
         }
     }
     
     func selectCell(cell: UICollectionViewCell) {
         let scale: CGFloat = iPad() ? 1.05 : 1.1
-        UIView.animateWithDuration(0.3, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+        UIView.animateWithDuration(0.3, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
             cell.transform = CGAffineTransformMakeScale(scale, scale)
         }, completion: nil)
     }
     
     func deselectCell(cell: UICollectionViewCell) {
-        UIView.animateWithDuration(0.3, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: nil, animations: {
+        UIView.animateWithDuration(0.3, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
             cell.transform = CGAffineTransformMakeScale(1.0, 1.0)
         }, completion: nil)
     }
@@ -425,7 +420,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
         RZUserDatabase.getLinkedClassroom({ classroom in
         
             if let classroom = classroom {
-                requestPasscode(classroom.passcode, "Passcode for \(classroom.name)", currentController: self, completion: {
+                requestPasscode(classroom.passcode, description: "Passcode for \(classroom.name)", currentController: self, completion: {
                     let settings = UIStoryboard(name: "User", bundle: nil).instantiateViewControllerWithIdentifier("classroomSettings") as! SettingsViewController
                     settings.classroom = classroom
                     self.presentViewController(settings, animated: true, completion: nil)
@@ -484,7 +479,7 @@ class UserCell : UICollectionViewCell {
         self.user = user
         name.text = user.name
         icon.image = user.icon
-        decorateUserIcon(icon, height)
+        decorateUserIcon(icon, height: height)
     }
     
 }

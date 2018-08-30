@@ -64,7 +64,7 @@ class KeeperViewController : UIViewController {
         animateGenderButtons(selected: girlButton, other: boyButton, animate: true)
     }
     
-    func animateGenderButtons(#selected: UIButton, other: UIButton, animate: Bool) {
+    func animateGenderButtons(selected selected: UIButton, other: UIButton, animate: Bool) {
         let selectedTransform = CGAffineTransformMakeScale(1.0, 1.0)
         let otherTransform = CGAffineTransformMakeScale(0.75, 0.75)
         if !animate {
@@ -73,7 +73,7 @@ class KeeperViewController : UIViewController {
             return
         }
         
-        UIView.animateWithDuration(0.75, delay: 0.0, usingSpringWithDamping: 0.3, initialSpringVelocity: 0.0, options: nil, animations: {
+        UIView.animateWithDuration(0.75, delay: 0.0, usingSpringWithDamping: 0.3, initialSpringVelocity: 0.0, options: [], animations: {
             selected.transform = selectedTransform
             other.transform = otherTransform
         }, completion: nil)

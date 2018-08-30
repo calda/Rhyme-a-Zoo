@@ -45,7 +45,7 @@ class WelcomeViewController : UIViewController {
     
     func playWelcomeAnimation() {
         //play welcome animation
-        UIView.animateWithDuration(1.5, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: nil, animations: {
+        UIView.animateWithDuration(1.5, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: [], animations: {
             self.welcome.alpha = 1.0
             self.welcome.transform = CGAffineTransformMakeScale(1.0, 1.0)
             }, completion: nil)
@@ -62,7 +62,7 @@ class WelcomeViewController : UIViewController {
             
             RZWelcomeAnimationPlayed = true
             
-            UIView.animateWithDuration(0.8, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.0, options: nil, animations: {
+            UIView.animateWithDuration(0.8, delay: 0.0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.0, options: [], animations: {
                 self.welcomePosition.constant = 45.0
                 self.nextArrowPosition.constant = -45.0
                 self.teacherButtonPositon.constant = 5.0
