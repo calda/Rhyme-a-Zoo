@@ -2648,6 +2648,9 @@
 		2E7DE1BC213871C5002AE703 /* UniversalAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7DD76C213871C3002AE703 /* UniversalAudio.swift */; };
 		2E7DE1BD213871C5002AE703 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7DD76D213871C3002AE703 /* AppDelegate.swift */; };
 		2E7DE1BE21387312002AE703 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2E7DD646213871C3002AE703 /* Main.storyboard */; };
+		2E7DE1C121387815002AE703 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E7DE1C021387815002AE703 /* SQLite.framework */; };
+		2E7DE1C221387991002AE703 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E7DE1C021387815002AE703 /* SQLite.framework */; };
+		2E7DE1C321387991002AE703 /* SQLite.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2E7DE1C021387815002AE703 /* SQLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -2657,6 +2660,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				2E7DE1C321387991002AE703 /* SQLite.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5307,6 +5311,7 @@
 		2E7DD76B213871C3002AE703 /* CoreSwift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreSwift.swift; sourceTree = "<group>"; };
 		2E7DD76C213871C3002AE703 /* UniversalAudio.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniversalAudio.swift; sourceTree = "<group>"; };
 		2E7DD76D213871C3002AE703 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		2E7DE1C021387815002AE703 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = Carthage/Build/iOS/SQLite.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -5314,7 +5319,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2E7DE1C121387815002AE703 /* SQLite.framework in Frameworks */,
 				2E25436C1B6EA78000AF5338 /* CloudKit.framework in Frameworks */,
+				2E7DE1C221387991002AE703 /* SQLite.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5326,6 +5333,7 @@
 			children = (
 				2E08997F1B40A5D200693309 /* Rhyme a Zoo */,
 				2E25436B1B6EA78000AF5338 /* CloudKit.framework */,
+				2E7DE1C021387815002AE703 /* SQLite.framework */,
 			);
 			sourceTree = "<group>";
 		};
@@ -11006,6 +11014,11 @@
 				CODE_SIGN_ENTITLEMENTS = "Rhyme a Zoo/Rhyme a Zoo.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = CT648UDKHF;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = "Rhyme a Zoo/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -11024,6 +11037,11 @@
 				CODE_SIGN_ENTITLEMENTS = "Rhyme a Zoo/Rhyme a Zoo.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = CT648UDKHF;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = "Rhyme a Zoo/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

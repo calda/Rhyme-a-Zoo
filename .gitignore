@@ -1,1 +1,6 @@
 .DS_Store
+Cartfile.resolved
+Carthage/Build/Mac/*
+Carthage/Build/watchOS/*
+Carthage/Build/tvOS/*
+Carthage/Checkouts/*

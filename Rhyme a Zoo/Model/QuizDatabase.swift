@@ -7,7 +7,7 @@
 //
 
 import Foundation
-//import SQLite
+import SQLite
 
 ///Global database. QuizDatabase -> Quiz -> Question -> Option
 let RZQuizDatabase = QuizDatabase()
