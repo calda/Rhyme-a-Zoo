@@ -24,7 +24,7 @@ class UserDatabase {
     func getLocalUsers() -> [User] {
         var users: [User] = []
         
-        if let userStrings = data.stringArrayForKey(RZUsersKey) {
+        if let userStrings = data.stringArray(forKey: RZUsersKey) {
             for userString in userStrings {
                 if let user = User(fromString: userString) {
                     users.append(user)
@@ -35,7 +35,7 @@ class UserDatabase {
         return users
     }
     
-    func addLocalUser(user: User) {
+    func addLocalUser(_ user: User) {
         let users = getLocalUsers()
         var userStrings: [String] = []
         
@@ -46,12 +46,12 @@ class UserDatabase {
         data.setValue(userStrings, forKey: RZUsersKey)
     }
     
-    func deleteLocalUser(user: User, deleteFromClassroom: Bool) {
+    func deleteLocalUser(_ user: User, deleteFromClassroom: Bool) {
         let userString = user.toUserString()
         
-        if var userStrings = data.stringArrayForKey(RZUsersKey) {
-            if let indexToRemove = userStrings.indexOf(userString) {
-                userStrings.removeAtIndex(indexToRemove)
+        if var userStrings = data.stringArray(forKey: RZUsersKey) {
+            if let indexToRemove = userStrings.index(of: userString) {
+                userStrings.remove(at: indexToRemove)
                 data.setValue(userStrings, forKey: RZUsersKey)
             }
         }
@@ -61,28 +61,27 @@ class UserDatabase {
         //also delete from the cloud if applicable
         getLinkedClassroom({ classroom in
             
-            if let classroom = classroom, record = user.record {
+            if classroom != nil, let record = user.record {
                 let operation = CKModifyRecordsOperation(recordsToSave: nil, recordIDsToDelete: [record.recordID])
                 operation.modifyRecordsCompletionBlock = { _, _, error in
-                    if error != nil {
-                        print(error)
+                    if let error = error {
+                        print(error.localizedDescription)
                     }
                 }
-                self.cloud.addOperation(operation)
+                self.cloud.add(operation)
             }
         
         })
     }
     
-    func changeLocalUserIcon(user immutableUser: User, newIcon: String) {
-        var user = immutableUser
+    func changeLocalUserIcon(user: User, newIcon: String) {
         let oldUserString = user.toUserString()
         user.iconName = newIcon
         user.icon = UIImage(named: newIcon)!
         let newUserString = user.toUserString()
         
-        if var userStrings = data.stringArrayForKey(RZUsersKey) {
-            if let indexToSwitch = userStrings.indexOf(oldUserString) {
+        if var userStrings = data.stringArray(forKey: RZUsersKey) {
+            if let indexToSwitch = userStrings.index(of: oldUserString) {
                 userStrings[indexToSwitch] = newUserString
                 data.setValue(userStrings, forKey: RZUsersKey)
             }
@@ -93,16 +92,16 @@ class UserDatabase {
     
     //MARK: - CloudKit School management
     
-    let cloud = CKContainer.defaultContainer().publicCloudDatabase
-    private var currentClassroom: Classroom?
+    let cloud = CKContainer.default().publicCloudDatabase
+    fileprivate var currentClassroom: Classroom?
     
-    func createClassroomNamed(name: String, location: CLLocation, passcode: String, completion: ((Classroom?) -> ())?) {
+    func createClassroomNamed(_ name: String, location: CLLocation, passcode: String, completion: ((Classroom?) -> ())?) {
         
         let record = CKRecord(recordType: "Classroom")
-        record.setObject(name, forKey: "Name")
-        record.setObject(passcode, forKey: "Passcode")
+        record.setObject(name as CKRecordValue, forKey: "Name")
+        record.setObject(passcode as CKRecordValue, forKey: "Passcode")
         record.setObject(location, forKey: "Location")
-        cloud.saveRecord(record, completionHandler: { record, error in
+        cloud.save(record, completionHandler: { record, error in
             guard let record = record else {
                 sync() {
                     completion?(nil)
@@ -118,7 +117,7 @@ class UserDatabase {
         })
     }
     
-    func linkToClassroom(classroom: Classroom) {
+    func linkToClassroom(_ classroom: Classroom) {
         let name = classroom.record.recordID.recordName
         data.setValue(name, forKey: RZClassroomIDKey)
         data.setValue(classroom.passcode, forKey: RZClassroomPasscodeKey)
@@ -126,7 +125,7 @@ class UserDatabase {
     }
     
     func hasLinkedClassroom() -> Bool {
-        return data.valueForKey(RZClassroomIDKey) != nil
+        return data.value(forKey: RZClassroomIDKey) != nil
     }
     
     func unlinkClassroom() {
@@ -141,7 +140,7 @@ class UserDatabase {
         currentClassroom = nil
     }
     
-    func getLinkedClassroom(completion: (Classroom?) -> ()) {
+    func getLinkedClassroom(_ completion: @escaping (Classroom?) -> ()) {
         if let classroom = currentClassroom {
             completion(classroom)
             return
@@ -151,14 +150,14 @@ class UserDatabase {
     }
     
     func getLinkedClassroomPasscode() -> String? {
-        return data.stringForKey(RZClassroomPasscodeKey)
+        return data.string(forKey: RZClassroomPasscodeKey)
     }
     
-    func getLinkedClassroomFromCloud(completion: (Classroom?) -> ()) {
-        if let classroomName = data.stringForKey(RZClassroomIDKey) {
+    func getLinkedClassroomFromCloud(_ completion: @escaping (Classroom?) -> ()) {
+        if let classroomName = data.string(forKey: RZClassroomIDKey) {
             let recordID = CKRecordID(recordName: classroomName)
-            cloud.fetchRecordWithID(recordID, completionHandler: { record, error in
-                if error != nil { print(error) }
+            cloud.fetch(withRecordID: recordID, completionHandler: { record, error in
+                if let error = error { print(error.localizedDescription) }
                 if let record = record {
                     let classroom = Classroom(record: record)
                     self.currentClassroom = classroom
@@ -167,7 +166,7 @@ class UserDatabase {
                     }
                 } else {
                     
-                    if let error = error where error.code == 11 {
+                    if let error = error, (error as NSError).code == 11 {
                         //11 = "Unknown Item" (11/2003)
                         //classroom was not in cloud, meaning the classroom was deleted on another device
                         RZUserDatabase.unlinkClassroom()
@@ -184,22 +183,22 @@ class UserDatabase {
         }
     }
     
-    func userLoggedIn(completion: Bool -> ()) {
-        CKContainer.defaultContainer().accountStatusWithCompletionHandler({ status, error in
+    func userLoggedIn(_ completion: @escaping (Bool) -> ()) {
+        CKContainer.default().accountStatus(completionHandler: { status, error in
             sync() {
-                completion(status == .Available)
+                completion(status == .available)
             }
         })
     }
     
-    func getNearbyClassrooms(location: CLLocation, completion: [Classroom] -> ()) {
+    func getNearbyClassrooms(_ location: CLLocation, completion: @escaping ([Classroom]) -> ()) {
         let predicate = NSPredicate(format: "distanceToLocation:fromLocation:(Location, %@) < 8047", location) //within 5 miles
         let query = CKQuery(recordType: "Classroom", predicate: predicate)
         query.sortDescriptors = [CKLocationSortDescriptor(key: "Location", relativeLocation: location)]
-        cloud.performQuery(query, inZoneWithID: nil, completionHandler: classroomQueryCompletionHandler(reverseResults: false, completion: completion))
+        cloud.perform(query, inZoneWith: nil, completionHandler: classroomQueryCompletionHandler(reverseResults: false, completion: completion) as! ([CKRecord]?, Error?) -> Void)
     }
     
-    func getClassroomsMatchingText(text: String, location: CLLocation?, completion: [Classroom] -> ()) {
+    func getClassroomsMatchingText(_ text: String, location: CLLocation?, completion: @escaping ([Classroom]) -> ()) {
         let predicate = NSPredicate(format: "Name BEGINSWITH %@", text)
         let query = CKQuery(recordType: "Classroom", predicate: predicate)
         if let location = location {
@@ -207,15 +206,15 @@ class UserDatabase {
         } else {
             query.sortDescriptors = [NSSortDescriptor(key: "Name", ascending: true)]
         }
-        cloud.performQuery(query, inZoneWithID: nil, completionHandler: classroomQueryCompletionHandler(reverseResults: false, completion: completion))
+        cloud.perform(query, inZoneWith: nil, completionHandler: classroomQueryCompletionHandler(reverseResults: false, completion: completion) as! ([CKRecord]?, Error?) -> Void)
     }
     
-    private func classroomQueryCompletionHandler(reverseResults reverseResults: Bool, completion: [Classroom] -> ()) -> ([CKRecord]?, NSError?) -> () {
+    fileprivate func classroomQueryCompletionHandler(reverseResults: Bool, completion: @escaping ([Classroom]) -> ()) -> ([CKRecord]?, NSError?) -> () {
         
-        func classroomQueryCompletionHandler(results: [CKRecord]?, error: NSError?) {
+        func classroomQueryCompletionHandler(_ results: [CKRecord]?, error: NSError?) {
             
-            if error != nil {
-                print(error)
+            if let error = error {
+                print(error.localizedDescription)
             }
             
             if let records = results {
@@ -225,7 +224,7 @@ class UserDatabase {
                 }
                 
                 if reverseResults {
-                    classrooms = Array(classrooms.reverse())
+                    classrooms = Array(classrooms.reversed())
                 }
                 
                 sync() {
@@ -244,47 +243,47 @@ class UserDatabase {
         return classroomQueryCompletionHandler
     }
     
-    func saveClassroom(classroom: Classroom) {
+    func saveClassroom(_ classroom: Classroom) {
         let record = classroom.getUpdatedRecord()
         let operation = CKModifyRecordsOperation(recordsToSave: [record], recordIDsToDelete: nil)
         operation.modifyRecordsCompletionBlock = { _, _, error in
-            if error != nil {
-                print(error)
+            if let error = error {
+                print(error.localizedDescription)
             }
         }
-        self.cloud.addOperation(operation)
+        self.cloud.add(operation)
     }
     
-    func refreshLinkedClassroomData(completion: ((classroom: Classroom, changesFound: Bool) -> ())?) {
+    func refreshLinkedClassroomData(_ completion: ((_ classroom: Classroom, _ changesFound: Bool) -> ())?) {
         if let currentClassroom = self.currentClassroom {
             getLinkedClassroomFromCloud({ classroom in
                 if let classroom = classroom {
-                    let previousModified = (currentClassroom.record.modificationDate ?? .distantPast()).timeIntervalSince1970
-                    let currentModified = (classroom.record.modificationDate ?? .distantPast()) .timeIntervalSince1970
-                    completion?(classroom: classroom, changesFound: currentModified > previousModified)
+                    let previousModified = (currentClassroom.record.modificationDate ?? .distantPast).timeIntervalSince1970
+                    let currentModified = (classroom.record.modificationDate ?? .distantPast) .timeIntervalSince1970
+                    completion?(classroom, currentModified > previousModified)
                 }
             })
         }
     }
     
-    func deleteClassroom(classroom: Classroom) {
+    func deleteClassroom(_ classroom: Classroom) {
         let record = classroom.getUpdatedRecord()
         let operation = CKModifyRecordsOperation(recordsToSave: nil, recordIDsToDelete: [record.recordID])
         operation.modifyRecordsCompletionBlock = { _, _, error in
-            if error != nil {
-                print(error)
+            if let error = error {
+                print(error.localizedDescription)
             }
         }
-        self.cloud.addOperation(operation)
+        self.cloud.add(operation)
     }
     
     //MARK: - CloudKit User Management
     
-    func getUsersForClassroom(classroom: Classroom, completion: [User] -> ()) {
+    func getUsersForClassroom(_ classroom: Classroom, completion: @escaping ([User]) -> ()) {
         let predicate = NSPredicate(format: "Classroom = %@", classroom.record.recordID)
         let query = CKQuery(recordType: "User", predicate: predicate)
         query.sortDescriptors = [NSSortDescriptor(key: "UserString", ascending: true)]
-        cloud.performQuery(query, inZoneWithID: nil, completionHandler: { results, error in
+        cloud.perform(query, inZoneWith: nil, completionHandler: { results, error in
             
             var users: [User] = []
             
@@ -308,23 +307,23 @@ class UserDatabase {
         saveUserToLinkedClassroom(RZCurrentUser)
     }
     
-    func saveUserToLinkedClassroom(user: User) {
+    func saveUserToLinkedClassroom(_ user: User) {
         getLinkedClassroom({ classroom in
             if let classroom = classroom {
                 if let record = user.getUpdatedRecord(classroom) {
                     let operation = CKModifyRecordsOperation(recordsToSave: [record], recordIDsToDelete: nil)
                     operation.modifyRecordsCompletionBlock = { _, _, error in
-                        if error != nil {
-                            print(error)
+                        if let error = error {
+                            print(error.localizedDescription)
                         }
                     }
-                    self.cloud.addOperation(operation)
+                    self.cloud.add(operation)
                 }
             }
         })
     }
     
-    func saveNewUserToLinkedClassroom(newUser: User) {
+    func saveNewUserToLinkedClassroom(_ newUser: User) {
         //make sure the user doesn't already exist
         RZUserDatabase.getLinkedClassroom({ classroom in
             if let classroom = classroom {
@@ -350,12 +349,12 @@ class UserDatabase {
         })
     }
     
-    func refreshUser(user: User) {
+    func refreshUser(_ user: User) {
         if let currentRecord = user.record {
-            cloud.fetchRecordWithID(currentRecord.recordID, completionHandler: { record, error in
+            cloud.fetch(withRecordID: currentRecord.recordID, completionHandler: { record, error in
                 if let record = record {
-                    let previousModified = (currentRecord.modificationDate ?? .distantPast()).timeIntervalSince1970
-                    let currentModified = (record.modificationDate ?? .distantPast()).timeIntervalSince1970
+                    let previousModified = (currentRecord.modificationDate ?? .distantPast).timeIntervalSince1970
+                    let currentModified = (record.modificationDate ?? .distantPast).timeIntervalSince1970
                     if currentModified > previousModified {
                         user.record = record
                         user.pullDataFromCloud()
@@ -423,9 +422,9 @@ class User : NSObject {
     }
     
     convenience init?(record: CKRecord) {
-        let userString = record.valueForKey("UserString") as! String
+        let userString = record.value(forKey: "UserString") as! String
         self.init(fromString: userString)
-        self.passcode = record.valueForKey("Passcode") as? String
+        self.passcode = record.value(forKey: "Passcode") as? String
         self.record = record
     }
     
@@ -433,14 +432,14 @@ class User : NSObject {
         return name + "~" + ID + "~" + iconName
     }
     
-    func dateLastModified() -> NSDate? {
+    func dateLastModified() -> Date? {
         let modified = record?.modificationDate
         let created = record?.creationDate
         //let's not count creation as a modification
         return created == modified ? nil : modified
     }
     
-    func getUpdatedRecord(classroom: Classroom) -> CKRecord? {
+    func getUpdatedRecord(_ classroom: Classroom) -> CKRecord? {
         //keep the default user from propegating up into the cloud
         if self.name == "DEFAULT USER // YOU SHOULD NEVER SEE THIS" { return nil }
         
@@ -454,38 +453,39 @@ class User : NSObject {
             record = CKRecord(recordType: "User")
         }
         
-        record.setObject(toUserString(), forKey: "UserString")
-        record.setObject(self.passcode, forKey: "Passcode")
-        record.setObject(dictToArray(RZQuizDatabase.getQuizData()), forKey: "QuizData")
-        record.setObject(CKReference(record: classroom.record, action: CKReferenceAction.DeleteSelf), forKey: "Classroom")
-        record.setObject(RZQuizDatabase.getFavorites(), forKey: "Favorites")
-        record.setObject(RZQuizDatabase.getPlayerBalance(), forKey: "Balance")
-        record.setObject(RZQuizDatabase.getOwnedAnimals(), forKey: "OwnedAnimals")
-        record.setObject(RZQuizDatabase.currentZooLevel(), forKey: "ZooLevel")
-        record.setObject(RZQuizDatabase.currentLevel(), forKey: "QuizLevel")
-        record.setObject(RZQuizDatabase.getKeeperString(), forKey: "Zookeeper")
-        record.setObject(RZQuizDatabase.getTotalMoneyEarnedArray(), forKey: "TotalMoneyEarned")
-        record.setObject("\(RZQuizDatabase.hasWatchedWelcomeVideo())", forKey: "HasWatchedWelcomeVideo")
-        record.setObject(RZQuizDatabase.getPercentCorrectArray(), forKey: "PercentCorrect")
+        record.setObject(toUserString() as CKRecordValue, forKey: "UserString")
+        record.setObject(self.passcode! as CKRecordValue, forKey: "Passcode")
+        record.setObject(dictToArray(RZQuizDatabase.getQuizData()) as CKRecordValue, forKey: "QuizData")
+        record.setObject(CKReference(record: classroom.record, action: CKReferenceAction.deleteSelf), forKey: "Classroom")
+        record.setObject(RZQuizDatabase.getFavorites() as CKRecordValue, forKey: "Favorites")
+        record.setObject(RZQuizDatabase.getPlayerBalance() as CKRecordValue, forKey: "Balance")
+        record.setObject(RZQuizDatabase.getOwnedAnimals() as CKRecordValue, forKey: "OwnedAnimals")
+        record.setObject(RZQuizDatabase.currentZooLevel() as CKRecordValue, forKey: "ZooLevel")
+        record.setObject(RZQuizDatabase.currentLevel() as CKRecordValue, forKey: "QuizLevel")
+        record.setObject(RZQuizDatabase.getKeeperString() as CKRecordValue, forKey: "Zookeeper")
+        record.setObject(RZQuizDatabase.getTotalMoneyEarnedArray() as CKRecordValue, forKey: "TotalMoneyEarned")
+        record.setObject("\(RZQuizDatabase.hasWatchedWelcomeVideo())" as CKRecordValue, forKey: "HasWatchedWelcomeVideo")
+        record.setObject(RZQuizDatabase.getPercentCorrectArray() as CKRecordValue, forKey: "PercentCorrect")
         
         RZCurrentUser = actualUser
         return record
     }
     
+    @discardableResult
     func pullDataFromCloud() -> Bool {
         if let record = record {
             
             //get from CKRecord
-            let quizData = record.valueForKey("QuizData") as? [String] ?? []
-            let favorites = record.valueForKey("Favorites") as? [Int] ?? []
-            let balance = record.valueForKey("Balance") as? Double ?? 0
-            let ownedAnimals = record.valueForKey("OwnedAnimals") as? [String] ?? []
-            let zooLevel = record.valueForKey("ZooLevel") as? Int ?? 1
-            let quizLevel = record.valueForKey("QuizLevel") as? Int ?? 1
-            let keeperString = record.valueForKey("Zookeeper") as? String ?? "boy~1"
-            let totalMoneyEarned = record.valueForKey("TotalMoneyEarned") as? [String] ?? []
-            let hasWatchedWelcomeVideo = record.valueForKey("HasWatchedWelcomeVideo") as? String ?? "false"
-            let percentCorrect = record.valueForKey("PercentCorrect") as? [String] ?? []
+            let quizData = record.value(forKey: "QuizData") as? [String] ?? []
+            let favorites = record.value(forKey: "Favorites") as? [Int] ?? []
+            let balance = record.value(forKey: "Balance") as? Double ?? 0
+            let ownedAnimals = record.value(forKey: "OwnedAnimals") as? [String] ?? []
+            let zooLevel = record.value(forKey: "ZooLevel") as? Int ?? 1
+            let quizLevel = record.value(forKey: "QuizLevel") as? Int ?? 1
+            let keeperString = record.value(forKey: "Zookeeper") as? String ?? "boy~1"
+            let totalMoneyEarned = record.value(forKey: "TotalMoneyEarned") as? [String] ?? []
+            let hasWatchedWelcomeVideo = record.value(forKey: "HasWatchedWelcomeVideo") as? String ?? "false"
+            let percentCorrect = record.value(forKey: "PercentCorrect") as? [String] ?? []
             
             let actualUser = RZCurrentUser
             RZCurrentUser = self
@@ -511,14 +511,14 @@ class User : NSObject {
         }
     }
     
-    func useQuizDatabase(function: () -> ()) {
+    func useQuizDatabase(_ function: () -> ()) {
         let actualUser = RZCurrentUser
         RZCurrentUser = self
         function()
         RZCurrentUser = actualUser
     }
     
-    func useQuizDatabaseToReturn<T>(function: () -> (T)) -> T {
+    func useQuizDatabaseToReturn<T>(_ function: () -> (T)) -> T {
         let actualUser = RZCurrentUser
         RZCurrentUser = self
         let willReturn = function()
@@ -575,7 +575,7 @@ struct ClassroomSetting {
         //settings are only relevant if there is a connected classroom
         if !RZUserDatabase.hasLinkedClassroom() { return nil }
         
-        if let setting = data.stringForKey(self.key) {
+        if let setting = data.string(forKey: self.key) {
             return setting == "true"
         }
         
@@ -583,7 +583,7 @@ struct ClassroomSetting {
         return byDefault
     }
     
-    func updateSetting(new: Bool) {
+    func updateSetting(_ new: Bool) {
         data.setValue("\(new)", forKey: self.key)
         
         RZUserDatabase.getLinkedClassroom({ classroom in
@@ -593,7 +593,7 @@ struct ClassroomSetting {
         })
     }
     
-    func updateSettingFromCloud(newString: String) {
+    func updateSettingFromCloud(_ newString: String) {
         data.setValue(newString, forKey: self.key)
     }
     
@@ -608,12 +608,12 @@ class Classroom {
     
     init(record: CKRecord) {
         self.record = record
-        name = record.valueForKey("Name") as! String
-        location = record.valueForKey("Location") as! CLLocation
-        passcode = record.valueForKey("Passcode") as! String
+        name = record.value(forKey: "Name") as! String
+        location = record.value(forKey: "Location") as! CLLocation
+        passcode = record.value(forKey: "Passcode") as! String
         
         //load settings
-        if let settingsArray = record.valueForKey("Settings") as? [String] {
+        if let settingsArray = record.value(forKey: "Settings") as? [String] {
             let cloudSettings = arrayToDict(settingsArray)
             for setting in RZClassroomSettings {
                 if let userInput = cloudSettings[setting.name] {
@@ -625,7 +625,7 @@ class Classroom {
     }
     
     func getUpdatedRecord() -> CKRecord {
-        record.setObject(passcode, forKey: "Passcode")
+        record.setObject(passcode as CKRecordValue, forKey: "Passcode")
         
         //create settings dictionary
         var cloudSettings: [String : String] = [:]
@@ -636,7 +636,7 @@ class Classroom {
         }
         
         let settingsArray = dictToArray(cloudSettings)
-        record.setObject(settingsArray, forKey: "Settings")
+        record.setObject(settingsArray as CKRecordValue, forKey: "Settings")
         
         return record
     }

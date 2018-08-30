@@ -16,36 +16,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
 
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         return true
     }
 
-    func applicationWillResignActive(application: UIApplication) {
+    func applicationWillResignActive(_ application: UIApplication) {
         //save the time that the app was closed
-        let time = NSDate()
+        let time = Date()
         data.setValue(time, forKey: RZAppClosedTimeKey)
         
         RZUserDatabase.saveCurrentUserToLinkedClassroom()
     }
 
-    func applicationDidBecomeActive(application: UIApplication) {
+    func applicationDidBecomeActive(_ application: UIApplication) {
         RZCurrentUser.pullDataFromCloud()
         
         //check if more than five minutes have passed since the app was closed
-        if let closedTime = data.valueForKey(RZAppClosedTimeKey) as? NSDate {
-            let currentTime = NSDate()
-            let diff = currentTime.timeIntervalSinceDate(closedTime)
+        if let closedTime = data.value(forKey: RZAppClosedTimeKey) as? Date {
+            let currentTime = Date()
+            let diff = currentTime.timeIntervalSince(closedTime)
             //FIXME: change to 300
             if diff > 300 { //300 seconds = 5 minutes
                 //return to home if only one user
                 //return to User screen if users > 1 || users == 0
                 
-                func controllerIsHome(viewController: UIViewController) -> Bool {
+                func controllerIsHome(_ viewController: UIViewController) -> Bool {
                     return viewController is MainViewController
                 }
                 
-                func controllerIsUser(viewController: UIViewController) -> Bool {
+                func controllerIsUser(_ viewController: UIViewController) -> Bool {
                     return viewController is UsersViewController
                 }
                 

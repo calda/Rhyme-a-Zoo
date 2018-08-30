@@ -13,12 +13,12 @@ let _SilverCoin = UIImage(named: "Silver-Coin")!
 let _GoldCoin = UIImage(named: "Gold-Coin")!
 
 enum CoinType {
-    case Silver, Gold
+    case silver, gold
     
     func getImage() -> UIImage {
         switch(self) {
-            case .Silver: return _SilverCoin
-            case .Gold: return _GoldCoin
+            case .silver: return _SilverCoin
+            case .gold: return _GoldCoin
         }
     }
 }
@@ -40,9 +40,9 @@ class BankViewController : UIViewController {
     @IBOutlet weak var repeatAnimationButton: UIButton!
     
     var hasSpentCoins: Bool = false
-    var coinTimers: [NSTimer] = []
+    var coinTimers: [Timer] = []
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         self.view.layoutIfNeeded()
         sortOutletCollectionByTag(&coinImages)
         
@@ -57,17 +57,17 @@ class BankViewController : UIViewController {
         self.coinCount.alpha = 0.0
         
         if availableBalance == 0 {
-            noCoins.hidden = false
-            availableCoinsArea.hidden = true
+            noCoins.isHidden = false
+            availableCoinsArea.isHidden = true
         } else {
-            noCoins.hidden = true
-            availableCoinsArea.hidden = false
+            noCoins.isHidden = true
+            availableCoinsArea.isHidden = false
         }
         
         if availableBalance > 60 {
-            coinPile.hidden = false
+            coinPile.isHidden = false
             coinPile.alpha = 1.0
-            availableCoinsArea.hidden = true
+            availableCoinsArea.isHidden = true
         }
         
         let (totalGold, totalSilver) = RZQuizDatabase.getTotalMoneyEarned()
@@ -81,7 +81,7 @@ class BankViewController : UIViewController {
         self.view.layoutIfNeeded()
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         playAnimation()
     }
     
@@ -89,12 +89,12 @@ class BankViewController : UIViewController {
         initialCoinString = coinCount.attributedText!
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         self.endTimers()
         UAHaltPlayback()
     }
     
-    func decorateCoins(gold gold: Int, silver: Int) {
+    func decorateCoins(gold: Int, silver: Int) {
         //clear coins
         for i in 0...9 {
             coinImages[i].image = nil
@@ -108,16 +108,16 @@ class BankViewController : UIViewController {
         
         if coin20 > 7 {
             //too many to display
-            availableCoinsView.hidden = true
-            coinPile.hidden = false
+            availableCoinsView.isHidden = true
+            coinPile.isHidden = false
         }
         else {
-            availableCoinsView.hidden = false
-            coinPile.hidden = true
+            availableCoinsView.isHidden = false
+            coinPile.isHidden = true
         }
         
         //display coins
-        func setImage(inout current: Int, type: String) {
+        func setImage(_ current: inout Int, type: String) {
             if current > 9 { return }
             coinImages[current].image = UIImage(named: type)
             current += 1
@@ -140,9 +140,9 @@ class BankViewController : UIViewController {
     }
     
     func playAnimation() {
-        self.repeatAnimationButton.enabled = false
+        self.repeatAnimationButton.isEnabled = false
         
-        UAPlayer().play("coins-available", ofType: "mp3", ifConcurrent: .Interrupt)
+        UAPlayer().play("coins-available", ofType: "mp3", ifConcurrent: .interrupt)
         let duration = UALengthOfFile("coins-total", ofType: "mp3")
         
         //TODO: FIX
@@ -155,43 +155,43 @@ class BankViewController : UIViewController {
         for i in 1...animationLoops {
             let loop: Double = Double(i) - 1
             //play raining coins animation
-            coinTimers.append(NSTimer.scheduledTimerWithTimeInterval(duration + (loop * 4.5), target: self, selector: #selector(BankViewController.playAnimationPart(_:)), userInfo: 1, repeats: false))
+            coinTimers.append(Timer.scheduledTimer(timeInterval: duration + (loop * 4.5), target: self, selector: #selector(BankViewController.playAnimationPart(_:)), userInfo: 1, repeats: false))
             
             if i == 1 { //only play the audio on the first loop
-                coinTimers.append(NSTimer.scheduledTimerWithTimeInterval(duration + 0.5 + (loop * 4.5), target: self, selector: #selector(BankViewController.playAnimationPart(_:)), userInfo: 2, repeats: false))
+                coinTimers.append(Timer.scheduledTimer(timeInterval: duration + 0.5 + (loop * 4.5), target: self, selector: #selector(BankViewController.playAnimationPart(_:)), userInfo: 2, repeats: false))
             }
             
             //only fade the background on the last loop
             if i == animationLoops {
-                coinTimers.append(NSTimer.scheduledTimerWithTimeInterval(duration + 4.5 + (loop * 4.5), target: self, selector: #selector(BankViewController.playAnimationPart(_:)), userInfo: 3, repeats: false))
+                coinTimers.append(Timer.scheduledTimer(timeInterval: duration + 4.5 + (loop * 4.5), target: self, selector: #selector(BankViewController.playAnimationPart(_:)), userInfo: 3, repeats: false))
             }
         }
     }
     
-    func playAnimationPart(timer: NSTimer) {
+    func playAnimationPart(_ timer: Timer) {
         if let part = timer.userInfo as? Int {
             
             if part == 1 {
-                UIView.animateWithDuration(1.0) {
+                UIView.animate(withDuration: 1.0, animations: {
                     self.coinView.backgroundColor = UIColor(white: 0.0, alpha: 0.7)
                     self.availableCoinsArea.alpha = 0.3
                     self.coinCount.alpha = 1.0
-                }
+                }) 
                 self.spawnCoins()
                 
             }
                 
             else if part == 2 {
-                UAPlayer().play("coins-total", ofType: "mp3", ifConcurrent: .Interrupt)
+                UAPlayer().play("coins-total", ofType: "mp3", ifConcurrent: .interrupt)
             }
             
             else if part == 3 {
-                self.repeatAnimationButton.enabled = true
-                UIView.animateWithDuration(0.5) {
-                    self.coinView.backgroundColor = UIColor.clearColor()
+                self.repeatAnimationButton.isEnabled = true
+                UIView.animate(withDuration: 0.5, animations: {
+                    self.coinView.backgroundColor = UIColor.clear
                     self.availableCoinsArea.alpha = 1.0
-                }
-                UIView.animateWithDuration(1.0, delay: 2.5, options: [], animations: {
+                }) 
+                UIView.animate(withDuration: 1.0, delay: 2.5, options: [], animations: {
                     self.coinCount.alpha = 0.0
                 }, completion: nil)
             }
@@ -203,12 +203,12 @@ class BankViewController : UIViewController {
         totalGold = min(100, totalGold)
         totalSilver = min(100, totalSilver)
         
-        dispatch_async(RZAsyncQueue) {
+        RZAsyncQueue.async {
             for _ in 0 ..< min(300, totalGold) {
-                let wait = NSTimeInterval(arc4random_uniform(100)) / 100.0
+                let wait = TimeInterval(arc4random_uniform(100)) / 100.0
                 
                 sync() {
-                    let timer = NSTimer.scheduledTimerWithTimeInterval(wait, target: self, selector: #selector(BankViewController.spawnCoinOfType(_:)), userInfo: CoinType.Gold.getImage(), repeats: false)
+                    let timer = Timer.scheduledTimer(timeInterval: wait, target: self, selector: #selector(BankViewController.spawnCoinOfType(_:)), userInfo: CoinType.gold.getImage(), repeats: false)
                     self.coinTimers.append(timer)
                 }
                 
@@ -217,7 +217,7 @@ class BankViewController : UIViewController {
                 let wait = Double(arc4random_uniform(100)) / 50.0
                 
                 sync() {
-                    let timer = NSTimer.scheduledTimerWithTimeInterval(wait, target: self, selector: "spawnCoinOfType:", userInfo: CoinType.Silver.getImage(), repeats: false)
+                    let timer = Timer.scheduledTimer(timeInterval: wait, target: self, selector: #selector(BankViewController.spawnCoinOfType(_:)), userInfo: CoinType.silver.getImage(), repeats: false)
                     self.coinTimers.append(timer)
                 }
                 
@@ -226,23 +226,23 @@ class BankViewController : UIViewController {
         
     }
     
-    func spawnCoinOfType(timer: NSTimer) {
+    func spawnCoinOfType(_ timer: Timer) {
         if let image = timer.userInfo as? UIImage {
             if coinView.subviews.count > 500 {
                 return
             }
             let startX = CGFloat(arc4random_uniform(UInt32(self.view.frame.width)))
             
-            let coin = UIImageView(frame: CGRectMake(startX - 15.0, -30.0, 30.0, 30.0))
+            let coin = UIImageView(frame: CGRect(x: startX - 15.0, y: -30.0, width: 30.0, height: 30.0))
             if iPad() {
-                coin.frame = CGRectMake(startX - 25.0, -50.0, 50.0, 50.0)
+                coin.frame = CGRect(x: startX - 25.0, y: -50.0, width: 50.0, height: 50.0)
             }
             coin.image = image
             self.coinView.addSubview(coin)
             
-            let endPosition = CGPointMake(startX - 25.0, self.view.frame.height + 50)
+            let endPosition = CGPoint(x: startX - 25.0, y: self.view.frame.height + 50)
             let duration = 2.0 + (Double(Int(arc4random_uniform(1000))) / 250.0)
-            UIView.animateWithDuration(duration, animations: {
+            UIView.animate(withDuration: duration, animations: {
                 coin.frame.origin = endPosition
                 }, completion: { success in
                     coin.removeFromSuperview()
@@ -265,26 +265,25 @@ class BankViewController : UIViewController {
         let current = text.string
         var splits = current.characters.split{ $0 == " " }.map { String($0) }.map { String($0) }
         
-        let balance = RZQuizDatabase.getPlayerBalance()
         if totalSilver == 0 {
-            text.replaceCharactersInRange(NSMakeRange(splits[0].characters.count, splits[2].characters.count + 3), withString: "")
+            text.replaceCharacters(in: NSMakeRange((splits[0]?.characters.count)!, (splits[2]?.characters.count)! + 3), with: "")
         } else {
-            text.replaceCharactersInRange(NSMakeRange(splits[0].characters.count + 3, splits[2].characters.count), withString: "\(totalSilver)")
+            text.replaceCharacters(in: NSMakeRange((splits[0]?.characters.count)! + 3, (splits[2]?.characters.count)!), with: "\(totalSilver)")
         }
-        text.replaceCharactersInRange(NSMakeRange(0, splits[0].characters.count), withString: "\(totalGold)")
+        text.replaceCharacters(in: NSMakeRange(0, (splits[0]?.characters.count)!), with: "\(totalGold)")
         coinCount.attributedText = text
     }
     
-    @IBAction func back(sender: AnyObject) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+    @IBAction func back(_ sender: AnyObject) {
+        self.dismiss(animated: true, completion: nil)
         self.addingNewCoins = false
     }
     
-    @IBAction func repeatAnimation(sender: UIButton) {
+    @IBAction func repeatAnimation(_ sender: UIButton) {
         playAnimation()
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         for subview in coinView.subviews {
             subview.removeFromSuperview()
         }

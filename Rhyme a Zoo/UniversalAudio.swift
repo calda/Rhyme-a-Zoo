@@ -10,17 +10,17 @@ import UIKit
 import AVKit
 import AVFoundation
 
-private let UAAudioQueue = dispatch_queue_create("com.hearatale.raz.audio", DISPATCH_QUEUE_SERIAL)
+private let UAAudioQueue = DispatchQueue(label: "com.hearatale.raz.audio", attributes: [])
 private var UAAudioIsPlaying = false
 private var UAShouldHaltPlayback = false
 
 enum UAConcurrentAudioMode {
     ///The audio track will immediately start playing.
-    case Interrupt
+    case interrupt
     ///The audio track will be added to the play queue and will attempt to play after other tracks finish playing.
-    case Wait
+    case wait
     ///The audio track will only play is no other audio is playing or queued.
-    case Ignore
+    case ignore
 }
 
 func UAHaltPlayback() {
@@ -35,13 +35,13 @@ func UAIsAudioPlaying() -> Bool {
     return UAAudioIsPlaying
 }
 
-func UALengthOfFile(name: String, ofType type: String) -> NSTimeInterval {
-    if let path = NSBundle.mainBundle().pathForResource(name, ofType: type) {
-        let URL = NSURL(fileURLWithPath: path)
-        let asset = AVURLAsset(URL: URL, options: nil)
+func UALengthOfFile(_ name: String, ofType type: String) -> TimeInterval {
+    if let path = Bundle.main.path(forResource: name, ofType: type) {
+        let URL = Foundation.URL(fileURLWithPath: path)
+        let asset = AVURLAsset(url: URL, options: nil)
         
         let time = asset.duration
-        return NSTimeInterval(CMTimeGetSeconds(time))
+        return TimeInterval(CMTimeGetSeconds(time))
     }
     return 0.0
 }
@@ -52,7 +52,8 @@ class UAPlayer {
     var name: String?
     var shouldHalt = false
     
-    func play(name: String, ofType type: String, ifConcurrent mode: UAConcurrentAudioMode = .Interrupt ) -> Bool {
+    @discardableResult
+    func play(_ name: String, ofType type: String, ifConcurrent mode: UAConcurrentAudioMode = .interrupt ) -> Bool {
         
         self.name = name
         do {
@@ -60,23 +61,23 @@ class UAPlayer {
         } catch _ {
         }
         
-        if let path = NSBundle.mainBundle().pathForResource(name, ofType: type) {
-            player = try? AVAudioPlayer(data: NSData(contentsOfFile: path)!)
+        if let path = Bundle.main.path(forResource: name, ofType: type) {
+            player = try? AVAudioPlayer(data: Data(contentsOf: URL(fileURLWithPath: path)))
             
-            if mode == .Interrupt {
+            if mode == .interrupt {
                 startPlayback()
                 return true
             }
             
-            if mode == .Ignore {
+            if mode == .ignore {
                 if !UAAudioIsPlaying {
                     startPlayback()
                     return true
                 }
             }
             
-            if mode == .Wait {
-                dispatch_async(UAAudioQueue, {
+            if mode == .wait {
+                UAAudioQueue.async(execute: {
                     while(UAAudioIsPlaying) {
                         if UAShouldHaltPlayback {
                             return
@@ -96,8 +97,8 @@ class UAPlayer {
             UAAudioIsPlaying = true
             player.play()
             
-            dispatch_async(UAAudioQueue, {
-                while(player.playing) {
+            UAAudioQueue.async(execute: {
+                while(player.isPlaying) {
                     if self.shouldHalt && !self.fading {
                         sync {
                             self.doVolumeFade()

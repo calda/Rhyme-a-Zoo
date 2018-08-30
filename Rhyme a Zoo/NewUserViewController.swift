@@ -16,7 +16,7 @@ let RZUserIconOptions = ["bat", "Birds", "bunny", "calf", "cat", "cow", "dog", "
     "ferret", "gazelle", "bear", "hamster", "jellyfish", "mole", "orca", "parrot", "penguin", "rhino",
     "skunk", "snail", "turkey", "walrus", "zebra"]
 
-func updateAvailableIconsForUsers(users: [User], inout availableIcons: [String]) {
+func updateAvailableIconsForUsers(_ users: [User], availableIcons: inout [String]) {
     var userRemoved = false
     for user in users {
         let usedIcon = user.iconName
@@ -24,7 +24,7 @@ func updateAvailableIconsForUsers(users: [User], inout availableIcons: [String])
         for i_forwards in 1 ... iconCount {
             //go backwards through the array so we can take out indecies as we go
             let i = iconCount - i_forwards
-            if usedIcon.lowercaseString.hasPrefix(availableIcons[i].lowercaseString) {
+            if usedIcon.lowercased().hasPrefix(availableIcons[i].lowercased()) {
                 
                 //leave one of the user's current icon
                 if user.toUserString() == RZCurrentUser.toUserString() {
@@ -32,7 +32,7 @@ func updateAvailableIconsForUsers(users: [User], inout availableIcons: [String])
                     else { userRemoved = true }
                 }
                 
-                availableIcons.removeAtIndex(i)
+                availableIcons.remove(at: i)
             }
         }
     }
@@ -46,7 +46,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
     @IBOutlet weak var hiddenInput: UITextField!
     @IBOutlet weak var finishEditingButton: UIButton!
     @IBOutlet weak var continueButton: UIButton!
-    var instructionsTimer: NSTimer?
+    var instructionsTimer: Timer?
     
     var userInputName: String = ""
     var currentIconName: String = "Name"
@@ -64,10 +64,10 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
     
     var availableIcons = RZUserIconOptions
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         editModeBackButton.alpha = 0.0
         editModeDeleteButton.alpha = 0.0
-        continueButton.enabled = false
+        continueButton.isEnabled = false
         decorateUserIcon(selectedIcon)
         
         finishEditingButton.alpha = 0.0
@@ -86,7 +86,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
             }
         })
         
-        if let user = editUser where editMode {
+        if let user = editUser, editMode {
             selectedIcon.image = user.icon
             currentIconString = user.iconName
             nameLabel.text = user.name
@@ -101,49 +101,49 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
             //add user's icon to the available icons
             let iconFile = user.iconName
             //remove .jpg
-            let iconName = (iconFile as NSString).stringByReplacingOccurrencesOfString(".jpg", withString: "")
+            let iconName = (iconFile as NSString).replacingOccurrences(of: ".jpg", with: "")
             self.availableIcons.append(iconName)
         }
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         if UAIsAudioPlaying() {
             UAHaltPlayback()
         }
         
         if !editMode {
-            instructionsTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: #selector(NewUserViewController.playInstructionAudio), userInfo: nil, repeats: false)
+            instructionsTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(NewUserViewController.playInstructionAudio), userInfo: nil, repeats: false)
         }
     }
     
     func playInstructionAudio() {
-        UAPlayer().play("create-user", ofType: "mp3", ifConcurrent: .Interrupt)
+        UAPlayer().play("create-user", ofType: "mp3", ifConcurrent: .interrupt)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         instructionsTimer?.invalidate()
         UAHaltPlayback()
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("icon", forIndexPath: indexPath) as! UserIconCell
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "icon", for: indexPath) as! UserIconCell
         cell.decorate(availableIcons[indexPath.item])
         return cell
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return availableIcons.count
     }
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let height = collectionView.frame.height / (iPad() ? 3.0 : 2.0)
-        return CGSizeMake(height, height)
+        return CGSize(width: height, height: height)
     }
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        for visible in collectionView.visibleCells() {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        for visible in collectionView.visibleCells {
             if let cell = visible as? UserIconCell {
-                if collectionView.indexPathForCell(cell) == indexPath {
+                if collectionView.indexPath(for: cell) == indexPath {
                     
                     //user tapped this cell
                     cell.animateSelection()
@@ -152,8 +152,8 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
                     
                     let iconName = availableIcons[indexPath.item]
                     currentIconString = iconName + ".jpg"
-                    let splitIndex = iconName.startIndex.successor()
-                    currentIconName = iconName.substringToIndex(splitIndex).uppercaseString + iconName.substringFromIndex(splitIndex).lowercaseString
+                    let splitIndex = iconName.characters.index(after: iconName.startIndex)
+                    currentIconName = iconName.substring(to: splitIndex).uppercased() + iconName.substring(from: splitIndex).lowercased()
                     if userInputName == "" && !requireName {
                         nameLabel.text = currentIconName
                         nameLabel.alpha = 0.5
@@ -169,25 +169,25 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
         }
     }
     
-    func scrollViewDidScroll(scrollView: UIScrollView) {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         quitEditing(scrollView)
     }
     
-    @IBAction func editName(sender: AnyObject) {
+    @IBAction func editName(_ sender: AnyObject) {
         if editMode { return } //can't edit the name in Edit Mode
         
-        hiddenInput.autocorrectionType = UITextAutocorrectionType.No
-        hiddenInput.autocapitalizationType = UITextAutocapitalizationType.Words
+        hiddenInput.autocorrectionType = UITextAutocorrectionType.no
+        hiddenInput.autocapitalizationType = UITextAutocapitalizationType.words
         self.hiddenInput.becomeFirstResponder()
         
-        finishEditingButton.transform = CGAffineTransformMakeScale(0.5, 0.5)
-        UIView.animateWithDuration(0.8, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: [], animations: {
+        finishEditingButton.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
+        UIView.animate(withDuration: 0.8, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: [], animations: {
             self.finishEditingButton.alpha = 1.0
-            self.finishEditingButton.transform = CGAffineTransformMakeScale(1.1, 1.1)
+            self.finishEditingButton.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
         }, completion: nil)
     }
     
-    @IBAction func hiddenInputChanged(sender: UITextField) {
+    @IBAction func hiddenInputChanged(_ sender: UITextField) {
         userInputName = sender.text ?? ""
         if userInputName == " " {
             sender.text = ""
@@ -204,16 +204,16 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
         checkIfComplete()
     }
     
-    @IBAction func quitEditing(sender: AnyObject) {
+    @IBAction func quitEditing(_ sender: AnyObject) {
         self.hiddenInput.resignFirstResponder()
         checkIfComplete()
     }
 
     
-    @IBAction func editingEnded(sender: UITextField) {
-        UIView.animateWithDuration(0.5, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
+    @IBAction func editingEnded(_ sender: UITextField) {
+        UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
             self.finishEditingButton.alpha = 0.0
-            self.finishEditingButton.transform = CGAffineTransformMakeScale(0.5, 0.5)
+            self.finishEditingButton.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
         }, completion: nil)
         checkIfComplete()
     }
@@ -221,15 +221,15 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
     func checkIfComplete() {
         let icon = currentIconString != ""
         let name = !requireName || userInputName != ""
-        self.continueButton.enabled = icon && name
+        self.continueButton.isEnabled = icon && name
     }
     
-    @IBAction func cancelPressed(sender: AnyObject) {
+    @IBAction func cancelPressed(_ sender: AnyObject) {
         UAHaltPlayback()
-        self.dismissViewControllerAnimated(true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
     
-    @IBAction func continuePressed(sender: AnyObject) {
+    @IBAction func continuePressed(_ sender: AnyObject) {
         self.resignFirstResponder()
         if RZSettingRequirePasscode.currentSetting() == true {
             createPasscode("Create a passcode for \(nameLabel.text!)", currentController: self, completion: { passcode in
@@ -243,7 +243,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
         }
     }
     
-    func createNewUser(passcode: String?) {
+    func createNewUser(_ passcode: String?) {
         //create new user
         let name = nameLabel.text!
         let iconName = currentIconString
@@ -253,51 +253,51 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
         RZCurrentUser = user
         
         let mainMenu = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController()!
-        self.presentViewController(mainMenu, animated: true, completion: nil)
+        self.present(mainMenu, animated: true, completion: nil)
     }
     
     //MARK: Edit Mode (launched from Home view)
     
-    func openInEditModeForUser(user: User) {
+    func openInEditModeForUser(_ user: User) {
         self.editMode = true
         self.editUser = user
     }
     
-    @IBAction func editModeDeletePressed(sender: AnyObject) {
+    @IBAction func editModeDeletePressed(_ sender: AnyObject) {
         if let user = editUser {
             
-            let alert = UIAlertController(title: "Delete \(user.name)?", message: "You'll lose all of your progress. This cannot be undone.", preferredStyle: .Alert)
-            let nevermind = UIAlertAction(title: "Nevermind", style: .Default, handler: nil)
-            let delete = UIAlertAction(title: "Delete", style: .Destructive, handler: { action in
+            let alert = UIAlertController(title: "Delete \(user.name)?", message: "You'll lose all of your progress. This cannot be undone.", preferredStyle: .alert)
+            let nevermind = UIAlertAction(title: "Nevermind", style: .default, handler: nil)
+            let delete = UIAlertAction(title: "Delete", style: .destructive, handler: { action in
                 
                 RZUserDatabase.deleteLocalUser(user, deleteFromClassroom: true)
                 
                 //present last alert
-                let okAlert = UIAlertController(title: "Deleted \(user.name)", message: nil, preferredStyle: .Alert)
-                let ok = UIAlertAction(title: "ok", style: .Default, handler: { action in
+                let okAlert = UIAlertController(title: "Deleted \(user.name)", message: nil, preferredStyle: .alert)
+                let ok = UIAlertAction(title: "ok", style: .default, handler: { action in
                     self.editMode = false
                     dismissController(self, untilMatch: { controller in
                         return controller is UsersViewController
                     })
                 })
                 okAlert.addAction(ok)
-                self.presentViewController(okAlert, animated: true, completion: nil)
+                self.present(okAlert, animated: true, completion: nil)
                 
             })
             alert.addAction(nevermind)
             alert.addAction(delete)
-            self.presentViewController(alert, animated: true, completion: nil)
+            self.present(alert, animated: true, completion: nil)
         }
     }
     
-    @IBAction func editModeBackPressed(sender: AnyObject) {
+    @IBAction func editModeBackPressed(_ sender: AnyObject) {
         if let editUser = editUser {
             //save edits to user
             RZUserDatabase.changeLocalUserIcon(user: editUser, newIcon: currentIconString)
         }
         
         editMode = false
-        self.dismissViewControllerAnimated(true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
 
 }
@@ -306,37 +306,37 @@ class UserIconCell : UICollectionViewCell {
     
     @IBOutlet weak var iconImage: UIImageView!
     
-    func decorate(iconName: String) {
+    func decorate(_ iconName: String) {
         let image = UIImage(named: "\(iconName).jpg")
         iconImage.image = image
-        self.layer.rasterizationScale = UIScreen.mainScreen().scale
+        self.layer.rasterizationScale = UIScreen.main.scale
         self.layer.shouldRasterize = true
         
         decorateUserIcon(iconImage)
-        iconImage.transform = CGAffineTransformMakeScale(0.95, 0.95)
+        iconImage.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
     }
     
     func animateSelection() {
-        UIView.animateWithDuration(0.5, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
-            self.iconImage.transform = CGAffineTransformMakeScale(0.85, 0.85)
+        UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
+            self.iconImage.transform = CGAffineTransform(scaleX: 0.85, y: 0.85)
         }, completion: nil)
     }
     
     func animateDeselection() {
-        UIView.animateWithDuration(0.3, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
-            self.iconImage.transform = CGAffineTransformMakeScale(0.95, 0.95)
+        UIView.animate(withDuration: 0.3, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
+            self.iconImage.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
         }, completion: nil)
     }
     
 }
 
-func decorateUserIcon(view: UIView) {
+func decorateUserIcon(_ view: UIView) {
     decorateUserIcon(view, height: view.frame.height)
 }
 
-func decorateUserIcon(view: UIView, height: CGFloat) {
+func decorateUserIcon(_ view: UIView, height: CGFloat) {
     view.layer.masksToBounds = true
     view.layer.cornerRadius = height / 6.0
-    view.layer.borderColor = UIColor.whiteColor().CGColor
+    view.layer.borderColor = UIColor.white.cgColor
     view.layer.borderWidth = 2.0
 }

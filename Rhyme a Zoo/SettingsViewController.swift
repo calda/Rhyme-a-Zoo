@@ -21,9 +21,9 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
     @IBOutlet var touchRecognizer: UITouchGestureRecognizer!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         tableView.contentInset = UIEdgeInsets(top: 70.0, left: 0.0, bottom: 0.0, right: 0.0)
-        self.observeNotification(RZSetTouchDelegateEnabledNotification, selector: "setTouchRecognizerEnabled:")
+        self.observeNotification(RZSetTouchDelegateEnabledNotification, selector: #selector(SettingsViewController.setTouchRecognizerEnabled(_:)))
         self.view.clipsToBounds = true
         self.view.layer.masksToBounds = true
         tableView.clipsToBounds = false
@@ -42,13 +42,13 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
     //MARK: - Table View Data Source
     
     enum CellType {
-        case Function(function: ((SettingsViewController) -> ())?)
-        case Toggle(setting: ClassroomSetting)
-        case Title
+        case function(function: ((SettingsViewController) -> ())?)
+        case toggle(setting: ClassroomSetting)
+        case title
         
         func getFunction() -> ((SettingsViewController) -> ())? {
             switch self {
-                case .Function(let function):
+                case .function(let function):
                     return function
                 default: return nil
             }
@@ -56,7 +56,7 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
         
         func getSetting() -> ClassroomSetting? {
             switch self {
-                case .Toggle(let setting):
+                case .toggle(let setting):
                     return setting
                 default:
                     return nil
@@ -65,54 +65,54 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
     }
     
     let cells: [(identifier: String, type: CellType)] = [
-        ("students", .Function(function: { controller in
+        ("students", .function(function: { controller in
             controller.showUsers()
         })),
-        ("toggle", .Toggle(setting: RZSettingRequirePasscode)),
-        ("toggle", .Toggle(setting: RZSettingUserCreation)),
-        ("toggle", .Toggle(setting: RZSettingSkipVideos)),
-        ("passcode", .Function(function: { controller in
+        ("toggle", .toggle(setting: RZSettingRequirePasscode)),
+        ("toggle", .toggle(setting: RZSettingUserCreation)),
+        ("toggle", .toggle(setting: RZSettingSkipVideos)),
+        ("passcode", .function(function: { controller in
             controller.changePasscode()
         })),
-        ("leave", .Function(function: { controller in
+        ("leave", .function(function: { controller in
             controller.removeDeviceFromClassroom()
         })),
-        ("delete", .Function(function: { controller in
+        ("delete", .function(function: { controller in
             controller.deleteClassroom()
         }))
     ]
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return cells.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let index = indexPath.item
         let cell = cells[index]
         
         if cell.identifier == "students" {
-            let row = tableView.dequeueReusableCellWithIdentifier(cell.identifier, forIndexPath: indexPath) as! StudentsCell
+            let row = tableView.dequeueReusableCell(withIdentifier: cell.identifier, for: indexPath) as! StudentsCell
             RZUserDatabase.getUsersForClassroom(classroom, completion: { users in
                 row.decorateForUsers(users)
             })
-            row.backgroundColor = UIColor.clearColor()
+            row.backgroundColor = UIColor.clear
             return row
         }
         
         if cell.identifier == "toggle" {
-            let row = tableView.dequeueReusableCellWithIdentifier(cell.identifier, forIndexPath: indexPath) as! ToggleCell
+            let row = tableView.dequeueReusableCell(withIdentifier: cell.identifier, for: indexPath) as! ToggleCell
             if let setting = cell.type.getSetting() {
                 row.decorateForSetting(setting)
             }
             return row
         }
         
-        let row = tableView.dequeueReusableCellWithIdentifier(cell.identifier, forIndexPath: indexPath) 
-        row.backgroundColor = UIColor.clearColor()
+        let row = tableView.dequeueReusableCell(withIdentifier: cell.identifier, for: indexPath) 
+        row.backgroundColor = UIColor.clear
         return row
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let cell = cells[indexPath.item]
         if cell.identifier == "students" {
             return 75.0
@@ -122,23 +122,23 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
     
     //MARK: - User Interaction
     
-    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
     
-    @IBAction func touchRecognized(sender: UITouchGestureRecognizer) {
-        if sender.state == .Ended {
+    @IBAction func touchRecognized(_ sender: UITouchGestureRecognizer) {
+        if sender.state == .ended {
             animateSelection(nil)
         }
         
         for cell in tableView.visibleCells {
-            let touch = sender.locationInView(cell.superview!)
+            let touch = sender.location(in: cell.superview!)
             if cell.frame.contains(touch) {
                 
-                if let index = tableView.indexPathForCell(cell)?.item {
+                if let index = tableView.indexPath(for: cell)?.item {
                     let delegate = tableView.delegate as? SettingsViewTableDelegate
                     
-                    if sender.state == .Ended {
+                    if sender.state == .ended {
                         delegate?.processSelectedCell(index)
                     }
                     else {
@@ -151,7 +151,7 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
         }
     }
     
-    func processSelectedCell(index: Int) {
+    func processSelectedCell(_ index: Int) {
         let cell = cells[index]
         //call function for cell
         if let function = cell.type.getFunction() {
@@ -159,39 +159,39 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
         }
     }
     
-    func canHighlightCell(index: Int) -> Bool {
+    func canHighlightCell(_ index: Int) -> Bool {
         let cell = cells[index]
         return cell.type.getFunction() != nil
     }
     
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-        postNotification(RZSetTouchDelegateEnabledNotification, object: false)
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        postNotification(RZSetTouchDelegateEnabledNotification, object: NSNumber(value: false))
         delay(0.5) {
-            postNotification(RZSetTouchDelegateEnabledNotification, object: true)
+            postNotification(RZSetTouchDelegateEnabledNotification, object: NSNumber(value: true))
         }
     }
     
-    func setTouchRecognizerEnabled(notification: NSNotification) {
-        if let enabled = notification.object as? Bool {
-            touchRecognizer.enabled = enabled
-            if enabled == false {
+    func setTouchRecognizerEnabled(_ notification: Notification) {
+        if let enabled = notification.object as? NSNumber {
+            touchRecognizer.isEnabled = enabled.boolValue
+            if enabled.boolValue == false {
                 animateSelection(nil)
             }
         }
     }
     
-    func animateSelection(index: Int?) {
+    func animateSelection(_ index: Int?) {
         for cell in tableView.visibleCells {
             
-            if let indexPath = tableView.indexPathForCell(cell) where indexPath.item == index && touchRecognizer.enabled {
-                UIView.animateWithDuration(0.15) {
+            if let indexPath = tableView.indexPath(for: cell), indexPath.item == index && touchRecognizer.isEnabled {
+                UIView.animate(withDuration: 0.15, animations: {
                     cell.backgroundColor = UIColor(white: 1.0, alpha: 0.1)
-                }
+                }) 
             }
             else {
-                UIView.animateWithDuration(0.15) {
+                UIView.animate(withDuration: 0.15, animations: {
                     cell.backgroundColor = UIColor(white: 1.0, alpha: 0.0)
-                }
+                }) 
             }
             
         }
@@ -205,9 +205,9 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
             if let newPasscode = newPasscode {
                 self.classroom.passcode = newPasscode
                 RZUserDatabase.saveClassroom(self.classroom)
-                let alert = UIAlertController(title: "Passcode Changed", message: nil, preferredStyle: .Alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
-                self.presentViewController(alert, animated: true, completion: nil)
+                let alert = UIAlertController(title: "Passcode Changed", message: nil, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
             }
             
         })
@@ -216,25 +216,25 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
     func removeDeviceFromClassroom() {
         
         //prompt with alert
-        let alert = UIAlertController(title: "Remove this device from your classroom?", message: "You can rejoin at any time.", preferredStyle: .Alert)
-        alert.addAction(UIAlertAction(title: "Nevermind", style: .Default, handler: nil))
-        alert.addAction(UIAlertAction(title: "Leave", style: .Destructive, handler: { _ in
+        let alert = UIAlertController(title: "Remove this device from your classroom?", message: "You can rejoin at any time.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Nevermind", style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: "Leave", style: .destructive, handler: { _ in
         
             let classroomName = self.classroom.name
             RZUserDatabase.unlinkClassroom()
             
             //give the server a sec to catch up
             //show alert then dismiss
-            let alert = UIAlertController(title: "Removing this device from \"\(classroomName)\"", message: "", preferredStyle: .Alert)
-            self.presentViewController(alert, animated: true, completion: nil)
+            let alert = UIAlertController(title: "Removing this device from \"\(classroomName)\"", message: "", preferredStyle: .alert)
+            self.present(alert, animated: true, completion: nil)
             delay(3.0) {
-                self.dismissViewControllerAnimated(true, completion: {
-                    self.dismissViewControllerAnimated(true, completion: nil)
+                self.dismiss(animated: true, completion: {
+                    self.dismiss(animated: true, completion: nil)
                 })
             }
         
         }))
-        self.presentViewController(alert, animated: true, completion: nil)
+        self.present(alert, animated: true, completion: nil)
         
     }
     
@@ -242,9 +242,9 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
     func deleteClassroom() {
         
         //prompt with alert
-        let alert = UIAlertController(title: "Are you sure you want to delete \"\(classroom.name)\"", message: "This cannot be undone. All user progress will be lost forever.", preferredStyle: .Alert)
-        alert.addAction(UIAlertAction(title: "Nevermind", style: .Default, handler: nil))
-        alert.addAction(UIAlertAction(title: "Delete", style: .Destructive, handler: { _ in
+        let alert = UIAlertController(title: "Are you sure you want to delete \"\(classroom.name)\"", message: "This cannot be undone. All user progress will be lost forever.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Nevermind", style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in
             
             requestPasscode(self.classroom.passcode, description: "Verify passcode to delete Classroom.", currentController: self, completion: {
                 let classroomName = self.classroom.name
@@ -253,29 +253,29 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
                 
                 //give the server a sec to catch up
                 //show alert then dismiss
-                let alert = UIAlertController(title: "Deleting \"\(classroomName)\"", message: "", preferredStyle: .Alert)
-                self.presentViewController(alert, animated: true, completion: nil)
+                let alert = UIAlertController(title: "Deleting \"\(classroomName)\"", message: "", preferredStyle: .alert)
+                self.present(alert, animated: true, completion: nil)
                 delay(3.0) {
-                    self.dismissViewControllerAnimated(true, completion: {
-                        self.dismissViewControllerAnimated(true, completion: nil)
+                    self.dismiss(animated: true, completion: {
+                        self.dismiss(animated: true, completion: nil)
                     })
                 }
             })
         
         }))
         
-        self.presentViewController(alert, animated: true, completion: nil)
+        self.present(alert, animated: true, completion: nil)
         
     }
     
     func showUsers() {
         let delegate = SettingsUsersDelegate(self)
         switchToDelegate(delegate, isBack: false, atOffset: nil)
-        self.activityIndicator.hidden = false
+        self.activityIndicator.isHidden = false
         RZUserDatabase.getUsersForClassroom(self.classroom, completion: { users in
             delay(0.3) {
                 delegate.users = users
-                self.activityIndicator.hidden = true
+                self.activityIndicator.isHidden = true
             }
         })
     }
@@ -285,19 +285,19 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
     var delegateStack: Stack<(delegate: SettingsViewTableDelegate, contentOffset: CGPoint)> = Stack()
     var currentDelegate: SettingsViewTableDelegate!
     
-    @IBAction func backButtonPressed(sender: AnyObject) {
+    @IBAction func backButtonPressed(_ sender: AnyObject) {
         if let (newDelegate, offset) = delegateStack.pop() {
             switchToDelegate(newDelegate, isBack: true, atOffset: offset)
         }
         else if sender is UIButton {
             //already on the last delegate
-            self.dismissViewControllerAnimated(true, completion: nil)
+            self.dismiss(animated: true, completion: nil)
         }
     }
     
-    func switchToDelegate(delegate: SettingsViewTableDelegate, isBack: Bool, atOffset offset: CGPoint?) {
-        self.activityIndicator.hidden = true
-        if let currentDelegate = tableView.delegate as? SettingsViewTableDelegate where !isBack {
+    func switchToDelegate(_ delegate: SettingsViewTableDelegate, isBack: Bool, atOffset offset: CGPoint?) {
+        self.activityIndicator.isHidden = true
+        if let currentDelegate = tableView.delegate as? SettingsViewTableDelegate, !isBack {
             let delegateInfo = (delegate: currentDelegate, contentOffset: self.tableView.contentOffset)
             delegateStack.push(delegateInfo)
         }
@@ -315,8 +315,8 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
         
         //change button
         let image = delegate.getBackButtonImage()
-        backButton.setImage(image, forState: .Normal)
-        self.tableView.contentOffset = offset ?? CGPointMake(0.0, -70.0)
+        backButton.setImage(image, for: UIControlState())
+        self.tableView.contentOffset = offset ?? CGPoint(x: 0.0, y: -70.0)
         playTransitionForView(backButton, duration: 0.3, transition: kCATransitionFade)
     }
     
@@ -326,11 +326,11 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
 
 protocol SettingsViewTableDelegate : UITableViewDelegate, UITableViewDataSource {
     
-    func processSelectedCell(index: Int)
-    func canHighlightCell(index: Int) -> Bool
+    func processSelectedCell(_ index: Int)
+    func canHighlightCell(_ index: Int) -> Bool
     func getTitle() -> String
     func getBackButtonImage() -> UIImage
-    func scrollViewDidScroll(scrollView: UIScrollView)
+    func scrollViewDidScroll(_ scrollView: UIScrollView)
     
 }
 
@@ -373,46 +373,46 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
     
     //MARK: Table View Data Source
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return users.count + additionalCells
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let index = indexPath.item
         if index == 0 {
-            let cell = tableView.dequeueReusableCellWithIdentifier("newUser", forIndexPath: indexPath) 
-            cell.backgroundColor = UIColor.clearColor()
+            let cell = tableView.dequeueReusableCell(withIdentifier: "newUser", for: indexPath) 
+            cell.backgroundColor = UIColor.clear
             return cell
         }
         if index == 1 && showCustomEmailCell {
-            let cell = tableView.dequeueReusableCellWithIdentifier("dataEmail", forIndexPath: indexPath) 
-            cell.backgroundColor = UIColor.clearColor()
+            let cell = tableView.dequeueReusableCell(withIdentifier: "dataEmail", for: indexPath) 
+            cell.backgroundColor = UIColor.clear
             return cell
         }
         if index == 2 && showPasscodeEmailCell {
-            let cell = tableView.dequeueReusableCellWithIdentifier("passcodeEmail", forIndexPath: indexPath) 
-            cell.backgroundColor = UIColor.clearColor()
+            let cell = tableView.dequeueReusableCell(withIdentifier: "passcodeEmail", for: indexPath) 
+            cell.backgroundColor = UIColor.clear
             return cell
         }
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("user", forIndexPath: indexPath) as! UserNameCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "user", for: indexPath) as! UserNameCell
         cell.decorateForUser(users[index - additionalCells])
-        cell.backgroundColor = UIColor.clearColor()
+        cell.backgroundColor = UIColor.clear
         return cell
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return indexPath.item == 0 ? 75.0 : 50.0
     }
     
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-        postNotification(RZSetTouchDelegateEnabledNotification, object: false)
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        postNotification(RZSetTouchDelegateEnabledNotification, object: NSNumber(value: false))
         delay(0.5) {
-            postNotification(RZSetTouchDelegateEnabledNotification, object: true)
+            postNotification(RZSetTouchDelegateEnabledNotification, object: NSNumber(value: true))
         }
     }
     
-    func processSelectedCell(index: Int) {
+    func processSelectedCell(_ index: Int) {
         if index == 0 {
             startNewStudentFlow()
         }
@@ -430,26 +430,26 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
         }
     }
     
-    func canHighlightCell(index: Int) -> Bool {
+    func canHighlightCell(_ index: Int) -> Bool {
         return true
     }
     
     //MARK: Adding New Students
     
-    func startNewStudentFlow(message: String? = nil) {
+    func startNewStudentFlow(_ message: String? = nil) {
         //show name alert
-        let alert = UIAlertController(title: "Add New Student", message: nil, preferredStyle: .Alert)
+        let alert = UIAlertController(title: "Add New Student", message: nil, preferredStyle: .alert)
         var textField: UITextField?
-        alert.addTextFieldWithConfigurationHandler() { field in
+        alert.addTextField() { field in
             field.placeholder = "Type the student's name."
-            field.autocapitalizationType = .Words
-            field.autocorrectionType = .No
+            field.autocapitalizationType = .words
+            field.autocorrectionType = .no
             textField = field
         }
-        alert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: nil))
-        alert.addAction(UIAlertAction(title: "Done", style: .Default, handler: { _ in
+        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { _ in
             
-            if let name = textField?.text where name.characters.count > 0 {
+            if let name = textField?.text, name.characters.count > 0 {
                 //pick a random icon name
                 var icons = RZUserIconOptions.shuffled()
                 updateAvailableIconsForUsers(self.users, availableIcons: &icons)
@@ -462,13 +462,13 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
             
         }))
         
-        settingsController.presentViewController(alert, animated: true, completion: nil)
+        settingsController.present(alert, animated: true, completion: nil)
     }
     
-    func getPasscodeForNewStudentFlow(name: String, iconName: String) {
+    func getPasscodeForNewStudentFlow(_ name: String, iconName: String) {
         if RZSettingRequirePasscode.currentSetting() == true {
-            let alert = UIAlertController(title: "Add a Passcode", message: "To keep your student's profile safe, please choose an option to assign them a passcode.", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Random", style: .Default, handler: { _ in
+            let alert = UIAlertController(title: "Add a Passcode", message: "To keep your student's profile safe, please choose an option to assign them a passcode.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Random", style: .default, handler: { _ in
                 //generate a 4-digit passcode
                 var passcode: String = ""
                 for _ in 1...4 {
@@ -478,7 +478,7 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
                  self.finishNewStudentFlow(name, iconName: iconName, passcode: passcode)
             }))
             
-            alert.addAction(UIAlertAction(title: "Custom", style: UIAlertActionStyle.Default, handler: { _ in
+            alert.addAction(UIAlertAction(title: "Custom", style: UIAlertActionStyle.default, handler: { _ in
                 //show password dialog
                 createPasscode("Create a custom 4-digit passcode for \(name)", currentController: self.settingsController, completion: { passcode in
                     if let passcode = passcode {
@@ -489,30 +489,30 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
                 })
             }))
             
-            alert.addAction(UIAlertAction(title: "Don't add a Passcode", style: .Destructive, handler: { _ in
+            alert.addAction(UIAlertAction(title: "Don't add a Passcode", style: .destructive, handler: { _ in
                 self.finishNewStudentFlow(name, iconName: iconName, passcode: nil)
             }))
             
-            settingsController.presentViewController(alert, animated: true, completion: nil)
+            settingsController.present(alert, animated: true, completion: nil)
         }
         else {
             finishNewStudentFlow(name, iconName: iconName, passcode: nil)
         }
     }
     
-    func finishNewStudentFlow(name: String, iconName: String, passcode: String?) {
+    func finishNewStudentFlow(_ name: String, iconName: String, passcode: String?) {
         let user = User(name: name, iconName: iconName, passcode: passcode)
         users.append(user)
         //sort the new array by name again
         let nsusers = users as NSArray
-        users = nsusers.sortedArrayUsingDescriptors([NSSortDescriptor(key: "name", ascending: true)]) as! [User]
+        users = nsusers.sortedArray(using: [NSSortDescriptor(key: "name", ascending: true)]) as! [User]
         tableView.reloadData()
         
         //show an alert
         let message = passcode != nil ? "Passcode: \(passcode!)" : ""
-        let alert = UIAlertController(title: "Created \(name)", message: message, preferredStyle: .Alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
-        settingsController.presentViewController(alert, animated: true, completion: nil)
+        let alert = UIAlertController(title: "Created \(name)", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        settingsController.present(alert, animated: true, completion: nil)
     }
     
     //MARK: Other Interactions
@@ -521,9 +521,9 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
         
         if !MFMailComposeViewController.canSendMail() {
             //show an alert to tell the user to set up mail
-            let alert = UIAlertController(title: "You haven't set up your email yet.", message: "Set up your email in the Settings App and then try again.", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Nevermind", style: .Destructive, handler: nil))
-            alert.addAction(UIAlertAction(title: "Settings", style: .Default, handler: { _ in
+            let alert = UIAlertController(title: "You haven't set up your email yet.", message: "Set up your email in the Settings App and then try again.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Nevermind", style: .destructive, handler: nil))
+            alert.addAction(UIAlertAction(title: "Settings", style: .default, handler: { _ in
                 openSettings()
             }))
             return
@@ -557,16 +557,16 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
         
         mail.setMessageBody(messageBody, isHTML: true)
         
-        settingsController.presentViewController(mail, animated: true, completion: nil)
+        settingsController.present(mail, animated: true, completion: nil)
         
         
     }
     
-    func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
-        controller.dismissViewControllerAnimated(true, completion: nil)
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        controller.dismiss(animated: true, completion: nil)
     }
     
-    func showStudentStatistics(user: User) {
+    func showStudentStatistics(_ user: User) {
         let newDelegate = SettingsUserStatisticsDelegate(user: user, settingsController: settingsController)
         settingsController.switchToDelegate(newDelegate, isBack: false, atOffset: nil)
     }
@@ -615,7 +615,7 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
                 cell.setIndent(0)
                 
                 if user.passcode == nil && RZSettingRequirePasscode.currentSetting() == true {
-                    cell.itemLabel.textColor = UIColor.redColor()
+                    cell.itemLabel.textColor = UIColor.red
                     cell.itemLabel.alpha = 0.4
                 }
             }
@@ -673,7 +673,7 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
                     }
                     else {
                         cell.setTitle("Last played ")
-                        let dateString = NSDateFormatter.localizedStringFromDate(date, dateStyle: .MediumStyle, timeStyle: .NoStyle)
+                        let dateString = DateFormatter.localizedString(from: date as Date, dateStyle: .medium, timeStyle: .none)
                         cell.setItem(dateString)
                     }
                 } else {
@@ -895,19 +895,19 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
         
     ]
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return SettingsUserStatisticsDelegate.cells.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cellInfo = SettingsUserStatisticsDelegate.cells[indexPath.item]
-        let row = tableView.dequeueReusableCellWithIdentifier(cellInfo.identifier, forIndexPath: indexPath) 
+        let row = tableView.dequeueReusableCell(withIdentifier: cellInfo.identifier, for: indexPath) 
         cellInfo.decorate?(row, self.user)
-        row.backgroundColor = UIColor.clearColor()
+        row.backgroundColor = UIColor.clear
         return row
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let id = SettingsUserStatisticsDelegate.cells[indexPath.item].identifier
         if id == "bigUser" { return 100.0}
         if id == "blank" { return 30.0 }
@@ -915,20 +915,20 @@ class SettingsUserStatisticsDelegate : NSObject, SettingsViewTableDelegate {
         return 40.0
     }
     
-    func canHighlightCell(index: Int) -> Bool {
+    func canHighlightCell(_ index: Int) -> Bool {
         return SettingsUserStatisticsDelegate.cells[index].tap != nil
     }
     
-    func processSelectedCell(index: Int) {
+    func processSelectedCell(_ index: Int) {
         if let tapFunction = SettingsUserStatisticsDelegate.cells[index].tap {
             tapFunction(user, settingsController)
         }
     }
     
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-        postNotification(RZSetTouchDelegateEnabledNotification, object: false)
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        postNotification(RZSetTouchDelegateEnabledNotification, object: NSNumber(value: false))
         delay(0.5) {
-            postNotification(RZSetTouchDelegateEnabledNotification, object: true)
+            postNotification(RZSetTouchDelegateEnabledNotification, object: NSNumber(value: true))
         }
     }
     
@@ -966,7 +966,7 @@ class SettingsQuizScoresDelegate: NSObject, SettingsViewTableDelegate {
                     }
                     let data = (rhymeName: quiz.name + " (#\(quizIndex))", score: coinString)
                     processedData.append(data)
-                    quizData.removeValueForKey(numberString)
+                    quizData.removeValue(forKey: numberString)
                 }
             }
             
@@ -983,41 +983,41 @@ class SettingsQuizScoresDelegate: NSObject, SettingsViewTableDelegate {
         return UIImage(named: "button-back")!
     }
     
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-        postNotification(RZSetTouchDelegateEnabledNotification, object: false)
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        postNotification(RZSetTouchDelegateEnabledNotification, object: NSNumber(value: false))
         delay(0.5) {
-            postNotification(RZSetTouchDelegateEnabledNotification, object: true)
+            postNotification(RZSetTouchDelegateEnabledNotification, object: NSNumber(value: true))
         }
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return quizData.count + 1
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let index = indexPath.item
         if index == 0 {
-            let cell = tableView.dequeueReusableCellWithIdentifier("bigUser", forIndexPath: indexPath) as! BigUserCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "bigUser", for: indexPath) as! BigUserCell
             cell.decorateForUser(self.user, controller: settingsController)
             return cell
         }
         else {
             let (rhymeName, score) = quizData[index - 1]
-            let cell = tableView.dequeueReusableCellWithIdentifier("userInfoRight", forIndexPath: indexPath) as! UserInfoCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "userInfoRight", for: indexPath) as! UserInfoCell
             cell.setTitle(rhymeName)
             cell.setItem(score)
             cell.setIndent(0)
             cell.makeItemResistCompression()
-            cell.backgroundColor = UIColor.clearColor()
+            cell.backgroundColor = UIColor.clear
             return cell
         }
     }
     
-    func canHighlightCell(index: Int) -> Bool {
+    func canHighlightCell(_ index: Int) -> Bool {
         return false
     }
     
-    func processSelectedCell(index: Int) {
+    func processSelectedCell(_ index: Int) {
         return
     }
     
@@ -1058,33 +1058,33 @@ class SettingsComposeEmailDelegate : NSObject, SettingsViewTableDelegate, MFMail
         return UIImage(named: "button-back")!
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return cells.count + 2
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.item == 0 {
-            let cell = tableView.dequeueReusableCellWithIdentifier("emailHeader", forIndexPath: indexPath) 
-            cell.backgroundColor = UIColor.clearColor()
+            let cell = tableView.dequeueReusableCell(withIdentifier: "emailHeader", for: indexPath) 
+            cell.backgroundColor = UIColor.clear
             return cell
         }
         if indexPath.item == cells.count + 1 {
-            let cell = tableView.dequeueReusableCellWithIdentifier("sendEmail", forIndexPath: indexPath) 
-            cell.backgroundColor = UIColor.clearColor()
+            let cell = tableView.dequeueReusableCell(withIdentifier: "sendEmail", for: indexPath) 
+            cell.backgroundColor = UIColor.clear
             return cell
         }
         
         let cellInfo = cells[indexPath.item - 1]
-        let row = tableView.dequeueReusableCellWithIdentifier(cellInfo.identifier, forIndexPath: indexPath) 
+        let row = tableView.dequeueReusableCell(withIdentifier: cellInfo.identifier, for: indexPath) 
         cellInfo.decorate?(row, users[0])
         if let row = row as? UserInfoCheckCell {
             row.setChecked(cellInfo.selected, animated: false)
         }
-        row.backgroundColor = UIColor.clearColor()
+        row.backgroundColor = UIColor.clear
         return row
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.item == 0 || indexPath.item == cells.count + 1 {
             return 75.0
         }
@@ -1094,7 +1094,7 @@ class SettingsComposeEmailDelegate : NSObject, SettingsViewTableDelegate, MFMail
         return 50.0
     }
     
-    func canHighlightCell(index: Int) -> Bool {
+    func canHighlightCell(_ index: Int) -> Bool {
         if index == 0 { return false }
         if index == cells.count + 1 { return true }
         
@@ -1102,7 +1102,7 @@ class SettingsComposeEmailDelegate : NSObject, SettingsViewTableDelegate, MFMail
         return true
     }
     
-    func processSelectedCell(index: Int) {
+    func processSelectedCell(_ index: Int) {
         if index == cells.count + 1 {
             sendCustomEmail()
         }
@@ -1115,17 +1115,17 @@ class SettingsComposeEmailDelegate : NSObject, SettingsViewTableDelegate, MFMail
             cell = cells[index - 1]
             
             //get the row and toggle the button
-            let indexPath = NSIndexPath(forRow: index, inSection: 0)
-            if let row = settingsController.tableView.cellForRowAtIndexPath(indexPath) as? UserInfoCheckCell {
+            let indexPath = IndexPath(row: index, section: 0)
+            if let row = settingsController.tableView.cellForRow(at: indexPath) as? UserInfoCheckCell {
                 row.setChecked(cell.selected, animated: true)
             }
         }
     }
     
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-        postNotification(RZSetTouchDelegateEnabledNotification, object: false)
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        postNotification(RZSetTouchDelegateEnabledNotification, object: NSNumber(value: false))
         delay(0.5) {
-            postNotification(RZSetTouchDelegateEnabledNotification, object: true)
+            postNotification(RZSetTouchDelegateEnabledNotification, object: NSNumber(value: true))
         }
     }
     
@@ -1133,9 +1133,9 @@ class SettingsComposeEmailDelegate : NSObject, SettingsViewTableDelegate, MFMail
         
         if !MFMailComposeViewController.canSendMail() {
             //show an alert to tell the user to set up mail
-            let alert = UIAlertController(title: "You haven't set up your email yet.", message: "Set up your email in the Settings App and then try again.", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Nevermind", style: .Destructive, handler: nil))
-            alert.addAction(UIAlertAction(title: "Settings", style: .Default, handler: { _ in
+            let alert = UIAlertController(title: "You haven't set up your email yet.", message: "Set up your email in the Settings App and then try again.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Nevermind", style: .destructive, handler: nil))
+            alert.addAction(UIAlertAction(title: "Settings", style: .default, handler: { _ in
                 openSettings()
             }))
             return
@@ -1146,7 +1146,7 @@ class SettingsComposeEmailDelegate : NSObject, SettingsViewTableDelegate, MFMail
         mail.setSubject("Rhyme a Zoo Student Data")
         mail.mailComposeDelegate = self
         
-        settingsController.presentViewController(mail, animated: true, completion: nil)
+        settingsController.present(mail, animated: true, completion: nil)
     }
     
     func createEmailBody() -> String {
@@ -1156,9 +1156,9 @@ class SettingsComposeEmailDelegate : NSObject, SettingsViewTableDelegate, MFMail
         //add introduction
         emailBody += "<b>Rhyme a Zoo Student Data:</b> \(settingsController.classroom.name)</br>"
         
-        let now = NSDate()
-        let dateString = NSDateFormatter.localizedStringFromDate(now, dateStyle: .MediumStyle, timeStyle: .NoStyle)
-        let timeString = NSDateFormatter.localizedStringFromDate(now, dateStyle: .NoStyle, timeStyle: .ShortStyle)
+        let now = Date()
+        let dateString = DateFormatter.localizedString(from: now, dateStyle: .medium, timeStyle: .none)
+        let timeString = DateFormatter.localizedString(from: now, dateStyle: .none, timeStyle: .short)
         let nowString = "\(dateString) at \(timeString)"
         emailBody += "<i>This data was generated on \(nowString).</i></br></br>"
         
@@ -1171,11 +1171,10 @@ class SettingsComposeEmailDelegate : NSObject, SettingsViewTableDelegate, MFMail
             var currentCell = 1
             
             for (identifier, decorate, selected) in cells {
-                currentCell++
+                currentCell += 1
                 if !selected { continue }
                 
-                let indexPath = NSIndexPath(forRow: currentCell, inSection: 0)
-                if let cell = settingsController.tableView.dequeueReusableCellWithIdentifier(identifier) as? UserInfoCell {
+                if let cell = settingsController.tableView.dequeueReusableCell(withIdentifier: identifier) as? UserInfoCell {
                     decorate?(cell, user)
                     //create string from cell
                     let unknown = "Unknown"
@@ -1190,8 +1189,8 @@ class SettingsComposeEmailDelegate : NSObject, SettingsViewTableDelegate, MFMail
         return emailBody
     }
     
-    func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
-        controller.dismissViewControllerAnimated(true, completion: nil)
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        controller.dismiss(animated: true, completion: nil)
     }
     
 }
@@ -1204,9 +1203,9 @@ class StudentsCell : UITableViewCell {
     @IBOutlet weak var label: UILabel!
     var previousUserCount = 0
     
-    func decorateForUsers(usersArray: [User]) {
+    func decorateForUsers(_ usersArray: [User]) {
         let contentView = label.superview!
-        let users = Array(usersArray.reverse()) //reverse user array since we draw it backwards
+        let users = Array(usersArray.reversed()) //reverse user array since we draw it backwards
         
         label.text = users.count == 0 ? "Add Students" : "View All Students"
         
@@ -1222,14 +1221,14 @@ class StudentsCell : UITableViewCell {
         //add new image views
         let endX = label.frame.origin.x + label.frame.width
         let height = label.frame.height * 1.3
-        let size = CGSizeMake(height, height)
-        let y = CGRectGetMidY(label.frame) - height / 2
+        let size = CGSize(width: height, height: height)
+        let y = label.frame.midY - height / 2
         
         var currentX = contentView.frame.width - size.width
         var currentUser = 0
         
         while currentX > endX && currentUser < users.count {
-            let origin = CGPointMake(currentX, y)
+            let origin = CGPoint(x: currentX, y: y)
             let image = UIImageView(image: users[currentUser].icon)
             image.frame = CGRect(origin: origin, size: size)
             decorateUserIcon(image)
@@ -1237,17 +1236,17 @@ class StudentsCell : UITableViewCell {
             downsampleImageInView(image)
             
             if previousUserCount == 0 {
-                image.transform = CGAffineTransformMakeTranslation(0.0, 5.0)
+                image.transform = CGAffineTransform(translationX: 0.0, y: 5.0)
             }
             
             image.alpha = 0.0
-            UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
+            UIView.animate(withDuration: 0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.curveEaseOut, animations: {
                 image.alpha = 1.0
-                image.transform = CGAffineTransformMakeTranslation(0.0, 0.0)
+                image.transform = CGAffineTransform(translationX: 0.0, y: 0.0)
             }, completion: nil)
             
             currentX -= size.width + 5.0
-            currentUser++
+            currentUser += 1
         }
         
         previousUserCount = users.count
@@ -1263,21 +1262,21 @@ class ToggleCell : UITableViewCell {
     
     var setting: ClassroomSetting?
     
-    func decorateForSetting(setting: ClassroomSetting) {
+    func decorateForSetting(_ setting: ClassroomSetting) {
         self.setting = setting
-        self.backgroundColor = UIColor.clearColor()
+        self.backgroundColor = UIColor.clear
         
         nameLabel.text = setting.name
         descriptionLabel.text = setting.description
         if let current = setting.currentSetting() {
-            toggleSwitch.on = current
+            toggleSwitch.isOn = current
         }
     }
     
-    @IBAction func switchToggled(sender: UISwitch) {
-        setting?.updateSetting(sender.on)
+    @IBAction func switchToggled(_ sender: UISwitch) {
+        setting?.updateSetting(sender.isOn)
         
-        if let setting = setting where setting.key == RZSettingRequirePasscode.key && sender.on {
+        if let setting = setting, setting.key == RZSettingRequirePasscode.key && sender.isOn {
             //make sure all users have passcodes
             checkAllUsersHavePasscode()
         }
@@ -1291,20 +1290,20 @@ class UserNameCell : UITableViewCell {
     @IBOutlet weak var icon: UIImageView!
     @IBOutlet weak var passcodeLabel: UILabel!
     
-    func decorateForUser(user: User) {
+    func decorateForUser(_ user: User) {
         nameLabel.text = user.name
         icon.image = user.icon
         decorateUserIcon(icon)
         downsampleImageInView(icon)
         
-        if let passcode = user.passcode where RZSettingRequirePasscode.currentSetting() == true {
+        if let passcode = user.passcode, RZSettingRequirePasscode.currentSetting() == true {
             passcodeLabel.text = "passcode: \(passcode)"
-            passcodeLabel.textColor = UIColor.whiteColor()
+            passcodeLabel.textColor = UIColor.white
             passcodeLabel.alpha = 0.5
         } else {
             if RZSettingRequirePasscode.currentSetting() == true {
                 passcodeLabel.text = "no passcode set"
-                passcodeLabel.textColor = UIColor.redColor()
+                passcodeLabel.textColor = UIColor.red
                 passcodeLabel.alpha = 0.4
             }
             else {
@@ -1324,7 +1323,7 @@ class BigUserCell : UITableViewCell {
     var controller: SettingsViewController?
     var user: User?
     
-    func decorateForUser(user: User, controller: SettingsViewController) {
+    func decorateForUser(_ user: User, controller: SettingsViewController) {
         nameLabel.text = user.name
         icon.image = user.icon
         decorateUserIcon(icon)
@@ -1333,15 +1332,15 @@ class BigUserCell : UITableViewCell {
         self.controller = controller
         self.user = user
         
-        self.deleteButton.hidden = self.frame.height != 100.0
+        self.deleteButton.isHidden = self.frame.height != 100.0
     }
     
-    @IBAction func deletePressed(sender: AnyObject) {
+    @IBAction func deletePressed(_ sender: AnyObject) {
         if let user = user, let controller = controller {
             //confirm with alert
-            let alert = UIAlertController(title: "Delete \(user.name)?", message: "This student will lose all of their progress forever.", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Nevermind", style: .Default, handler: nil))
-            alert.addAction(UIAlertAction(title: "Delete", style: .Destructive, handler: { _ in
+            let alert = UIAlertController(title: "Delete \(user.name)?", message: "This student will lose all of their progress forever.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Nevermind", style: .default, handler: nil))
+            alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in
                 
                 RZUserDatabase.deleteLocalUser(user, deleteFromClassroom: true)
                 controller.backButtonPressed(self)
@@ -1356,7 +1355,7 @@ class BigUserCell : UITableViewCell {
                 }
                 
             }))
-            controller.presentViewController(alert, animated: true, completion: nil)
+            controller.present(alert, animated: true, completion: nil)
         }
     }
     
@@ -1368,30 +1367,30 @@ class UserInfoCell : UITableViewCell {
     @IBOutlet weak var itemLabel: UILabel!
     @IBOutlet weak var titleLeading: NSLayoutConstraint!
     
-    func setTitle(string: String) {
+    func setTitle(_ string: String) {
         titleLabel.text = string
-        self.accessoryType = .None
+        self.accessoryType = .none
     }
     
-    func setItem(string: String?) {
+    func setItem(_ string: String?) {
         itemLabel.text = string
-        itemLabel.textColor = UIColor.whiteColor()
+        itemLabel.textColor = UIColor.white
         itemLabel.alpha = 0.7
-        itemLabel.setContentCompressionResistancePriority(750.0, forAxis: UILayoutConstraintAxis.Horizontal)
+        itemLabel.setContentCompressionResistancePriority(750.0, for: UILayoutConstraintAxis.horizontal)
     }
     
-    func setIndent(level: Int) {
+    func setIndent(_ level: Int) {
         let indent = CGFloat(level) * 30.0
         titleLeading.constant = indent
         self.layoutIfNeeded()
     }
     
-    func setHasFunction(hasFunction: Bool) {
-        self.accessoryType = hasFunction ? .DisclosureIndicator : .None
+    func setHasFunction(_ hasFunction: Bool) {
+        self.accessoryType = hasFunction ? .disclosureIndicator : .none
     }
     
     func makeItemResistCompression() {
-        itemLabel.setContentCompressionResistancePriority(800.0, forAxis: UILayoutConstraintAxis.Horizontal)
+        itemLabel.setContentCompressionResistancePriority(800.0, for: UILayoutConstraintAxis.horizontal)
     }
     
 }
@@ -1400,14 +1399,14 @@ class UserInfoCheckCell : UserInfoCell {
     
     @IBOutlet weak var check: UIImageView!
     
-    func setChecked(checked: Bool, animated: Bool) {
+    func setChecked(_ checked: Bool, animated: Bool) {
         check.image = UIImage(named: checked ? "button-check" : "button-cancel")
         let scale: CGFloat = checked ? 1.3 : 1.0
-        let transform = CGAffineTransformMakeScale(scale, scale)
+        let transform = CGAffineTransform(scaleX: scale, y: scale)
         let alpha: CGFloat = checked ? 1.0 : 0.75
         
         if animated {
-            UIView.animateWithDuration(0.6, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: [], animations: {
+            UIView.animate(withDuration: 0.6, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: [], animations: {
                 self.check.transform = transform
                 self.check.alpha = alpha
             }, completion: nil)
@@ -1418,14 +1417,14 @@ class UserInfoCheckCell : UserInfoCell {
         }
     }
     
-    override func setItem(string: String?) {
+    override func setItem(_ string: String?) {
         super.setItem(string)
         itemLabel.alpha = 0.0
     }
     
-    override func setTitle(string: String) {
+    override func setTitle(_ string: String) {
         if string.hasSuffix(":") {
-            let truncated = string.substringToIndex(string.endIndex.predecessor())
+            let truncated = string.substring(to: string.characters.index(before: string.endIndex))
             super.setTitle(truncated)
         }
         else {
@@ -1455,8 +1454,8 @@ func checkAllUsersHavePasscode() {
                 if noPasscode.count > 0 {
                     //ask if we should generate passcodes for users without them
                     let plural = noPasscode.count == 1 ? " doesn't have a passcode." : " don't have passcodes."
-                    let alert = UIAlertController(title: "Passcodes Enabled", message: "...but \(noPasscode.count) user\(plural) This means anybody with access to your classroom can play on their profile. Would you like us to create passcodes for them?", preferredStyle: .Alert)
-                    alert.addAction(UIAlertAction(title: "Create Passcodes", style: .Default, handler: { _ in
+                    let alert = UIAlertController(title: "Passcodes Enabled", message: "...but \(noPasscode.count) user\(plural) This means anybody with access to your classroom can play on their profile. Would you like us to create passcodes for them?", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Create Passcodes", style: .default, handler: { _ in
                         
                         for user in noPasscode {
                             //generate a 4-digit passcode
@@ -1471,17 +1470,17 @@ func checkAllUsersHavePasscode() {
                         }
                         
                         //show done alert
-                        let done = UIAlertController(title: "Passcodes Created", message: "All of your users now have passcodes. You can the new passcodes by tapping \"View All Students\" on this screen.", preferredStyle: .Alert)
-                        done.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+                        let done = UIAlertController(title: "Passcodes Created", message: "All of your users now have passcodes. You can the new passcodes by tapping \"View All Students\" on this screen.", preferredStyle: .alert)
+                        done.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
                         if let controller = SettingsUserStatisticsDelegate.settingsControllerStatic {
-                            controller.presentViewController(done, animated: true, completion: nil)
+                            controller.present(done, animated: true, completion: nil)
                         }
                         
                     }))
-                    alert.addAction(UIAlertAction(title: "Ignore", style: .Destructive, handler: nil))
+                    alert.addAction(UIAlertAction(title: "Ignore", style: .destructive, handler: nil))
                     
                     if let controller = SettingsUserStatisticsDelegate.settingsControllerStatic {
-                        controller.presentViewController(alert, animated: true, completion: nil)
+                        controller.present(alert, animated: true, completion: nil)
                     }
                     
                 }

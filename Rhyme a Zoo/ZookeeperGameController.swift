@@ -26,19 +26,19 @@ class ZookeeperGameController : UIViewController, UIGestureRecognizerDelegate {
             
             let height = self.view.frame.height * 0.5
             let width = height * (0.5746835443)
-            let size = CGSizeMake(width, height)
+            let size = CGSize(width: width, height: height)
             zookeeperImage.frame.size = size
             zookeeperImage.center = self.view.center
             self.view.addSubview(zookeeperImage)
             
             //animate
             zookeeperImage.alpha = 0.0
-            zookeeperImage.transform = CGAffineTransformMakeScale(0.5, 0.5)
-            UIView.animateWithDuration(0.6, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: [], animations: {
+            zookeeperImage.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
+            UIView.animate(withDuration: 0.6, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: [], animations: {
                 self.zookeeperImage.alpha = 1.0
-                self.zookeeperImage.transform = CGAffineTransformMakeScale(1.0, 1.0)
+                self.zookeeperImage.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             }, completion: nil)
-            UIView.animateWithDuration(0.3, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
+            UIView.animate(withDuration: 0.3, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
                 for button in self.mainButtons {
                     self.originalButtonAlpha[button] = button.alpha
                     button.alpha = 0.0
@@ -48,9 +48,9 @@ class ZookeeperGameController : UIViewController, UIGestureRecognizerDelegate {
         }
             
         else {
-            UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
+            UIView.animate(withDuration: 0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
                 self.zookeeperImage.alpha = 0.0
-                self.zookeeperImage.transform = CGAffineTransformMakeScale(self.currentKeeperScale * 0.5, self.currentKeeperScale * 0.5)
+                self.zookeeperImage.transform = CGAffineTransform(scaleX: self.currentKeeperScale * 0.5, y: self.currentKeeperScale * 0.5)
                 
                 for button in self.mainButtons {
                     button.alpha = self.originalButtonAlpha[button] ?? 1.0
@@ -71,19 +71,19 @@ class ZookeeperGameController : UIViewController, UIGestureRecognizerDelegate {
     //MARK: - User Interaction
     
     func zookeeperGameTap(event sender: UITapGestureRecognizer) {
-        if let zookeeperImage = self.zookeeperImage {
+        if zookeeperImage != nil {
             //in zookeeper mode
-            UIView.animateWithDuration(0.2, animations: {
-                self.zookeeperImage.center = sender.locationInView(self.zookeeperImage.superview)
+            UIView.animate(withDuration: 0.2, animations: {
+                self.zookeeperImage.center = sender.location(in: self.zookeeperImage.superview)
             })
         }
     }
     
     func zookeeperGamePan(event sender: UIPanGestureRecognizer) {
-        if let zookeeperImage = self.zookeeperImage {
+        if zookeeperImage != nil {
             //in zookeeper mode
-            UIView.animateWithDuration(0.2, animations: {
-                self.zookeeperImage.center = sender.locationInView(self.zookeeperImage.superview)
+            UIView.animate(withDuration: 0.2, animations: {
+                self.zookeeperImage.center = sender.location(in: self.zookeeperImage.superview)
             })
         }
     }
@@ -93,17 +93,17 @@ class ZookeeperGameController : UIViewController, UIGestureRecognizerDelegate {
     func zookeeperGamePinch(event sender: UIPinchGestureRecognizer) {
         if let zookeeperImage = self.zookeeperImage {
             
-            if sender.state == .Began {
+            if sender.state == .began {
                 previousKeeperScale = currentKeeperScale
             }
             
             let scale = sender.scale
             currentKeeperScale = min(previousKeeperScale * scale, 3.0)
-            zookeeperImage.transform = CGAffineTransformMakeScale(currentKeeperScale, currentKeeperScale)
+            zookeeperImage.transform = CGAffineTransform(scaleX: currentKeeperScale, y: currentKeeperScale)
         }
     }
     
-    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
     

@@ -10,7 +10,7 @@ import UIKit
 //import SQLite
 import CoreLocation
 
-var data = NSUserDefaults.standardUserDefaults()
+var data = UserDefaults.standard
 let RZMainMenuTouchDownNotification = "com.hearatale.raz.main-menu-touch-down"
 
 class MainViewController: UIViewController, UIGestureRecognizerDelegate {
@@ -26,29 +26,29 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var zookeeperButton: UIButton!
     var currentZookeeper: String?
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         if self.presentedViewController == nil {
             
             var delay = 0.0
             var animationViews = [UIView]()
-            animationViews.appendContentsOf(cards as [UIView])
-            animationViews.appendContentsOf(topItems)
+            animationViews.append(contentsOf: cards as [UIView])
+            animationViews.append(contentsOf: topItems)
             
             for view in animationViews {
                 let origin = view.frame.origin
-                let offset: CGFloat = (topItems as NSArray).containsObject(view) ? -100 : 500.0
-                view.frame.offsetInPlace(dx: 0.0, dy: offset)
+                let offset: CGFloat = (topItems as NSArray).contains(view) ? -100 : 500.0
+                view.frame = view.frame.offsetBy(dx: 0, dy: offset)
                 
-                UIView.animateWithDuration(0.7, delay: delay, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.AllowUserInteraction, animations: {
+                UIView.animate(withDuration: 0.7, delay: delay, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.allowUserInteraction, animations: {
                     view.frame.origin = origin
                 }, completion: nil)
                 
                 delay += 0.03
             }
         }
-        userIcon.setImage(RZCurrentUser.icon, forState: .Normal)
+        userIcon.setImage(RZCurrentUser.icon, for: UIControlState())
         decorateUserIcon(userIcon)
-        userName.setTitle(RZCurrentUser.name, forState: .Normal)
+        userName.setTitle(RZCurrentUser.name, for: UIControlState())
         
         RZUserDatabase.refreshUser(RZCurrentUser)
         
@@ -58,7 +58,7 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
         
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         //test the database because I'm dumb and deleted the Unit Tests
         /*         ALL OF THESE TESTS PASSED ON JUNE 30, 2015        */
         
@@ -107,24 +107,24 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
             }
         }
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "touchDownNotificationRecieved:", name: RZMainMenuTouchDownNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.touchDownNotificationRecieved(_:)), name: NSNotification.Name(rawValue: RZMainMenuTouchDownNotification), object: nil)
         
-        dispatch_async(RZAsyncQueue, {
+        RZAsyncQueue.async(execute: {
             //replace icon image with aliased version
             let newSize = self.userIcon.frame.size
-            let screenScale = UIScreen.mainScreen().scale
-            let scaleSize = CGSizeMake(newSize.width * screenScale, newSize.height * screenScale)
+            let screenScale = UIScreen.main.scale
+            let scaleSize = CGSize(width: newSize.width * screenScale, height: newSize.height * screenScale)
             
-            if let original = RZCurrentUser.icon where original.size.width > scaleSize.width {
+            if let original = RZCurrentUser.icon, original.size.width > scaleSize.width {
                 UIGraphicsBeginImageContext(scaleSize)
                 let context = UIGraphicsGetCurrentContext()
-                CGContextSetInterpolationQuality(context, CGInterpolationQuality.High)
-                CGContextSetShouldAntialias(context, true)
-                original.drawInRect(CGRect(origin: CGPointZero, size: scaleSize))
+                context?.interpolationQuality = CGInterpolationQuality.high
+                context?.setShouldAntialias(true)
+                original.draw(in: CGRect(origin: CGPoint.zero, size: scaleSize))
                 let newImage = UIGraphicsGetImageFromCurrentImageContext()
                 UIGraphicsEndImageContext()
-                dispatch_async(dispatch_get_main_queue(), {
-                    self.userIcon.setImage(newImage, forState: .Normal)
+                DispatchQueue.main.async(execute: {
+                    self.userIcon.setImage(newImage, for: UIControlState())
                 })
             }
         })
@@ -141,59 +141,58 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
         
     }
     
-    func touchDownNotificationRecieved(notification: NSNotification) {
+    func touchDownNotificationRecieved(_ notification: Notification) {
         if let touch = notification.object as? UITouch {
-            processTouchAtLocation(touch.locationInView(buttonsSuperview), state: .Began)
+            processTouchAtLocation(touch.location(in: buttonsSuperview), state: .began)
         }
     }
     
-    @IBAction func touchRecognized(sender: UIGestureRecognizer) {
-        processTouchAtLocation(sender.locationInView(buttonsSuperview), state: sender.state)
+    @IBAction func touchRecognized(_ sender: UIGestureRecognizer) {
+        processTouchAtLocation(sender.location(in: buttonsSuperview), state: sender.state)
     }
     
-    func processTouchAtLocation(touch: CGPoint, state: UIGestureRecognizerState) {
+    func processTouchAtLocation(_ touch: CGPoint, state: UIGestureRecognizerState) {
         //figure out which button this touch is in
         for (button, frame) in buttonFrames {
             if frame.contains(touch) {
-                UIView.animateWithDuration(0.2, animations: {
-                    button.transform = CGAffineTransformMakeScale(1.07, 1.07)
+                UIView.animate(withDuration: 0.2, animations: {
+                    button.transform = CGAffineTransform(scaleX: 1.07, y: 1.07)
                 })
             } else {
-                UIView.animateWithDuration(0.2, animations: {
-                    button.transform = CGAffineTransformMakeScale(1.0, 1.0)
+                UIView.animate(withDuration: 0.2, animations: {
+                    button.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
                 })
             }
         }
         
         //if the touch is lifted
-        if state == .Ended {
+        if state == .ended {
             
             for (button, frame) in buttonFrames {
-                UIView.animateWithDuration(0.2, animations: {
-                    button.transform = CGAffineTransformMakeScale(1.0, 1.0)
+                UIView.animate(withDuration: 0.2, animations: {
+                    button.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
                 })
                 
                 if frame.contains(touch) {
-                    if let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier(button.restorationIdentifier!) as? UIViewController {
-                        if let controller = controller as? CatalogViewController {
-                            controller.animatingFromHome = true
-                        }
-                        self.presentViewController(controller, animated: true, completion: nil)
+                    let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: button.restorationIdentifier!)
+                    if let controller = controller as? CatalogViewController {
+                        controller.animatingFromHome = true
                     }
+                    self.present(controller, animated: true, completion: nil)
                 }
                 
             }
         }
     }
     
-    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
     
-    @IBAction func editUser(sender: UIButton) {
-        let editUserController = UIStoryboard(name: "User", bundle: nil).instantiateViewControllerWithIdentifier("newUser") as! NewUserViewController
+    @IBAction func editUser(_ sender: UIButton) {
+        let editUserController = UIStoryboard(name: "User", bundle: nil).instantiateViewController(withIdentifier: "newUser") as! NewUserViewController
         editUserController.openInEditModeForUser(RZCurrentUser)
-        self.presentViewController(editUserController, animated: true, completion: nil)
+        self.present(editUserController, animated: true, completion: nil)
     }
     
     func createImageForZookeeper() {
@@ -207,24 +206,24 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
             let background = UIImage(named: "home-zookeeper-background" + (iPad() ? "-large" : ""))!
             
             UIGraphicsBeginImageContextWithOptions(background.size, false, 1)
-            background.drawAtPoint(CGPointZero)
+            background.draw(at: CGPoint.zero)
             
             //draw zookeeper in center
-            var origin = CGPointMake(159, 422)
-            var size = CGSizeMake(720, 1250)
+            var origin = CGPoint(x: 159, y: 422)
+            var size = CGSize(width: 720, height: 1250)
             
             if !iPad() {
-                origin = CGPointMake(origin.x / 2, origin.y / 2)
-                size = CGSizeMake(size.width / 2, size.height / 2)
+                origin = CGPoint(x: origin.x / 2, y: origin.y / 2)
+                size = CGSize(width: size.width / 2, height: size.height / 2)
             }
             
-            zookeeper.drawInRect(CGRect(origin: origin, size: size))
+            zookeeper.draw(in: CGRect(origin: origin, size: size))
             
-            foreground.drawAtPoint(CGPointZero)
+            foreground.draw(at: CGPoint.zero)
             
             let composite = UIGraphicsGetImageFromCurrentImageContext()
             UIGraphicsEndImageContext()
-            self.zookeeperButton.setImage(composite, forState: .Normal)
+            self.zookeeperButton.setImage(composite, for: UIControlState())
             self.currentZookeeper = RZQuizDatabase.getKeeperString()
         }
     }
@@ -233,11 +232,11 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
 
 class TouchView: UIImageView {
 
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        super.touchesBegan(touches, withEvent: event)
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
         //gesture recognizers can't handle touch down on their own
         guard let touch = touches.first else { return }
-        NSNotificationCenter.defaultCenter().postNotificationName(RZMainMenuTouchDownNotification, object: touch, userInfo: nil)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: RZMainMenuTouchDownNotification), object: touch, userInfo: nil)
     }
 
 }
@@ -247,13 +246,13 @@ class HomeButton: UIButton {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
-        self.addTarget(self, action: "returnHome:", forControlEvents: UIControlEvents.TouchUpInside)
+        self.addTarget(self, action: #selector(HomeButton.returnHome(_:)), for: UIControlEvents.touchUpInside)
     }
     
-    func returnHome(sender: AnyObject) {
+    func returnHome(_ sender: AnyObject) {
         UAHaltPlayback()
         
-        if let application = UIApplication.sharedApplication().delegate, let topController = getTopController(application) {
+        if let application = UIApplication.shared.delegate, let topController = getTopController(application) {
             //close all of the controllers until we're back to the desired controller
             //where controllerCheck(...) == true
             dismissController(topController, untilMatch: { $0 is MainViewController })

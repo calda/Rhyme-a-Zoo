@@ -20,8 +20,8 @@ class RhymeViewController : UIViewController {
     @IBOutlet weak var previousButton: UIButton!
     @IBOutlet weak var nextButton: UIButton!
     @IBOutlet weak var quizButton: UIButton!
-    var rhymeTimer: NSTimer?
-    var quizBounceTimer: NSTimer?
+    var rhymeTimer: Timer?
+    var quizBounceTimer: Timer?
     @IBOutlet weak var repeatButton: UIButton!
     @IBOutlet weak var repeatHeight: NSLayoutConstraint!
     @IBOutlet weak var rhymeText: UILabel!
@@ -34,13 +34,13 @@ class RhymeViewController : UIViewController {
     var nextRhyme: Rhyme?
     var previousRhyme: Rhyme?
     
-    func decorate(rhyme: Rhyme) {
+    func decorate(_ rhyme: Rhyme) {
         self.rhyme = rhyme
     }
     
     //MARK: - View Setup
     
-    func decorateForRhyme(rhyme: Rhyme, updateBackground: Bool = true) {
+    func decorateForRhyme(_ rhyme: Rhyme, updateBackground: Bool = true) {
         //decorate cell for rhyme
         let number = rhyme.number.threeCharacterString()
         let illustration = UIImage(named: "illustration_\(number).jpg")
@@ -49,10 +49,10 @@ class RhymeViewController : UIViewController {
         
         let rawText = rhyme.rhymeText
         //add new lines
-        var text = rawText.stringByReplacingOccurrencesOfString("/", withString: "\n", options: [], range: nil)
-        text = text.stringByReplacingOccurrencesOfString(";", withString: ",", options: [], range: nil)
-        text = text.stringByReplacingOccurrencesOfString("\'", withString: "'", options: [], range: nil)
-        text = text.stringByReplacingOccurrencesOfString("/", withString: "\n", options: [], range: nil)
+        var text = rawText.replacingOccurrences(of: "/", with: "\n", options: [], range: nil)
+        text = text.replacingOccurrences(of: ";", with: ",", options: [], range: nil)
+        text = text.replacingOccurrences(of: "\'", with: "'", options: [], range: nil)
+        text = text.replacingOccurrences(of: "/", with: "\n", options: [], range: nil)
         rhymeString = text
         
         let paragraphStyle = NSMutableParagraphStyle()
@@ -61,38 +61,37 @@ class RhymeViewController : UIViewController {
         rhymeText.attributedText = attributed
         
         //set up buttons
-        let rhymeIndex = RZQuizDatabase.getIndexForRhyme(rhyme)
         previousRhyme = rhyme.getPrevious(fromFavorites: RZShowingFavorites)
         nextRhyme = rhyme.getNext(fromFavorites: RZShowingFavorites)
-        previousButton.hidden = previousRhyme == nil
-        nextButton.hidden = nextRhyme == nil
+        previousButton.isHidden = previousRhyme == nil
+        nextButton.isHidden = nextRhyme == nil
         
         let quizPlayed = rhyme.quizHasBeenPlayed()
-        quizButton.setImage(UIImage(named: (quizPlayed ? "button-check" : "button-question")), forState: .Normal)
-        quizButton.enabled = false
+        quizButton.setImage(UIImage(named: (quizPlayed ? "button-check" : "button-question")), for: UIControlState())
+        quizButton.isEnabled = false
         
         let favorite = rhyme.isFavorite()
-        likeButton.setImage(UIImage(named: (favorite ? "button-unlike" : "button-heart")), forState: .Normal)
+        likeButton.setImage(UIImage(named: (favorite ? "button-unlike" : "button-heart")), for: UIControlState())
         
     }
     
-    override func viewWillAppear(animate: Bool) {
+    override func viewWillAppear(_ animate: Bool) {
         self.view.clipsToBounds = true
         
         decorateForRhyme(rhyme)
         
         //mask the rhyme page
-        let height = UIScreen.mainScreen().bounds.height
+        let height = UIScreen.main.bounds.height
         let maskHeight = height - 20.0 - (iPad() ? 60.0 : 0.0)
         let maskWidth = (rhymePage.frame.width / rhymePage.frame.height) * maskHeight
-        let maskRect = CGRectMake(10.0, 10.0, maskWidth, maskHeight)
+        let maskRect = CGRect(x: 10.0, y: 10.0, width: maskWidth, height: maskHeight)
         
         let maskLayer = CAShapeLayer()
-        maskLayer.path = UIBezierPath(roundedRect: maskRect, cornerRadius: maskHeight / 20.0).CGPath
+        maskLayer.path = UIBezierPath(roundedRect: maskRect, cornerRadius: maskHeight / 20.0).cgPath
         rhymePage.layer.mask = maskLayer
         
         //remove the buttonGradientView if this is a 4S
-        let size = UIScreen.mainScreen().bounds.size
+        let size = UIScreen.main.bounds.size
         if size.width <= 480.0 {
             //is 4S
             buttonGradientWidth.constant = 0
@@ -102,7 +101,7 @@ class RhymeViewController : UIViewController {
         //set up buttons
         likeBottom.constant = 10
         repeatHeight.constant = 0
-        repeatButton.imageView!.contentMode = UIViewContentMode.ScaleAspectFit
+        repeatButton.imageView!.contentMode = UIViewContentMode.scaleAspectFit
         self.view.layoutIfNeeded()
         
         updateScrollView()
@@ -114,8 +113,8 @@ class RhymeViewController : UIViewController {
         let width = scrollView.frame.width
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.paragraphSpacing = 9.5
-        let attributes = [NSParagraphStyleAttributeName : paragraphStyle, NSFontAttributeName : rhymeText.font]
-        let idealSize = (rhymeString as NSString).boundingRectWithSize(CGSizeMake(width, 1000), options: [.UsesLineFragmentOrigin, .UsesFontLeading], attributes: attributes, context: nil)
+        let attributes = [NSParagraphStyleAttributeName : paragraphStyle, NSFontAttributeName : rhymeText.font] as [String : Any]
+        let idealSize = (rhymeString as NSString).boundingRect(with: CGSize(width: width, height: 1000), options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: attributes, context: nil)
         
         let difference = abs(idealSize.height - scrollView.frame.height)
         if difference > 6.0 && idealSize.height > scrollView.frame.height {
@@ -127,16 +126,16 @@ class RhymeViewController : UIViewController {
         
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         delay(0.05) {
             if !self.willPlayAnimalVideo() {
-                self.rhymeTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: "playRhyme", userInfo: nil, repeats: false)
+                self.rhymeTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(RhymeViewController.playRhyme), userInfo: nil, repeats: false)
             }
         }
         
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         delay(0.06) {
             self.rhymeTimer?.invalidate()
         }
@@ -145,17 +144,17 @@ class RhymeViewController : UIViewController {
     
     //MARK: - Handling Playback of the Rhyme
     
-    var rhymeTimers: [NSTimer]?
+    var rhymeTimers: [Timer]?
     
     func playRhyme() {
         quizBounceTimer?.invalidate()
         
         //disable quiz button if it hasn't been played yet
-        quizButton.enabled = false
+        quizButton.isEnabled = false
         
         let number = rhyme.number.threeCharacterString()
         let audioName = "rhyme_\(number)"
-        let success = UAPlayer().play(audioName, ofType: "mp3", ifConcurrent: .Ignore)
+        let success = UAPlayer().play(audioName, ofType: "mp3", ifConcurrent: .ignore)
         
         if success {
             let wordTimes = rhyme.wordStartTimes
@@ -165,39 +164,39 @@ class RhymeViewController : UIViewController {
             for word in 0 ..< wordTimes.count {
                 let msec = wordTimes[word]
                 let timeInterval = Double(msec) / 1000.0
-                let timer = NSTimer.scheduledTimerWithTimeInterval(timeInterval, target: self, selector: "updateWord:", userInfo: word, repeats: false)
+                let timer = Timer.scheduledTimer(timeInterval: timeInterval, target: self, selector: #selector(RhymeViewController.updateWord(_:)), userInfo: word, repeats: false)
                 rhymeTimers?.append(timer)
             }
         }
     }
     
-    func updateWord(timer: NSTimer) {
+    func updateWord(_ timer: Timer) {
         if let word = timer.userInfo as? Int {
             updateAttributedTextForCurrentWord(word)
         }
     }
     
-    func updateAttributedTextForCurrentWord(currentWord: Int) {
+    func updateAttributedTextForCurrentWord(_ currentWord: Int) {
         
-        let text = rhymeString
-        let replacedLineBreaks = text.stringByReplacingOccurrencesOfString("\n", withString: "~\n", options: [], range: nil)
-        let noSpaces = replacedLineBreaks.stringByReplacingOccurrencesOfString(" ", withString: "\n", options: [], range: nil)
-        let words = noSpaces.componentsSeparatedByString("\n")
+        guard let text = rhymeString else { return }
+        let replacedLineBreaks = text.replacingOccurrences(of: "\n", with: "~\n", options: [], range: nil)
+        let noSpaces = replacedLineBreaks.replacingOccurrences(of: " ", with: "\n", options: [], range: nil)
+        let words = noSpaces.components(separatedBy: "\n")
         var before: String = ""
         var current: String = ""
         var after: String = ""
         
         for i in 0 ..< words.count {
             let word = words[i]
-            if i < currentWord { before = before.stringByAppendingString(word) + " " }
+            if i < currentWord { before = before + word + " " }
             else if i == currentWord { current = "\(word) " }
-            else { after = after.stringByAppendingString(word) + " "}
+            else { after = after + word + " "}
         }
         
         //add line breaks back in
-        before = before.stringByReplacingOccurrencesOfString("~ ", withString: "\n", options: [], range: nil)
-        current = current.stringByReplacingOccurrencesOfString("~ ", withString: "\n", options: [], range: nil)
-        after = after.stringByReplacingOccurrencesOfString("~ ", withString: "\n", options: [], range: nil)
+        before = before.replacingOccurrences(of: "~ ", with: "\n", options: [], range: nil)
+        current = current.replacingOccurrences(of: "~ ", with: "\n", options: [], range: nil)
+        after = after.replacingOccurrences(of: "~ ", with: "\n", options: [], range: nil)
         
         if current == "" {
             //current was empty so this is the end of the audio
@@ -226,7 +225,7 @@ class RhymeViewController : UIViewController {
                 NSParagraphStyleAttributeName : paragraphStyle
             ]
             let attributed = NSAttributedString(string: part, attributes: attributes)
-            finalString.appendAttributedString(attributed)
+            finalString.append(attributed)
         }
         
         rhymeText.attributedText = finalString
@@ -234,13 +233,13 @@ class RhymeViewController : UIViewController {
         scrollCurrentLineToVisible(currentWord)
     }
     
-    func scrollCurrentLineToVisible(currentWord: Int) {
+    func scrollCurrentLineToVisible(_ currentWord: Int) {
         
         if scrollContent.frame.height > scrollView.frame.height {
             
             let availableHeight = scrollView.frame.height
-            let text = rhymeString
-            let lines = getLinesArrayOfStringInLabel(text, label: rhymeText)
+            guard let text = rhymeString else { return }
+            let lines = getLinesArrayOfStringInLabel(text as NSString, label: rhymeText)
             
             //get line with current
             var lineWithCurrent = -1
@@ -251,8 +250,8 @@ class RhymeViewController : UIViewController {
                 if lineWithCurrent != -1 { continue }
                 
                 let line = lines[l]
-                let words = line.componentsSeparatedByString(" ")
-                for word in words {
+                let words = line.components(separatedBy: " ")
+                for _ in words {
                     if numberOfWords == currentWord {
                         lineWithCurrent = l
                     }
@@ -262,7 +261,7 @@ class RhymeViewController : UIViewController {
                 if lineWithCurrent != -1 { continue }
                 
                 var lineHeight = rhymeText.font.lineHeight
-                if (line as NSString).containsString("\n") {
+                if (line as NSString).contains("\n") {
                     //is a paragraph break
                     lineHeight += 9.5
                 }
@@ -270,7 +269,7 @@ class RhymeViewController : UIViewController {
             }
             
             if lineWithCurrent == -1 { //no word is highlighed, only happens at the end
-                currentLinePosition = CGFloat.max //mimic all the way at the bottom
+                currentLinePosition = CGFloat.greatestFiniteMagnitude //mimic all the way at the bottom
             }
             
             //do nothing if currentLinePosition is less than half-way down the block
@@ -283,7 +282,7 @@ class RhymeViewController : UIViewController {
                 currentLinePosition = scrollContent.frame.height - (availableHeight)
             }
             
-            scrollView.setContentOffset(CGPointMake(0, currentLinePosition), animated: true)
+            scrollView.setContentOffset(CGPoint(x: 0, y: currentLinePosition), animated: true)
             
             
         }
@@ -295,14 +294,14 @@ class RhymeViewController : UIViewController {
         //animate buttons
         likeBottom.constant = 70
         repeatHeight.constant = 50
-        quizButton.enabled = true
-        UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.AllowUserInteraction, animations: {
+        quizButton.isEnabled = true
+        UIView.animate(withDuration: 0.7, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: UIViewAnimationOptions.allowUserInteraction, animations: {
             self.view.layoutIfNeeded()
         }, completion: nil)
         
         quizBounceTimer?.invalidate()
         if !rhyme.quizHasBeenPlayed() {
-            self.quizBounceTimer = NSTimer.scheduledTimerWithTimeInterval(3.5, target: self, selector: "bounceQuizIcon", userInfo: nil, repeats: true)
+            self.quizBounceTimer = Timer.scheduledTimer(timeInterval: 3.5, target: self, selector: #selector(RhymeViewController.bounceQuizIcon), userInfo: nil, repeats: true)
             delay(0.25) {
                 self.quizButtonPressed(self)
             }
@@ -310,36 +309,36 @@ class RhymeViewController : UIViewController {
     }
     
     func bounceQuizIcon() {
-        if !quizButton.enabled {
+        if !quizButton.isEnabled {
             quizBounceTimer?.invalidate()
             return
         }
         
-        UIView.animateWithDuration(0.3, animations: {
-            self.quizButton.transform = CGAffineTransformMakeTranslation(0.0, -50.0)
+        UIView.animate(withDuration: 0.3, animations: {
+            self.quizButton.transform = CGAffineTransform(translationX: 0.0, y: -50.0)
             }, completion: { success in
-                UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: [], animations: {
-                    self.quizButton.transform = CGAffineTransformMakeTranslation(0.0, 0.0)
+                UIView.animate(withDuration: 0.7, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: [], animations: {
+                    self.quizButton.transform = CGAffineTransform(translationX: 0.0, y: 0.0)
                     }, completion: nil)
         })
     }
     
     //MARK: - Interface Buttons
     
-    @IBAction func repeatButtonPressed(sender: AnyObject) {
+    @IBAction func repeatButtonPressed(_ sender: AnyObject) {
         playRhyme()
         likeBottom.constant = 10
         repeatHeight.constant = 0
-        UIView.animateWithDuration(0.4, animations: {
+        UIView.animate(withDuration: 0.4, animations: {
             self.view.layoutIfNeeded()
         })
     }
     
-    @IBAction func likeButtonPressed(sender: UIButton) {
+    @IBAction func likeButtonPressed(_ sender: UIButton) {
         let favorite = !rhyme.isFavorite()
         rhyme.setFavoriteStatus(favorite)
         
-        self.likeButton.setImage(UIImage(named: (favorite ? "button-unlike" : "button-heart")), forState: .Normal)
+        self.likeButton.setImage(UIImage(named: (favorite ? "button-unlike" : "button-heart")), for: UIControlState())
         playTransitionForView(self.likeButton, duration: 2.0, transition: "rippleEffect")
     }
     
@@ -355,42 +354,42 @@ class RhymeViewController : UIViewController {
         }
     }
     
-    @IBAction func listButtonPressed(sender: AnyObject) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+    @IBAction func listButtonPressed(_ sender: AnyObject) {
+        self.dismiss(animated: true, completion: nil)
         endPlayback()
     }
     
-    @IBAction func quizButtonPressed(sender: AnyObject) {
-        let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("quiz") as! QuizViewController
+    @IBAction func quizButtonPressed(_ sender: AnyObject) {
+        let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "quiz") as! QuizViewController
         controller.quiz = rhyme
         quizBounceTimer?.invalidate()
-        self.presentViewController(controller, animated: true, completion: nil)
+        self.present(controller, animated: true, completion: nil)
     }
     
     
     //MARK: - Transitioning between rhymes
     
-    @IBAction func nextRhyme(sender: UIButton) {
+    @IBAction func nextRhyme(_ sender: UIButton) {
         if let next = nextRhyme {
             animateChangeToRhyme(next, transition: "pageCurl")
         }
     }
     
-    @IBAction func previousRhyme(sender: UIButton) {
+    @IBAction func previousRhyme(_ sender: UIButton) {
         if let previous = previousRhyme {
             animateChangeToRhyme(previous, transition: "pageCurl")
         }
     }
     
-    func animateChangeToRhyme(rhyme: Rhyme, transition: String) {
+    func animateChangeToRhyme(_ rhyme: Rhyme, transition: String) {
         
-        nextButton.enabled = false
-        quizButton.enabled = false
-        previousButton.enabled = false
+        nextButton.isEnabled = false
+        quizButton.isEnabled = false
+        previousButton.isEnabled = false
         
         likeBottom.constant = 10
         repeatHeight.constant = 0
-        UIView.animateWithDuration(0.4, animations: {
+        UIView.animate(withDuration: 0.4, animations: {
             self.view.layoutIfNeeded()
         })
         
@@ -404,8 +403,8 @@ class RhymeViewController : UIViewController {
             playTransitionForView(self.blurredPage, duration: 1.0, transition: kCATransitionFade)
             delay(0.6) {
                 self.playRhyme()
-                self.nextButton.enabled = true
-                self.previousButton.enabled = true
+                self.nextButton.isEnabled = true
+                self.previousButton.isEnabled = true
             }
         }
         
@@ -429,44 +428,43 @@ class RhymeViewController : UIViewController {
         return false
     }
     
-    func playAnimalVideo(name: String) {
+    func playAnimalVideo(_ name: String) {
         playVideo(name: name, currentController: self, completion: {
             //present the current zoo level building
             let currentZooLevel = RZQuizDatabase.currentZooLevel()
-            let building = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("building") as! BuildingViewController
+            let building = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "building") as! BuildingViewController
             building.mustBuy = true
             building.decorate(building: currentZooLevel, displaySize: self.view.frame.size)
-            self.presentViewController(building, animated: true, completion: nil)
+            self.present(building, animated: true, completion: nil)
         })
     }
     
 }
 
 ///stackoverflow.com/questions/4421267/how-to-get-text-from-nth-line-of-uilabel
-func getLinesArrayOfStringInLabel(text: NSString, label:UILabel) -> [String] {
+func getLinesArrayOfStringInLabel(_ text: NSString, label:UILabel) -> [String] {
     
-    let font:UIFont = label.font
-    let rect:CGRect = label.frame
+    let font = label.font!
+    let rect = label.frame
     
-    let myFont:CTFontRef = CTFontCreateWithName(font.fontName, font.pointSize, nil)
+    let myFont = CTFontCreateWithName(font.fontName as CFString, font.pointSize, nil)
     let attStr:NSMutableAttributedString = NSMutableAttributedString(string: text as String)
     attStr.addAttribute(String(kCTFontAttributeName), value:myFont, range: NSMakeRange(0, attStr.length))
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.paragraphSpacing = 9.5
     attStr.addAttribute(NSParagraphStyleAttributeName, value: paragraphStyle, range: NSMakeRange(0, attStr.length))
     
-    let frameSetter:CTFramesetterRef = CTFramesetterCreateWithAttributedString(attStr as CFAttributedStringRef)
+    let frameSetter = CTFramesetterCreateWithAttributedString(attStr as CFAttributedString)
     
-    let path:CGMutablePathRef = CGPathCreateMutable()
-    CGPathAddRect(path, nil, CGRectMake(0, 0, rect.size.width, 100000))
-    let frame:CTFrameRef = CTFramesetterCreateFrame(frameSetter, CFRangeMake(0, 0), path, nil)
-    let lines = CTFrameGetLines(frame) as! [CTLineRef]
+    let path = CGPath(rect: CGRect(x: 0, y: 0, width: rect.size.width, height: 100000), transform: nil)
+    let frame = CTFramesetterCreateFrame(frameSetter, CFRangeMake(0, 0), path, nil)
+    let lines = CTFrameGetLines(frame) as! [CTLine]
     var linesArray = [String]()
     
     for line in lines {
         let lineRange = CTLineGetStringRange(line)
         let range:NSRange = NSMakeRange(lineRange.location, lineRange.length)
-        let lineString = text.substringWithRange(range)
+        let lineString = text.substring(with: range)
         linesArray.append(lineString as String)
     }
     

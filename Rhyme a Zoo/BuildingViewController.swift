@@ -18,70 +18,72 @@ class BuildingViewController : ZookeeperGameController {
     @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var homeButton: HomeButton!
     
-    let percentageFrames = [ //each point is a percentage of the total width/height of the background image
-        "giraffe" : CGRect(origin: CGPointMake(0.637, 0.0493), size: CGSizeMake(0.318, 0.921)),
-        "hippo" : CGRect(origin: CGPointMake(0.038, 0.011), size: CGSizeMake(0.378, 0.369)),
-        "kangaroo" : CGRect(origin: CGPointMake(0.115, 0.433), size: CGSizeMake(0.450, 0.550)),
-        "panda" : CGRect(origin: CGPointMake(0.431, 0.108), size: CGSizeMake(0.312, 0.447)),
-        "ostrich" : CGRect(origin: CGPointMake(0.396, 0.192), size: CGSizeMake(0.28, 0.596)),
-        "owl" : CGRect(origin: CGPointMake(-0.035, 0.08), size: CGSizeMake(0.288, 0.504)),
-        "parrot" : CGRect(origin: CGPointMake(0.675, 0.085), size: CGSizeMake(0.422, 0.896)),
-        "flamingo" : CGRect(origin: CGPointMake(0.12, 0.377), size: CGSizeMake(0.265, 0.664)),
-        "seal" : CGRect(origin: CGPointMake(0.108, 0.397), size: CGSizeMake(0.52, 0.53)),
-        "shark" : CGRect(origin: CGPointMake(0.567, 0.325), size: CGSizeMake(0.381, 0.287)),
-        "squid" : CGRect(origin: CGPointMake(0.165, 0.02), size: CGSizeMake(0.302, 0.456)),
-        "dolphin" : CGRect(origin: CGPointMake(0.469, 0.087), size: CGSizeMake(0.451, 0.222)),
-        "wolf" : CGRect(origin: CGPointMake(0.628, 0.391), size: CGSizeMake(0.316, 0.556)),
-        "lion" : CGRect(origin: CGPointMake(0.009, 0.393), size: CGSizeMake(0.527, 0.588)),
-        "tiger" : CGRect(origin: CGPointMake(0.015, 0.023), size: CGSizeMake(0.3, 0.373)),
-        "jaguar" : CGRect(origin: CGPointMake(0.319, 0.003), size: CGSizeMake(0.419, 0.266)),
-        "alligator" : CGRect(origin: CGPointMake(0.055, 0.056), size: CGSizeMake(0.431, 0.479)),
-        "iguana" : CGRect(origin: CGPointMake(0.589, 0.444), size: CGSizeMake(0.373, 0.503)),
-        "turtle" : CGRect(origin: CGPointMake(0.556, 0.055), size: CGSizeMake(0.396, 0.317)),
-        "rattlesnake" : CGRect(origin: CGPointMake(0.021, 0.619), size: CGSizeMake(0.388, 0.264)),
-        "baboon" : CGRect(origin: CGPointMake(0.101, 0.008), size: CGSizeMake(0.183, 0.399)),
-        "monkey" : CGRect(origin: CGPointMake(0.558, 0.467), size: CGSizeMake(0.315, 0.391)),
-        "gorilla" : CGRect(origin: CGPointMake(0.691, 0.009), size: CGSizeMake(0.279, 0.519)),
-        "chimp" : CGRect(origin: CGPointMake(0.236, 0.339), size: CGSizeMake(0.279, 0.633)),
-        "pterodactyl" : CGRect(origin: CGPointMake(0.758, 0.129), size: CGSizeMake(0.29, 0.316)),
-        "stegasaurus" : CGRect(origin: CGPointMake(0.281, 0.417), size: CGSizeMake(0.288, 0.25)),
-        "trex" : CGRect(origin: CGPointMake(0.527, 0.197), size: CGSizeMake(0.389, 0.791)),
-        "triceratop" : CGRect(origin: CGPointMake(0.021, 0.315), size: CGSizeMake(0.244, 0.36)),
-        "mermaid" : CGRect(origin: CGPointMake(0.616, 0.293), size: CGSizeMake(0.353, 0.784)),
-        "centaur" : CGRect(origin: CGPointMake(0.278, 0.173), size: CGSizeMake(0.302, 0.498))
+    //each point is a percentage of the total width/height of the background image
+    let percentageFrames: [String: CGRect] = [
+        "giraffe"     : CGRect(origin: CGPoint(x: 0.637, y: 0.0493), size: CGSize(width: 0.318, height: 0.921)),
+        "hippo"       : CGRect(origin: CGPoint(x: 0.038, y: 0.011), size: CGSize(width: 0.378, height: 0.369)),
+        "kangaroo"    : CGRect(origin: CGPoint(x: 0.115, y: 0.433), size: CGSize(width: 0.450, height: 0.550)),
+        "panda"       : CGRect(origin: CGPoint(x: 0.431, y: 0.108), size: CGSize(width: 0.312, height: 0.447)),
+        "ostrich"     : CGRect(origin: CGPoint(x: 0.396, y: 0.192), size: CGSize(width: 0.28, height: 0.596)),
+        "owl"         : CGRect(origin: CGPoint(x: -0.035, y: 0.08), size: CGSize(width: 0.288, height: 0.504)),
+        "parrot"      : CGRect(origin: CGPoint(x: 0.675, y: 0.085), size: CGSize(width: 0.422, height: 0.896)),
+        "flamingo"    : CGRect(origin: CGPoint(x: 0.12, y: 0.377), size: CGSize(width: 0.265, height: 0.664)),
+        "seal"        : CGRect(origin: CGPoint(x: 0.108, y: 0.397), size: CGSize(width: 0.52, height: 0.53)),
+        "shark"       : CGRect(origin: CGPoint(x: 0.567, y: 0.325), size: CGSize(width: 0.381, height: 0.287)),
+        "squid"       : CGRect(origin: CGPoint(x: 0.165, y: 0.02), size: CGSize(width: 0.302, height: 0.456)),
+        "dolphin"     : CGRect(origin: CGPoint(x: 0.469, y: 0.087), size: CGSize(width: 0.451, height: 0.222)),
+        "wolf"        : CGRect(origin: CGPoint(x: 0.628, y: 0.391), size: CGSize(width: 0.316, height: 0.556)),
+        "lion"        : CGRect(origin: CGPoint(x: 0.009, y: 0.393), size: CGSize(width: 0.527, height: 0.588)),
+        "tiger"       : CGRect(origin: CGPoint(x: 0.015, y: 0.023), size: CGSize(width: 0.3, height: 0.373)),
+        "jaguar"      : CGRect(origin: CGPoint(x: 0.319, y: 0.003), size: CGSize(width: 0.419, height: 0.266)),
+        "alligator"   : CGRect(origin: CGPoint(x: 0.055, y: 0.056), size: CGSize(width: 0.431, height: 0.479)),
+        "iguana"      : CGRect(origin: CGPoint(x: 0.589, y: 0.444), size: CGSize(width: 0.373, height: 0.503)),
+        "turtle"      : CGRect(origin: CGPoint(x: 0.556, y: 0.055), size: CGSize(width: 0.396, height: 0.317)),
+        "rattlesnake" : CGRect(origin: CGPoint(x: 0.021, y: 0.619), size: CGSize(width: 0.388, height: 0.264)),
+        "baboon"      : CGRect(origin: CGPoint(x: 0.101, y: 0.008), size: CGSize(width: 0.183, height: 0.399)),
+        "monkey"      : CGRect(origin: CGPoint(x: 0.558, y: 0.467), size: CGSize(width: 0.315, height: 0.391)),
+        "gorilla"     : CGRect(origin: CGPoint(x: 0.691, y: 0.009), size: CGSize(width: 0.279, height: 0.519)),
+        "chimp"       : CGRect(origin: CGPoint(x: 0.236, y: 0.339), size: CGSize(width: 0.279, height: 0.633)),
+        "pterodactyl" : CGRect(origin: CGPoint(x: 0.758, y: 0.129), size: CGSize(width: 0.29, height: 0.316)),
+        "stegasaurus" : CGRect(origin: CGPoint(x: 0.281, y: 0.417), size: CGSize(width: 0.288, height: 0.25)),
+        "trex"        : CGRect(origin: CGPoint(x: 0.527, y: 0.197), size: CGSize(width: 0.389, height: 0.791)),
+        "triceratop"  : CGRect(origin: CGPoint(x: 0.021, y: 0.315), size: CGSize(width: 0.244, height: 0.36)),
+        "mermaid"     : CGRect(origin: CGPoint(x: 0.616, y: 0.293), size: CGSize(width: 0.353, height: 0.784)),
+        "centaur"     : CGRect(origin: CGPoint(x: 0.278, y: 0.173), size: CGSize(width: 0.302, height: 0.498))
     ]
     
-    let coinCenters = [ //each point is a percentage of the total width/height of the background image
-        "giraffe" : CGPointMake(0.761, 0.944),
-        "hippo" : CGPointMake(0.217, 0.355),
-        "kangaroo" : CGPointMake(0.369, 0.947),
-        "panda" : CGPointMake(0.588, 0.517),
-        "ostrich" : CGPointMake(0.532, 0.773),
-        "owl" : CGPointMake(0.106, 0.491),
-        "parrot" : CGPointMake(0.809, 0.477),
-        "flamingo" : CGPointMake(0.317, 0.723),
-        "seal" : CGPointMake(0.229, 0.888),
-        "shark" : CGPointMake(0.791, 0.507),
-        "squid" : CGPointMake(0.219, 0.219),
-        "dolphin" : CGPointMake(0.671, 0.235),
-        "wolf" : CGPointMake(0.793, 0.925),
-        "lion" : CGPointMake(0.235, 0.939),
-        "tiger" : CGPointMake(0.197, 0.325),
-        "jaguar" : CGPointMake(0.548, 0.187),
-        "alligator" : CGPointMake(0.416, 0.491),
-        "iguana" : CGPointMake(0.926, 0.709),
-        "turtle" : CGPointMake(0.677, 0.336),
-        "rattlesnake" : CGPointMake(0.102, 0.757),
-        "baboon" : CGPointMake(0.169, 0.347),
-        "monkey" : CGPointMake(0.612, 0.723),
-        "gorilla" : CGPointMake(0.914, 0.475),
-        "chimp" : CGPointMake(0.251, 0.896),
-        "pterodactyl" : CGPointMake(0.853, 0.387),
-        "stegasaurus" : CGPointMake(0.47, 0.675),
-        "trex" : CGPointMake(0.663, 0.925),
-        "triceratop" : CGPointMake(0.163, 0.627),
-        "mermaid" : CGPointMake(0.735, 0.805),
-        "centaur" : CGPointMake(0.444, 0.643)
+    //each point is a percentage of the total width/height of the background image
+    let coinCenters : [String: CGPoint] = [
+        "giraffe"     : CGPoint(x: 0.761, y: 0.944),
+        "hippo"       : CGPoint(x: 0.217, y: 0.355),
+        "kangaroo"    : CGPoint(x: 0.369, y: 0.947),
+        "panda"       : CGPoint(x: 0.588, y: 0.517),
+        "ostrich"     : CGPoint(x: 0.532, y: 0.773),
+        "owl"         : CGPoint(x: 0.106, y: 0.491),
+        "parrot"      : CGPoint(x: 0.809, y: 0.477),
+        "flamingo"    : CGPoint(x: 0.317, y: 0.723),
+        "seal"        : CGPoint(x: 0.229, y: 0.888),
+        "shark"       : CGPoint(x: 0.791, y: 0.507),
+        "squid"       : CGPoint(x: 0.219, y: 0.219),
+        "dolphin"     : CGPoint(x: 0.671, y: 0.235),
+        "wolf"        : CGPoint(x: 0.793, y: 0.925),
+        "lion"        : CGPoint(x: 0.235, y: 0.939),
+        "tiger"       : CGPoint(x: 0.197, y: 0.325),
+        "jaguar"      : CGPoint(x: 0.548, y: 0.187),
+        "alligator"   : CGPoint(x: 0.416, y: 0.491),
+        "iguana"      : CGPoint(x: 0.926, y: 0.709),
+        "turtle"      : CGPoint(x: 0.677, y: 0.336),
+        "rattlesnake" : CGPoint(x: 0.102, y: 0.757),
+        "baboon"      : CGPoint(x: 0.169, y: 0.347),
+        "monkey"      : CGPoint(x: 0.612, y: 0.723),
+        "gorilla"     : CGPoint(x: 0.914, y: 0.475),
+        "chimp"       : CGPoint(x: 0.251, y: 0.896),
+        "pterodactyl" : CGPoint(x: 0.853, y: 0.387),
+        "stegasaurus" : CGPoint(x: 0.47, y: 0.675),
+        "trex"        : CGPoint(x: 0.663, y: 0.925),
+        "triceratop"  : CGPoint(x: 0.163, y: 0.627),
+        "mermaid"     : CGPoint(x: 0.735, y: 0.805),
+        "centaur"     : CGPoint(x: 0.444, y: 0.643)
     ]
     
     let buildingAnimals = [
@@ -105,13 +107,17 @@ class BuildingViewController : ZookeeperGameController {
     
     //MARK: - Decorating the view with animals and buttons
     
-    func decorate(building building: Int, displaySize: CGSize) {
+    func decorate(building: Int, displaySize: CGSize) {
         self.building = building
         self.displaySize = displaySize
     }
     
-    override func viewWillAppear(animated: Bool) {
-        self.view.userInteractionEnabled = false
+    override func viewWillAppear(_ animated: Bool) {
+        self.view.isUserInteractionEnabled = false
+        
+        guard let building = building else {
+            fatalError("Must configure `building` through the `decorate` method.")
+        }
         
         //update background
         let image = UIImage(named:"building\(building).jpg")
@@ -125,12 +131,12 @@ class BuildingViewController : ZookeeperGameController {
         let currentHeight = self.backgroundImage.frame.height
         let ratio = displayHeight / currentHeight
         let backgroundSize = self.backgroundImage.frame
-        sceneSize = CGSizeMake(backgroundSize.width * ratio, backgroundSize.height * ratio)
+        sceneSize = CGSize(width: backgroundSize.width * ratio, height: backgroundSize.height * ratio)
         
         for animal in buildingAnimals[building - 1] {
             let frame = percentageFrames[animal]!
-            let origin = CGPointMake(frame.origin.x * sceneSize.width, frame.origin.y * sceneSize.height)
-            let size = CGSizeMake(frame.width * sceneSize.width, frame.height * sceneSize.height)
+            let origin = CGPoint(x: frame.origin.x * sceneSize.width, y: frame.origin.y * sceneSize.height)
+            let size = CGSize(width: frame.width * sceneSize.width, height: frame.height * sceneSize.height)
             let buttonFrame = CGRect(origin: origin, size: size)
             
             //add button to view
@@ -145,8 +151,8 @@ class BuildingViewController : ZookeeperGameController {
             }
             
             let button = UIButton(frame: buttonFrame)
-            button.setImage(image, forState: UIControlState.Normal)
-            button.userInteractionEnabled = false
+            button.setImage(image, for: UIControlState())
+            button.isUserInteractionEnabled = false
             backgroundImage.addSubview(button)
             animalButtons.updateValue(button, forKey: animal)
             
@@ -166,40 +172,40 @@ class BuildingViewController : ZookeeperGameController {
         
         //hide info button if there is no relevant audio
         if building > 6 {
-            infoButton.hidden = true
+            infoButton.isHidden = true
         } else {
-            infoButton.hidden = false
+            infoButton.isHidden = false
         }
         
         let dark = (building > RZQuizDatabase.currentZooLevel() ? "-dark" : "")
-        buildingButton.setImage(UIImage(named: "button-\(building)\(dark)"), forState: .Normal)
+        buildingButton.setImage(UIImage(named: "button-\(building)\(dark)"), for: UIControlState())
         
         if mustBuy {
-            backButton.enabled = false
-            homeButton.enabled = false
+            backButton.isEnabled = false
+            homeButton.isEnabled = false
         }
     }
     
-    func addButtonForAnimal(animal: String, playerOwns owned: Bool) {
-        let size = (owned ? (iPad() ? CGSizeMake(60, 60) : CGSizeMake(40, 40)) : (iPad() ? CGSizeMake(80, 80) : CGSizeMake(40, 40)))
+    func addButtonForAnimal(_ animal: String, playerOwns owned: Bool) {
+        let size = (owned ? (iPad() ? CGSize(width: 60, height: 60) : CGSize(width: 40, height: 40)) : (iPad() ? CGSize(width: 80, height: 80) : CGSize(width: 40, height: 40)))
         let percentCenter = coinCenters[animal]!
-        let center = CGPointMake(percentCenter.x * sceneSize.width, percentCenter.y * sceneSize.height)
-        var frame = CGRectMake(center.x - size.width/2, center.y - size.height/2, size.width, size.height)
+        let center = CGPoint(x: percentCenter.x * sceneSize.width, y: percentCenter.y * sceneSize.height)
+        var frame = CGRect(x: center.x - size.width/2, y: center.y - size.height/2, width: size.width, height: size.height)
         //calculate the offset so that these buttons are in the main view instead
-        let screenWidth = UIScreen.mainScreen().bounds.width
+        let screenWidth = UIScreen.main.bounds.width
         let unusedWidth = screenWidth - sceneSize.width
         let offset = unusedWidth / 2
-        frame.offsetInPlace(dx: offset, dy: 0)
+        frame = frame.offsetBy(dx: offset, dy: 0)
         
         let button = UIButton(frame: frame)
-        button.imageView!.contentMode = UIViewContentMode.ScaleAspectFit
+        button.imageView!.contentMode = UIViewContentMode.scaleAspectFit
         
         if !owned {
             let coinSize = iPad() ? "medium" : "small"
             let animalCost = RZQuizDatabase.currentZooLevel() == 8 ? 10 : 20
             let coinName = "coin-\(animalCost)-\(coinSize)"
-            button.setImage(UIImage(named: coinName), forState: .Normal)
-            button.addTarget(self, action: "purchasePressed:", forControlEvents: .TouchUpInside)
+            button.setImage(UIImage(named: coinName), for: UIControlState())
+            button.addTarget(self, action: #selector(BuildingViewController.purchasePressed(_:)), for: .touchUpInside)
             
             if !RZQuizDatabase.canAffordAnimal() {
                 button.alpha = 0.6
@@ -208,8 +214,8 @@ class BuildingViewController : ZookeeperGameController {
             buyButtons.append(button)
             
         } else {
-            button.setImage(UIImage(named: "button-play"), forState: .Normal)
-            button.addTarget(self, action: "playAnimalSound:", forControlEvents: .TouchUpInside)
+            button.setImage(UIImage(named: "button-play"), for: UIControlState())
+            button.addTarget(self, action: #selector(BuildingViewController.playAnimalSound(_:)), for: .touchUpInside)
             
             //fade button if file doesn't exist
             if UALengthOfFile(animal, ofType: "m4a") <= 1.0 {
@@ -222,20 +228,20 @@ class BuildingViewController : ZookeeperGameController {
         self.view.addSubview(button)
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         delay(1.0) {
-            self.view.userInteractionEnabled = true
+            self.view.isUserInteractionEnabled = true
         }
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         RZUserDatabase.saveCurrentUserToLinkedClassroom()
     }
     
     //MARK: - User Interaction
     
-    @IBAction func tapDetected(sender: UITapGestureRecognizer) {
-        if let zookeeperImage = self.zookeeperImage {
+    @IBAction func tapDetected(_ sender: UITapGestureRecognizer) {
+        if self.zookeeperImage != nil {
             //is in zookeeper mode
             zookeeperGameTap(event: sender)
             return
@@ -243,7 +249,7 @@ class BuildingViewController : ZookeeperGameController {
         
         if UAIsAudioPlaying() { return } //don't do visual effects if audio is already playing
         
-        let touch = sender.locationInView(backgroundImage)
+        let touch = sender.location(in: backgroundImage)
         var anyHit = false //only allow the top hitbox if two overlap
         
         //activate this code to get percentage points for touches
@@ -259,15 +265,15 @@ class BuildingViewController : ZookeeperGameController {
             let button = animalButtons[animal]!
             let frame = button.frame
             
-            if CGRectContainsPoint(frame, touch) && !anyHit {
+            if frame.contains(touch) && !anyHit {
                 anyHit = true
                 
-                if sender.state == .Ended {
-                    button.highlighted = false
+                if sender.state == .ended {
+                    button.isHighlighted = false
                     //play an audio for that animal
                     let audio = animalAudioNumber[animal]!
                     let audioName = "\(animal)_\(audio)"
-                    let success = UAPlayer().play(audioName, ofType: "mp3", ifConcurrent: .Ignore)
+                    let success = UAPlayer().play(audioName, ofType: "mp3", ifConcurrent: .ignore)
                     
                     if success {
                         //increment audio numver
@@ -278,43 +284,43 @@ class BuildingViewController : ZookeeperGameController {
                         animalAudioNumber.updateValue(nextAudio, forKey: animal)
                     }
                 }
-                else if sender.state == .Began || sender.state == .Changed {
-                    button.highlighted = true
+                else if sender.state == .began || sender.state == .changed {
+                    button.isHighlighted = true
                 }
             }
             else {
-                button.highlighted = false
+                button.isHighlighted = false
             }
         }
     }
     
-    @IBAction func infoPress(sender: AnyObject) {
+    @IBAction func infoPress(_ sender: AnyObject) {
         let audioName = "building\(building)"
-        UAPlayer().play(audioName, ofType: ".mp3", ifConcurrent: .Ignore)
+        UAPlayer().play(audioName, ofType: ".mp3", ifConcurrent: .ignore)
     }
     
-    @IBAction func homePressed(sender: AnyObject) {
+    @IBAction func homePressed(_ sender: AnyObject) {
         UAHaltPlayback()
-        self.dismissViewControllerAnimated(true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
     
-    func purchasePressed(sender: UIButton) {
+    func purchasePressed(_ sender: UIButton) {
         if !RZQuizDatabase.canAffordAnimal() {
-            UAPlayer().play("moreMoney", ofType: ".mp3", ifConcurrent: .Ignore)
+            UAPlayer().play("moreMoney", ofType: ".mp3", ifConcurrent: .ignore)
             return
         }
         if let animal = sender.restorationIdentifier {
             RZQuizDatabase.purchaseAnimal(animal)
             let didAdvanceLevel = RZQuizDatabase.advanceCurrentLevelIfComplete(buildingAnimals[building - 1])
-            backButton.enabled = true
-            homeButton.enabled = true
+            backButton.isEnabled = true
+            homeButton.isEnabled = true
             self.mustBuy = false
             
             //color in animal and play sound
-            UAPlayer().play("correct", ofType: ".mp3", ifConcurrent: .Interrupt)
+            UAPlayer().play("correct", ofType: ".mp3", ifConcurrent: .interrupt)
             let animalButton = animalButtons[animal]!
             let colored = UIImage(named: "\(animal)#color")
-            animalButton.setImage(colored, forState: .Normal)
+            animalButton.setImage(colored, for: UIControlState())
             
             //disable buy buttons if the user can't afford another animal
             if !RZQuizDatabase.canAffordAnimal() {
@@ -327,14 +333,14 @@ class BuildingViewController : ZookeeperGameController {
             addButtonForAnimal(animal, playerOwns: true)
             //remove current button from superview
             sender.removeFromSuperview()
-            if let index = mainButtons.indexOf(sender) {
-                mainButtons.removeAtIndex(index)
+            if let index = mainButtons.index(of: sender) {
+                mainButtons.remove(at: index)
             }
             
             //play animal's sound
             let duration = UALengthOfFile(animal, ofType: "m4a")
             delay(0.5) {
-                UAPlayer().play(animal, ofType: "m4a", ifConcurrent: .Interrupt)
+                UAPlayer().play(animal, ofType: "m4a", ifConcurrent: .interrupt)
             }
             
             if didAdvanceLevel {
@@ -342,11 +348,11 @@ class BuildingViewController : ZookeeperGameController {
                     let newLevel = RZQuizDatabase.currentZooLevel()
                     if (2...8).contains(newLevel) {
                         playVideo(name: "zoo-level-\(newLevel)", currentController: self, completion: {
-                            self.backButton.enabled = true
+                            self.backButton.isEnabled = true
                             if self.building != 8 {
-                                let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("building") as! BuildingViewController
+                                let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "building") as! BuildingViewController
                                 controller.decorate(building: self.building + 1, displaySize: self.view.frame.size)
-                                self.presentViewController(controller, animated: true, completion: nil)
+                                self.present(controller, animated: true, completion: nil)
                             }
                         })
                     }
@@ -355,23 +361,23 @@ class BuildingViewController : ZookeeperGameController {
         }
     }
     
-    func playAnimalSound(sender: UIButton) {
+    func playAnimalSound(_ sender: UIButton) {
         if let animal = sender.restorationIdentifier {
             if !UAIsAudioPlaying() {
-                UAPlayer().play(animal, ofType: "m4a", ifConcurrent: .Interrupt)
+                UAPlayer().play(animal, ofType: "m4a", ifConcurrent: .interrupt)
             }
         }
     }
     
-    @IBAction func zookeeperPressed(sender: UIButton) {
+    @IBAction func zookeeperPressed(_ sender: UIButton) {
         toggleZookeeper()
     }
     
-    @IBAction func panDetected(sender: UIPanGestureRecognizer) {
+    @IBAction func panDetected(_ sender: UIPanGestureRecognizer) {
         zookeeperGamePan(event: sender)
     }
     
-    @IBAction func pinchDetected(sender: UIPinchGestureRecognizer) {
+    @IBAction func pinchDetected(_ sender: UIPinchGestureRecognizer) {
         zookeeperGamePinch(event: sender)
     }
     

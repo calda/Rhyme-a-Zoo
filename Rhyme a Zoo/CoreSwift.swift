@@ -12,19 +12,20 @@ import UIKit.UIGestureRecognizerSubclass
 //MARK: - Functions
 
 ///perform the closure function after a given delay
-func delay(delay: Double, closure: ()->()) {
-    let time = dispatch_time(DISPATCH_TIME_NOW, Int64(delay * Double(NSEC_PER_SEC)))
-    dispatch_after(time, dispatch_get_main_queue(), closure)
+func delay(_ delay: Double, closure: @escaping ()->()) {
+    let time = DispatchTime.now() + Double(Int64(delay * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
+    DispatchQueue.main.asyncAfter(deadline: time, execute: closure)
 }
 
 
 ///play a CATransition for a UIView
-func playTransitionForView(view: UIView, duration: Double, transition transitionName: String) {
+func playTransitionForView(_ view: UIView, duration: Double, transition transitionName: String) {
     playTransitionForView(view, duration: duration, transition: transitionName, subtype: nil)
 }
 
 ///play a CATransition for a UIView
-func playTransitionForView(view: UIView, duration: Double, transition transitionName: String, var subtype: String?) {
+func playTransitionForView(_ view: UIView, duration: Double, transition transitionName: String, subtype: String?) {
+    let subtype = subtype
     let transition = CATransition()
     transition.duration = duration
     transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
@@ -32,7 +33,7 @@ func playTransitionForView(view: UIView, duration: Double, transition transition
     
     //run fix for transition subtype
     //subtypes don't take device orientation into account
-    let orientation = UIApplication.sharedApplication().statusBarOrientation
+    //let orientation = UIApplication.shared.statusBarOrientation
     //if orientation == .LandscapeLeft || orientation == .PortraitUpsideDown {
         //if subtype == kCATransitionFromLeft { subtype = kCATransitionFromRight }
         //else if subtype == kCATransitionFromRight { subtype = kCATransitionFromLeft }
@@ -41,17 +42,17 @@ func playTransitionForView(view: UIView, duration: Double, transition transition
     //}
     
     transition.subtype = subtype
-    view.layer.addAnimation(transition, forKey: nil)
+    view.layer.add(transition, forKey: nil)
 }
 
 ///dimiss a stack of View Controllers until a desired controler is found
-func dismissController(controller: UIViewController, untilMatch controllerCheck: (UIViewController) -> Bool) {
+func dismissController(_ controller: UIViewController, untilMatch controllerCheck: @escaping (UIViewController) -> Bool) {
     if controllerCheck(controller) {
         return //we made it to our destination
     }
     
     let superController = controller.presentingViewController
-    controller.dismissViewControllerAnimated(false, completion: {
+    controller.dismiss(animated: false, completion: {
         if let superController = superController {
             dismissController(superController, untilMatch: controllerCheck)
         }
@@ -59,7 +60,7 @@ func dismissController(controller: UIViewController, untilMatch controllerCheck:
 }
 
 ///get the top most view controller of the current Application
-func getTopController(application: UIApplicationDelegate) -> UIViewController? {
+func getTopController(_ application: UIApplicationDelegate) -> UIViewController? {
     //find the top controller
     var topController: UIViewController?
     
@@ -74,18 +75,18 @@ func getTopController(application: UIApplicationDelegate) -> UIViewController? {
 }
 
 ///sorts any [UIView]! by view.tag
-func sortOutletCollectionByTag<T : UIView>(inout collection: [T]!) {
-    collection = (collection as NSArray).sortedArrayUsingDescriptors([NSSortDescriptor(key: "tag", ascending: true)]) as! [T]
+func sortOutletCollectionByTag<T : UIView>(_ collection: inout [T]!) {
+    collection = (collection as NSArray).sortedArray(using: [NSSortDescriptor(key: "tag", ascending: true)]) as! [T]
 }
 
 
 ///animates a back and forth shake
-func shakeView(view: UIView) {
+func shakeView(_ view: UIView) {
     let animations : [CGFloat] = [20.0, -20.0, 10.0, -10.0, 3.0, -3.0, 0]
     for i in 0 ..< animations.count {
-        let frameOrigin = CGPointMake(view.frame.origin.x + animations[i], view.frame.origin.y)
+        let frameOrigin = CGPoint(x: view.frame.origin.x + animations[i], y: view.frame.origin.y)
         
-        UIView.animateWithDuration(0.1, delay: NSTimeInterval(0.1 * Double(i)), options: [], animations: {
+        UIView.animate(withDuration: 0.1, delay: TimeInterval(0.1 * Double(i)), options: [], animations: {
            view.frame.origin = frameOrigin
         }, completion: nil)
     }
@@ -93,12 +94,12 @@ func shakeView(view: UIView) {
 
 
 ///converts a String dictionary to a String array
-func dictToArray(dict: [String : String]) -> [String] {
+func dictToArray(_ dict: [String : String]) -> [String] {
     var array: [String] = []
     
     for item in dict {
-        let first = item.0.stringByReplacingOccurrencesOfString("~", withString: "|(#)|", options: [], range: nil)
-        let second = item.1.stringByReplacingOccurrencesOfString("~", withString: "|(#)|", options: [], range: nil)
+        let first = item.0.replacingOccurrences(of: "~", with: "|(#)|", options: [], range: nil)
+        let second = item.1.replacingOccurrences(of: "~", with: "|(#)|", options: [], range: nil)
         let combined = "\(first)~\(second)"
         array.append(combined)
     }
@@ -107,13 +108,13 @@ func dictToArray(dict: [String : String]) -> [String] {
 }
 
 ///converts an array created by the dictToArray: function to the original dictionary
-func arrayToDict(array: [String]) -> [String : String] {
+func arrayToDict(_ array: [String]) -> [String : String] {
     var dict: [String : String] = [:]
     
     for item in array {
         let splits = item.characters.split{ $0 == "~" }.map { String($0) }
-        let first = splits[0].stringByReplacingOccurrencesOfString("|(#)|", withString: "~", options: [], range: nil)
-        let second = splits[1].stringByReplacingOccurrencesOfString("|(#)|", withString: "~", options: [], range: nil)
+        let first = splits[0].replacingOccurrences(of: "|(#)|", with: "~", options: [], range: nil)
+        let second = splits[1].replacingOccurrences(of: "|(#)|", with: "~", options: [], range: nil)
         dict.updateValue(second, forKey: first)
     }
     
@@ -122,49 +123,49 @@ func arrayToDict(array: [String]) -> [String : String] {
 
 
 ///short-form function to run a block synchronously on the main queue
-func sync(closure: () -> ()) {
-    dispatch_sync(dispatch_get_main_queue(), closure)
+func sync(_ closure: () -> ()) {
+    DispatchQueue.main.sync(execute: closure)
 }
 
 ///short-form function to run a block asynchronously on the main queue
-func async(closure: () -> ()) {
-    dispatch_async(dispatch_get_main_queue(), closure)
+func async(_ closure: @escaping () -> ()) {
+    DispatchQueue.main.async(execute: closure)
 }
 
 
 ///open to this app's iOS Settings
 func openSettings() {
-    UIApplication.sharedApplication().openURL(NSURL(string:UIApplicationOpenSettingsURLString)!)
+    UIApplication.shared.openURL(URL(string:UIApplicationOpenSettingsURLString)!)
 }
 
 
 ///returns trus if the current device is an iPad
 func iPad() -> Bool {
-    return UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad
+    return UIDevice.current.userInterfaceIdiom == UIUserInterfaceIdiom.pad
 }
 
 
 ///a more succinct function call to post a notification
-func postNotification(name: String, object: AnyObject?) {
-    NSNotificationCenter.defaultCenter().postNotificationName(name, object: object, userInfo: nil)
+func postNotification(_ name: String, object: AnyObject?) {
+    NotificationCenter.default.post(name: Notification.Name(rawValue: name), object: object, userInfo: nil)
 }
 
 ///Asynchonrously ownsamples the image view's image to match the view's size
-func downsampleImageInView(imageView: UIImageView) {
+func downsampleImageInView(_ imageView: UIImageView) {
     async() {
         let newSize = imageView.frame.size
-        let screenScale = UIScreen.mainScreen().scale
-        let scaleSize = CGSizeMake(newSize.width * screenScale, newSize.height * screenScale)
+        let screenScale = UIScreen.main.scale
+        let scaleSize = CGSize(width: newSize.width * screenScale, height: newSize.height * screenScale)
         
-        if let original = imageView.image where original.size.width > scaleSize.width {
+        if let original = imageView.image, original.size.width > scaleSize.width {
             UIGraphicsBeginImageContext(scaleSize)
             let context = UIGraphicsGetCurrentContext()
-            CGContextSetInterpolationQuality(context, CGInterpolationQuality.High)
-            CGContextSetShouldAntialias(context, true)
-            original.drawInRect(CGRect(origin: CGPointZero, size: scaleSize))
+            context?.interpolationQuality = CGInterpolationQuality.high
+            context?.setShouldAntialias(true)
+            original.draw(in: CGRect(origin: CGPoint.zero, size: scaleSize))
             let newImage = UIGraphicsGetImageFromCurrentImageContext()
             UIGraphicsEndImageContext()
-            dispatch_async(dispatch_get_main_queue(), {
+            DispatchQueue.main.async(execute: {
                 imageView.image = newImage
             })
         }
@@ -172,30 +173,30 @@ func downsampleImageInView(imageView: UIImageView) {
 }
 
 ///Converts a URL to a CSV into an array of all of the lines in the CSV.
-func csvToArray(url: NSURL) -> [String] {
-    let string = try? String(contentsOfURL: url, encoding: NSUTF8StringEncoding)
+func csvToArray(_ url: URL) -> [String] {
+    let string = try? String(contentsOf: url, encoding: String.Encoding.utf8)
     return (string!).characters.split{ $0 == "\r\n" }.map { String($0) }
 }
 
 
 ///Crops an image to a circle (if square) or an oval (if rectangular)
-func cropImageToCircle(image: UIImage) -> UIImage {
+func cropImageToCircle(_ image: UIImage) -> UIImage {
     UIGraphicsBeginImageContext(image.size)
     let context = UIGraphicsGetCurrentContext()
     
     let radius = image.size.width / 2
-    let imageCenter = CGPointMake(image.size.width / 2, image.size.height / 2)
-    CGContextBeginPath(context)
-    CGContextAddArc(context, imageCenter.x, imageCenter.y, radius, 0, CGFloat(2*M_PI), 0)
-    CGContextClosePath(context)
-    CGContextClip(context)
+    let imageCenter = CGPoint(x: image.size.width / 2, y: image.size.height / 2)
+    context?.beginPath()
+    context?.addArc(center: imageCenter, radius: radius, startAngle: 0, endAngle: CGFloat(2 * Double.pi), clockwise: false)
+    context?.closePath()
+    context?.clip()
     
-    CGContextScaleCTM(context, image.scale, image.scale)
-    image.drawInRect(CGRect(origin: CGPointZero, size: image.size))
+    context?.scaleBy(x: image.scale, y: image.scale)
+    image.draw(in: CGRect(origin: CGPoint.zero, size: image.size))
     
     let cropped = UIGraphicsGetImageFromCurrentImageContext()
     UIGraphicsEndImageContext()
-    return cropped
+    return cropped!
     
 }
 
@@ -204,19 +205,19 @@ func cropImageToCircle(image: UIImage) -> UIImage {
 ///A touch gesture recognizer that sends events on both .Began (down) and .Ended (up)
 class UITouchGestureRecognizer : UIGestureRecognizer {
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent) {
-        super.touchesBegan(touches, withEvent: event)
-        self.state = .Began
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
+        super.touchesBegan(touches, with: event)
+        self.state = .began
     }
     
-    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent) {
-        super.touchesMoved(touches, withEvent: event)
-        self.state = .Began
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent) {
+        super.touchesMoved(touches, with: event)
+        self.state = .began
     }
     
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent) {
-        super.touchesEnded(touches, withEvent: event)
-        self.state = .Ended
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent) {
+        super.touchesEnded(touches, with: event)
+        self.state = .ended
     }
     
 }
@@ -224,8 +225,8 @@ class UITouchGestureRecognizer : UIGestureRecognizer {
 ///A basic class to manage Location access
 class LocationManager : NSObject, CLLocationManagerDelegate {
     
-    var waitingForAuthorization: [(completion: (CLLocation) -> (), failure: LocationFailureReason -> ())] = []
-    var waitingForUpdate: [(completion: (CLLocation) -> (), failure: LocationFailureReason -> ())] = []
+    var waitingForAuthorization: [(completion: (CLLocation) -> (), failure: (LocationFailureReason) -> ())] = []
+    var waitingForUpdate: [(completion: (CLLocation) -> (), failure: (LocationFailureReason) -> ())] = []
     var manager = CLLocationManager()
     
     ///Manager must be kept as a strong reference at the class-level.
@@ -235,15 +236,15 @@ class LocationManager : NSObject, CLLocationManagerDelegate {
         manager.desiredAccuracy = accuracy
     }
     
-    func getCurrentLocation(completion: (CLLocation) -> (), failure: LocationFailureReason -> () ) {
+    func getCurrentLocation(_ completion: @escaping (CLLocation) -> (), failure: @escaping (LocationFailureReason) -> () ) {
         let auth = CLLocationManager.authorizationStatus()
-        if auth == .Restricted || auth == .Denied {
-            failure(.PermissionsDenied)
+        if auth == .restricted || auth == .denied {
+            failure(.permissionsDenied)
             return
         }
         
-        if auth == .NotDetermined {
-            waitingForAuthorization.append(completion: completion, failure: failure)
+        if auth == .notDetermined {
+            waitingForAuthorization.append((completion: completion, failure: failure))
             manager.requestWhenInUseAuthorization()
             return
         }
@@ -252,34 +253,34 @@ class LocationManager : NSObject, CLLocationManagerDelegate {
         
     }
     
-    func getCurrentLocation(completion: (CLLocation) -> ()) {
+    func getCurrentLocation(_ completion: @escaping (CLLocation) -> ()) {
         getCurrentLocation(completion, failure: { error in })
     }
     
-    func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         for (completion, failure) in waitingForAuthorization {
-            if status == .AuthorizedWhenInUse {
+            if status == .authorizedWhenInUse {
                 updateLocationIfEnabled(completion, failure: failure)
             }
             else {
-                failure(.PermissionsDenied)
+                failure(.permissionsDenied)
             }
         }
         waitingForAuthorization = []
     }
     
-    private func updateLocationIfEnabled(completion: (CLLocation) -> (), failure: LocationFailureReason -> ()) {
+    fileprivate func updateLocationIfEnabled(_ completion: @escaping (CLLocation) -> (), failure: @escaping (LocationFailureReason) -> ()) {
         if !CLLocationManager.locationServicesEnabled() {
-            failure(.LocationServicesDisabled)
+            failure(.locationServicesDisabled)
             return
         }
         
-        waitingForUpdate.append(completion: completion, failure: failure)
+        waitingForUpdate.append((completion: completion, failure: failure))
         manager.startUpdatingLocation()
     }
     
-    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location = locations[0] as? CLLocation {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.first {
             for (completion, _) in waitingForUpdate {
                 completion(location)
             }
@@ -288,9 +289,9 @@ class LocationManager : NSObject, CLLocationManagerDelegate {
         manager.stopUpdatingLocation()
     }
     
-    func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         for (_, failure) in waitingForUpdate {
-            failure(.Error(error))
+            failure(.error(error as NSError))
         }
         waitingForUpdate = []
         manager.stopUpdatingLocation()
@@ -299,9 +300,9 @@ class LocationManager : NSObject, CLLocationManagerDelegate {
 }
 
 enum LocationFailureReason {
-    case PermissionsDenied
-    case LocationServicesDisabled
-    case Error(NSError)
+    case permissionsDenied
+    case locationServicesDisabled
+    case error(NSError)
 }
 
 ///Standard Stack data structure
@@ -310,7 +311,7 @@ struct Stack<T> {
     
     var array : [T] = []
     
-    mutating func push(push: T) {
+    mutating func push(_ push: T) {
         array.append(push)
     }
     
@@ -357,7 +358,7 @@ extension Int {
 
 extension NSObject {
     ///Short-hand function to register a notification observer
-    func observeNotification(name: String, selector: Selector) {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: selector, name: name, object: nil)
+    func observeNotification(_ name: String, selector: Selector) {
+        NotificationCenter.default.addObserver(self, selector: selector, name: NSNotification.Name(rawValue: name), object: nil)
     }
 }

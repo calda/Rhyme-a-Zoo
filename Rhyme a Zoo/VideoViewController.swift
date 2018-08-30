@@ -16,9 +16,9 @@ class VideoViewController : UIViewController {
     var videoName = "welcome-video"
     var completion: (() -> ())?
     var frames: [(imageName: String, time: Double)]?
-    var timers: [NSTimer] = []
-    var videoDuration: NSTimeInterval?
-    var videoStartTime: NSDate?
+    var timers: [Timer] = []
+    var videoDuration: TimeInterval?
+    var videoStartTime: Date?
     
     func loadDataForVideo() {
         /* data is in the following format:
@@ -26,8 +26,8 @@ class VideoViewController : UIViewController {
         s2:1.0
         s3:2.0 
         ... */
-        if let path = NSBundle.mainBundle().pathForResource(videoName, ofType: "txt") {
-            let dataString = (try! NSString(contentsOfFile: path, encoding: NSUTF8StringEncoding)) as String
+        if let path = Bundle.main.path(forResource: videoName, ofType: "txt") {
+            let dataString = (try! NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue)) as String
             let dataArray = dataString.characters.split{ $0 == "\n" }.map { String($0) }
             frames = []
             for frameInfo in dataArray {
@@ -40,36 +40,36 @@ class VideoViewController : UIViewController {
     }
     
     func playVideo() {
-        videoStartTime = NSDate()
-        UAPlayer().play(videoName, ofType: "mp3", ifConcurrent: .Interrupt)
+        videoStartTime = Date()
+        UAPlayer().play(videoName, ofType: "mp3", ifConcurrent: .interrupt)
         
         //add timer for closing the view after playback
         self.videoDuration = UALengthOfFile(videoName, ofType: "mp3")
-        let endTimer = NSTimer.scheduledTimerWithTimeInterval(videoDuration!, target: self, selector: "showImage:", userInfo: nil, repeats: false)
+        let endTimer = Timer.scheduledTimer(timeInterval: videoDuration!, target: self, selector: #selector(VideoViewController.showImage(_:)), userInfo: nil, repeats: false)
         timers.append(endTimer)
         
         //add timer for frames
         if let frames = frames {
             for (image, time) in frames {
-                let timer = NSTimer.scheduledTimerWithTimeInterval(time, target: self, selector: "showImage:", userInfo: image, repeats: false)
+                let timer = Timer.scheduledTimer(timeInterval: time, target: self, selector: #selector(VideoViewController.showImage(_:)), userInfo: image, repeats: false)
                 timers.append(timer)
             }
         }
         else {
-            self.dismissViewControllerAnimated(true, completion: nil)
+            self.dismiss(animated: true, completion: nil)
         }
         
         //add timer for progress bar
-        let progressTimer = NSTimer.scheduledTimerWithTimeInterval(0.01, target: self, selector: "updatePercentageBar", userInfo: nil, repeats: true)
+        let progressTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(VideoViewController.updatePercentageBar), userInfo: nil, repeats: true)
         timers.append(progressTimer)
     }
     
-    func showImage(timer: NSTimer) {
+    func showImage(_ timer: Timer) {
         if let imageName = timer.userInfo as? String {
             self.imageView.image = UIImage(named: imageName)
         }
         else {
-            self.dismissViewControllerAnimated(true, completion: nil)
+            self.dismiss(animated: true, completion: nil)
         }
     }
     
@@ -87,23 +87,23 @@ class VideoViewController : UIViewController {
     @IBOutlet weak var skipButton: UIVisualEffectView!
     @IBOutlet weak var progressBar: UIView!
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         loadDataForVideo()
         if let frames = frames {
             imageView.image = UIImage(named: frames[0].imageName)
         }
         
         if RZSettingSkipVideos.currentSetting() == false {
-            skipButton.hidden = true
+            skipButton.isHidden = true
         } else {
-            skipButton.hidden = false
+            skipButton.isHidden = false
         }
         
         setProgressBarPercentage(0.0001)
     }
     
-    func setProgressBarPercentage(percent: Double) {
-        var newTransform = CGAffineTransformMakeScale(CGFloat(percent), CGFloat(1.0))
+    func setProgressBarPercentage(_ percent: Double) {
+        var newTransform = CGAffineTransform(scaleX: CGFloat(percent), y: CGFloat(1.0))
         
         let width = imageView.frame.width
         let hiddenWidth = width * CGFloat(1 - percent)
@@ -112,11 +112,11 @@ class VideoViewController : UIViewController {
         progressBar.transform = newTransform
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         playVideo()
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         //end playback
         for timer in timers {
             timer.invalidate()
@@ -124,20 +124,20 @@ class VideoViewController : UIViewController {
         UAHaltPlayback()
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         completion?()
     }
     
-    @IBAction func closeView(sender: AnyObject) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+    @IBAction func closeView(_ sender: AnyObject) {
+        self.dismiss(animated: true, completion: nil)
     }
     
 }
 
-func playVideo(name name: String, currentController: UIViewController, completion: (() -> ())?) {
-    let videoController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("video") as! VideoViewController
+func playVideo(name: String, currentController: UIViewController, completion: (() -> ())?) {
+    let videoController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "video") as! VideoViewController
     videoController.videoName = name
     videoController.completion = completion
-    currentController.presentViewController(videoController, animated: true, completion: nil)
+    currentController.present(videoController, animated: true, completion: nil)
 }
 

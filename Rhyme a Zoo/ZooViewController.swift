@@ -16,29 +16,29 @@ class ZooViewController : ZookeeperGameController {
     @IBOutlet weak var questionButtonLeading: NSLayoutConstraint!
     
     let percentageFrames = [ //in percentages relative to the image view
-        CGRect(origin: CGPointMake(0.541, 0.195), size: CGSizeMake(0.175, 0.160)),
-        CGRect(origin: CGPointMake(0.356, 0.013), size: CGSizeMake(0.195, 0.278)),
-        CGRect(origin: CGPointMake(0.733, 0.423), size: CGSizeMake(0.267, 0.297)),
-        CGRect(origin: CGPointMake(0.244, 0.199), size: CGSizeMake(0.131, 0.198)),
-        CGRect(origin: CGPointMake(0.686, 0.255), size: CGSizeMake(0.208, 0.202)),
-        CGRect(origin: CGPointMake(0.066, 0.249), size: CGSizeMake(0.184, 0.365)),
-        CGRect(origin: CGPointMake(0.606, 0.007), size: CGSizeMake(0.322, 0.190)),
-        CGRect(origin: CGPointMake(0.606, 0.007), size: CGSizeMake(0.322, 0.190))
+        CGRect(origin: CGPoint(x: 0.541, y: 0.195), size: CGSize(width: 0.175, height: 0.160)),
+        CGRect(origin: CGPoint(x: 0.356, y: 0.013), size: CGSize(width: 0.195, height: 0.278)),
+        CGRect(origin: CGPoint(x: 0.733, y: 0.423), size: CGSize(width: 0.267, height: 0.297)),
+        CGRect(origin: CGPoint(x: 0.244, y: 0.199), size: CGSize(width: 0.131, height: 0.198)),
+        CGRect(origin: CGPoint(x: 0.686, y: 0.255), size: CGSize(width: 0.208, height: 0.202)),
+        CGRect(origin: CGPoint(x: 0.066, y: 0.249), size: CGSize(width: 0.184, height: 0.365)),
+        CGRect(origin: CGPoint(x: 0.606, y: 0.007), size: CGSize(width: 0.322, height: 0.190)),
+        CGRect(origin: CGPoint(x: 0.606, y: 0.007), size: CGSize(width: 0.322, height: 0.190))
     ]
     
     var buttonFrames: [CGRect] = []
     
     //MARK: - Setting Up View
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         //update background to level
         let level = RZQuizDatabase.currentZooLevel()
         backgroundImage.image = UIImage(named: "background\(level).jpg")
         
         for button in buildingButtons {
             if button.tag > level {
-                if button.tag == 7 || button.tag == 8 { button.hidden = true }
-                button.setImage(UIImage(named: "button-\(button.tag)-dark"), forState: .Normal)
+                if button.tag == 7 || button.tag == 8 { button.isHidden = true }
+                button.setImage(UIImage(named: "button-\(button.tag)-dark"), for: UIControlState())
             }
         }
         
@@ -53,14 +53,14 @@ class ZooViewController : ZookeeperGameController {
         self.view.layoutIfNeeded()
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         //generate frames for the building buttons
         buttonFrames = []
         let sceneSize = backgroundImage.frame.size
         
         for frame in percentageFrames {
-            let origin = CGPointMake(frame.origin.x * sceneSize.width, frame.origin.y * sceneSize.height)
-            let size = CGSizeMake(frame.width * sceneSize.width, frame.height * sceneSize.height)
+            let origin = CGPoint(x: frame.origin.x * sceneSize.width, y: frame.origin.y * sceneSize.height)
+            let size = CGSize(width: frame.width * sceneSize.width, height: frame.height * sceneSize.height)
             buttonFrames.append(CGRect(origin: origin, size: size))
         }
     }
@@ -68,14 +68,14 @@ class ZooViewController : ZookeeperGameController {
     
     //MARK: - User Interaction
     
-    @IBAction func tapDetected(sender: UITapGestureRecognizer) {
+    @IBAction func tapDetected(_ sender: UITapGestureRecognizer) {
         
-        if let zookeeperImage = self.zookeeperImage {
+        if self.zookeeperImage != nil {
             zookeeperGameTap(event: sender)
             return
         }
         
-        let touch = sender.locationInView(backgroundImage)
+        let touch = sender.location(in: backgroundImage)
         
         for i in 0 ..< buttonFrames.count {
             let j = buttonFrames.count - (i + 1) //go through frames backwards
@@ -92,11 +92,11 @@ class ZooViewController : ZookeeperGameController {
         }
     }
     
-    @IBAction func buildingNumberTapped(sender: UIButton) {
+    @IBAction func buildingNumberTapped(_ sender: UIButton) {
         openBuildingIfPossible(sender.tag)
     }
     
-    func openBuildingIfPossible(building: Int) {
+    func openBuildingIfPossible(_ building: Int) {
         var canOpenBuilding = true
         
         let level = RZQuizDatabase.currentZooLevel()
@@ -104,9 +104,9 @@ class ZooViewController : ZookeeperGameController {
         
         if canOpenBuilding {
             
-            let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("building") as! BuildingViewController
+            let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "building") as! BuildingViewController
             controller.decorate(building: building, displaySize: self.view.frame.size)
-            self.presentViewController(controller, animated: true, completion: nil)
+            self.present(controller, animated: true, completion: nil)
             
         }
         else {
@@ -114,37 +114,37 @@ class ZooViewController : ZookeeperGameController {
         }
     }
     
-    @IBAction func panDetected(sender: UIPanGestureRecognizer) {
+    @IBAction func panDetected(_ sender: UIPanGestureRecognizer) {
         zookeeperGamePan(event: sender)
     }
     
-    @IBAction func pinchRecognized(sender: UIPinchGestureRecognizer) {
+    @IBAction func pinchRecognized(_ sender: UIPinchGestureRecognizer) {
         zookeeperGamePinch(event: sender)
     }
     
-    @IBAction func questionPressed(sender: AnyObject) {
+    @IBAction func questionPressed(_ sender: AnyObject) {
         for i in 0 ..< numberButtonPercentages.count {
             showBuildingIcon(i + 1)
         }
     }
     
-    @IBAction func levelButtonPressed(sender: AnyObject) {
+    @IBAction func levelButtonPressed(_ sender: AnyObject) {
         let currentLevel = RZQuizDatabase.currentZooLevel()
         showBuildingIcon(currentLevel)
     }
     
     let numberButtonPercentages = [ //points for building number icons in percentages
-        CGPointMake(0.595, 0.291),
-        CGPointMake(0.462, 0.206),
-        CGPointMake(0.892, 0.530),
-        CGPointMake(0.323, 0.329),
-        CGPointMake(0.793, 0.368),
-        CGPointMake(0.197, 0.482),
-        CGPointMake(0.708, 0.072),
-        CGPointMake(0.847, 0.089)
+        CGPoint(x: 0.595, y: 0.291),
+        CGPoint(x: 0.462, y: 0.206),
+        CGPoint(x: 0.892, y: 0.530),
+        CGPoint(x: 0.323, y: 0.329),
+        CGPoint(x: 0.793, y: 0.368),
+        CGPoint(x: 0.197, y: 0.482),
+        CGPoint(x: 0.708, y: 0.072),
+        CGPoint(x: 0.847, y: 0.089)
     ]
     
-    func showBuildingIcon(buildingNumber: Int) {
+    func showBuildingIcon(_ buildingNumber: Int) {
         let percentagePoint = numberButtonPercentages[buildingNumber - 1]
         
         let level = RZQuizDatabase.currentZooLevel()
@@ -154,12 +154,12 @@ class ZooViewController : ZookeeperGameController {
         
         let x = backgroundImage.frame.width * percentagePoint.x
         let y = backgroundImage.frame.height * percentagePoint.y
-        var frame = CGRectMake(x - 20.0, y - 20.0, 40.0, 40.0) //frame inside of backgroundImage
+        var frame = CGRect(x: x - 20.0, y: y - 20.0, width: 40.0, height: 40.0) //frame inside of backgroundImage
         if iPad() {
-            frame = CGRectMake(x - 30.0, y - 30.0, 60.0, 60.0)
+            frame = CGRect(x: x - 30.0, y: y - 30.0, width: 60.0, height: 60.0)
         }
         let backgroundOrigin = backgroundImage.frame.origin
-        frame.offsetInPlace(dx: backgroundOrigin.x, dy: backgroundOrigin.y)
+        frame = frame.offsetBy(dx: backgroundOrigin.x, dy: backgroundOrigin.y)
         
         let icon = UIImageView(frame: frame)
         let dark = buildingNumber > level ? "-dark" : ""
@@ -167,11 +167,11 @@ class ZooViewController : ZookeeperGameController {
         icon.alpha = 0.0
         self.view.addSubview(icon)
         
-        UIView.animateWithDuration(0.2, animations: {
+        UIView.animate(withDuration: 0.2, animations: {
             icon.alpha = 1.0
             }, completion: { success in
                 
-                UIView.animateWithDuration(1.0, delay: 3.0, options: [], animations: {
+                UIView.animate(withDuration: 1.0, delay: 3.0, options: [], animations: {
                     icon.alpha = 0.0
                     }, completion: { success in
                         icon.removeFromSuperview()
@@ -180,12 +180,12 @@ class ZooViewController : ZookeeperGameController {
         })
     }
     
-    @IBAction func zookeeperPressed(sender: AnyObject) {
+    @IBAction func zookeeperPressed(_ sender: AnyObject) {
         toggleZookeeper()
     }
     
-    @IBAction func homePressed(sender: AnyObject) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+    @IBAction func homePressed(_ sender: AnyObject) {
+        self.dismiss(animated: true, completion: nil)
     }
     
 }

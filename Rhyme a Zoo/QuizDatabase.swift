@@ -39,24 +39,24 @@ let RZQuizDatabase = QuizDatabase()
 //let WordCategory = Expression<Int>("Category")
 
 //User Data Keys managed by the database
-let RZFavoritesKey: NSString = "com.hearatale.raz.favorites"
-let RZQuizResultsKey: NSString  = "com.hearatale.raz.quizResults"
-let RZPercentCorrectKey: String = "com.hearatale.raz.percentCorrect"
-let RZQuizLevelKey: NSString  = "com.hearatale.raz.quizLevel"
-let RZPlayerBalanceKey: NSString  = "com.hearatale.raz.balance"
-let RZTotalMoneyEarnedKey: NSString = "com.hearatale.raz.totalMoney"
-let RZAnimalsKey: NSString  = "com.hearatale.raz.animals"
-let RZZooLevelKey: NSString  = "com.hearatale.raz.animalLevel"
-let RZKeeperNumberKey: NSString  = "com.hearatale.raz.keeperNumber"
-let RZKeeperGenderKey: NSString  = "com.hearatale.raz.keeperGender"
-let RZHasWatchedWelcomeVideo: NSString = "com.hearatale.raz.watchedWelcome"
+let RZFavoritesKey           = "com.hearatale.raz.favorites"
+let RZQuizResultsKey         = "com.hearatale.raz.quizResults"
+let RZPercentCorrectKey      = "com.hearatale.raz.percentCorrect"
+let RZQuizLevelKey           = "com.hearatale.raz.quizLevel"
+let RZPlayerBalanceKey       = "com.hearatale.raz.balance"
+let RZTotalMoneyEarnedKey    = "com.hearatale.raz.totalMoney"
+let RZAnimalsKey             = "com.hearatale.raz.animals"
+let RZZooLevelKey            = "com.hearatale.raz.animalLevel"
+let RZKeeperNumberKey        = "com.hearatale.raz.keeperNumber"
+let RZKeeperGenderKey        = "com.hearatale.raz.keeperGender"
+let RZHasWatchedWelcomeVideo = "com.hearatale.raz.watchedWelcome"
 
-func userKey(key: NSString, forUser user: User) -> String {
-    let originalKey = key as String
+func userKey(_ key: String, forUser user: User) -> String {
+    let originalKey = key
     return "\(originalKey).\(user.ID)"
 }
 
-func userKey(key: NSString) -> String {
+func userKey(_ key: String) -> String {
     return userKey(key, forUser: RZCurrentUser)
 }
 
@@ -66,7 +66,7 @@ func userKey(key: NSString) -> String {
 ///Quiz Database -> Quiz -> Question -> Option
 class QuizDatabase {
     
-    private var quizNumberMap: [Int] = []
+    fileprivate var quizNumberMap: [Int] = []
     var count: Int {
         get {
             return quizNumberMap.count
@@ -81,7 +81,7 @@ class QuizDatabase {
     
     init() {
         //load DB Override before loading questions
-        let overrideFile = NSBundle.mainBundle().URLForResource("DB Override", withExtension: "csv")!
+        let overrideFile = Bundle.main.url(forResource: "DB Override", withExtension: "csv")!
         let csv = csvToArray(overrideFile)
         for line in csv {
             let splits = line.characters.split{ $0 == "," }.map { String($0) }
@@ -115,16 +115,16 @@ class QuizDatabase {
 //        }
     }
     
-    func getQuiz(index: Int) -> Quiz {
+    func getQuiz(_ index: Int) -> Quiz {
         let number = quizNumberMap[index]
         return Quiz(number)
     }
     
-    func getRhyme(index: Int) -> Rhyme {
+    func getRhyme(_ index: Int) -> Rhyme {
         return getQuiz(index)
     }
     
-    func quizesInLevel(level: Int) -> [Quiz!] {
+    func quizesInLevel(_ level: Int) -> [Quiz?] {
         return []
 //        var displayOrderArray: [Quiz!] = [nil, nil, nil, nil, nil]
 //        for quiz in Quizes.filter(QuizLevel == level) {
@@ -135,7 +135,7 @@ class QuizDatabase {
 //        return displayOrderArray.filter{ $0 != nil }
     }
     
-    func getIndexForRhyme(rhyme: Rhyme) -> Int {
+    func getIndexForRhyme(_ rhyme: Rhyme) -> Int {
         for i in 0 ..< quizNumberMap.count {
             if quizNumberMap[i] == rhyme.number {
                 return i
@@ -147,55 +147,56 @@ class QuizDatabase {
     //MARK: - Player Data for Quizes
     
     func getQuizData() -> [String : String] {
-        return data.dictionaryForKey(userKey(RZQuizResultsKey)) as? [String : String] ?? [:]
+        return data.dictionary(forKey: userKey(RZQuizResultsKey)) as? [String : String] ?? [:]
     }
     
-    func setQuizData(quizData: [String : String]) {
+    func setQuizData(_ quizData: [String : String]) {
         data.setValue(quizData, forKey: userKey(RZQuizResultsKey))
     }
     
     func getFavorites() -> [Int] {
-        return data.arrayForKey(userKey(RZFavoritesKey)) as? [Int] ?? []
+        return data.array(forKey: userKey(RZFavoritesKey)) as? [Int] ?? []
     }
     
-    func setFavorites(favs: [Int]) {
+    func setFavorites(_ favs: [Int]) {
         data.setValue(favs, forKey: userKey(RZFavoritesKey))
     }
     
-    func isQuizFavorite(number: Int) -> Bool {
-        if let favs = data.arrayForKey(userKey(RZFavoritesKey)) as? [Int] {
+    func isQuizFavorite(_ number: Int) -> Bool {
+        if let favs = data.array(forKey: userKey(RZFavoritesKey)) as? [Int] {
             return favs.contains(number)
         }
         return false
     }
     
     func numberOfFavories() -> Int {
-        if let favs = data.arrayForKey(userKey(RZFavoritesKey)) as? [Int] {
+        if let favs = data.array(forKey: userKey(RZFavoritesKey)) as? [Int] {
             return favs.count
         }
         return 0
     }
     
     func currentLevel() -> Int {
-        let level = data.integerForKey(userKey(RZQuizLevelKey))
+        let level = data.integer(forKey: userKey(RZQuizLevelKey))
         if level == 0 {
-            data.setInteger(1, forKey: userKey(RZQuizLevelKey))
+            data.set(1, forKey: userKey(RZQuizLevelKey))
             return 1
         }
         return level
     }
     
-    func setQuizLevel(level: Int) {
-        data.setInteger(level, forKey: userKey(RZQuizLevelKey))
+    func setQuizLevel(_ level: Int) {
+        data.set(level, forKey: userKey(RZQuizLevelKey))
     }
     
+    @discardableResult
     func advanceLevelIfCurrentIsComplete() -> Bool {
         let current = currentLevel()
-        let complete = quizesInLevel(currentLevel()).filter{ $0.quizHasBeenPlayed() }.count == 5
+        let complete = quizesInLevel(currentLevel()).filter{ ($0?.quizHasBeenPlayed())! }.count == 5
         
         if complete {
             let newLevel = min(current + 1, levelCount)
-            data.setInteger(newLevel, forKey: userKey(RZQuizLevelKey))
+            data.set(newLevel, forKey: userKey(RZQuizLevelKey))
         }
         return complete
     }
@@ -203,21 +204,21 @@ class QuizDatabase {
     //MARK: - Bank
     
     func getPlayerBalance() -> Double {
-        return data.doubleForKey(userKey(RZPlayerBalanceKey))
+        return data.double(forKey: userKey(RZPlayerBalanceKey))
     }
     
-    func changePlayerBalanceBy(amount: Double) {
+    func changePlayerBalanceBy(_ amount: Double) {
         let current = getPlayerBalance()
         let new = current + amount
-        data.setDouble(new, forKey: userKey(RZPlayerBalanceKey))
+        data.set(new, forKey: userKey(RZPlayerBalanceKey))
     }
     
-    func setPlayerBalance(value: Double) {
-        data.setDouble(value, forKey: userKey(RZPlayerBalanceKey))
+    func setPlayerBalance(_ value: Double) {
+        data.set(value, forKey: userKey(RZPlayerBalanceKey))
     }
     
     func getTotalMoneyEarned() -> (gold: Int, silver: Int) {
-        if let array = data.stringArrayForKey(userKey(RZTotalMoneyEarnedKey)) {
+        if let array = data.stringArray(forKey: userKey(RZTotalMoneyEarnedKey)) {
             let dict = arrayToDict(array)
             if let gold = Int(dict["gold"] ?? "0"), let silver = Int(dict["silver"] ?? "0") {
                 return (gold, silver)
@@ -227,7 +228,7 @@ class QuizDatabase {
         return (0, 0)
     }
     
-    func setTotalMoneyEarned(gold gold: Int, silver: Int) {
+    func setTotalMoneyEarned(gold: Int, silver: Int) {
         let dict = ["gold" : "\(gold)", "silver" : "\(silver)"]
         let array = dictToArray(dict)
         data.setValue(array, forKey: userKey(RZTotalMoneyEarnedKey))
@@ -239,7 +240,7 @@ class QuizDatabase {
         return dictToArray(dict)
     }
     
-    func setTotalMoneyEarnedFromArray(array: [String]) {
+    func setTotalMoneyEarnedFromArray(_ array: [String]) {
         let dict = arrayToDict(array)
         if let gold = Int(dict["gold"] ?? "0"), let silver = Int(dict["silver"] ?? "0") {
             setTotalMoneyEarned(gold: gold, silver: silver)
@@ -249,7 +250,7 @@ class QuizDatabase {
     //MARK: - Zoo Management
     
     func getOwnedAnimals() -> [String] {
-        if let array = data.arrayForKey(userKey(RZAnimalsKey)) as? [String] {
+        if let array = data.array(forKey: userKey(RZAnimalsKey)) as? [String] {
             return array
         }
         //array doesn't exist
@@ -257,11 +258,11 @@ class QuizDatabase {
         return []
     }
     
-    func setOwnedAnimals(animals: [String]) {
+    func setOwnedAnimals(_ animals: [String]) {
         data.setValue(animals, forKey: userKey(RZAnimalsKey))
     }
     
-    func playerOwnsAnimal(animal: String) -> Bool {
+    func playerOwnsAnimal(_ animal: String) -> Bool {
         return getOwnedAnimals().contains(animal)
     }
     
@@ -271,7 +272,7 @@ class QuizDatabase {
         return getPlayerBalance() >= requiredBalance
     }
     
-    func purchaseAnimal(animal: String) {
+    func purchaseAnimal(_ animal: String) {
         if !canAffordAnimal() { return }
         
         let zooLevel = currentZooLevel()
@@ -283,34 +284,34 @@ class QuizDatabase {
     }
     
     func currentZooLevel() -> Int {
-        let level = data.integerForKey(userKey(RZZooLevelKey))
+        let level = data.integer(forKey: userKey(RZZooLevelKey))
         if level == 0 {
-            data.setInteger(1, forKey: userKey(RZZooLevelKey))
+            data.set(1, forKey: userKey(RZZooLevelKey))
             return 1
         }
         return level
     }
     
-    func advanceCurrentLevelIfComplete(animals: [String]) -> Bool {
+    func advanceCurrentLevelIfComplete(_ animals: [String]) -> Bool {
         var complete = true
         for animal in animals {
             complete = complete && playerOwnsAnimal(animal)
         }
         if complete {
             let currentLevel = currentZooLevel()
-            data.setInteger(currentLevel + 1, forKey: userKey(RZZooLevelKey))
+            data.set(currentLevel + 1, forKey: userKey(RZZooLevelKey))
         }
         return complete
     }
     
-    func setZooLevel(level: Int) {
-        data.setInteger(level, forKey: userKey(RZZooLevelKey))
+    func setZooLevel(_ level: Int) {
+        data.set(level, forKey: userKey(RZZooLevelKey))
     }
     
     //MARK: - Zookeeper
     
     func getKeeperGender() -> String {
-        let gender = data.stringForKey(userKey(RZKeeperGenderKey))
+        let gender = data.string(forKey: userKey(RZKeeperGenderKey))
         if gender == nil || (gender != "boy" && gender != "girl") {
             data.setValue("boy", forKey: userKey(RZKeeperGenderKey))
             return "boy"
@@ -318,12 +319,12 @@ class QuizDatabase {
         return gender!
     }
     
-    func setKeeperGender(gender: String) {
+    func setKeeperGender(_ gender: String) {
         data.setValue(gender, forKey: userKey(RZKeeperGenderKey))
     }
     
     func getKeeperNumber() -> Int {
-        let number = data.integerForKey(userKey(RZKeeperNumberKey))
+        let number = data.integer(forKey: userKey(RZKeeperNumberKey))
         if number == 0 {
             data.setValue(1, forKey: userKey(RZKeeperNumberKey))
             return 1
@@ -331,7 +332,7 @@ class QuizDatabase {
         return number
     }
     
-    func setKeeperNumber(number: Int) {
+    func setKeeperNumber(_ number: Int) {
         data.setValue(number, forKey: userKey(RZKeeperNumberKey))
     }
     
@@ -339,7 +340,7 @@ class QuizDatabase {
         return "\(getKeeperGender())~\(getKeeperNumber())"
     }
     
-    func setKeeperWithString(string: String) {
+    func setKeeperWithString(_ string: String) {
         let splits = string.characters.split{ $0 == "~" }.map { String($0) }
         let gender = splits[0]
         setKeeperGender(gender)
@@ -351,15 +352,15 @@ class QuizDatabase {
     //MARK: - User Statistics
     
     func hasWatchedWelcomeVideo() -> Bool {
-        return data.boolForKey(userKey(RZHasWatchedWelcomeVideo))
+        return data.bool(forKey: userKey(RZHasWatchedWelcomeVideo))
     }
     
-    func setHasWatchedWelcomeVideo(status: Bool) {
-        data.setBool(status, forKey: userKey(RZHasWatchedWelcomeVideo))
+    func setHasWatchedWelcomeVideo(_ status: Bool) {
+        data.set(status, forKey: userKey(RZHasWatchedWelcomeVideo))
     }
     
     func getPercentCorrectArray() -> [String] {
-        if let array = data.stringArrayForKey(userKey(RZPercentCorrectKey)) {
+        if let array = data.stringArray(forKey: userKey(RZPercentCorrectKey)) {
             if array.count != 4 {
                 //create a new dictionary
                 let dict = ["totalComprehension" : "0", "correctComprehension" : "0", "totalPhonetic" : "0", "correctPhonetic" : "0"]
@@ -378,7 +379,7 @@ class QuizDatabase {
         }
     }
     
-    func setPercentCorrectArray(array: [String]) {
+    func setPercentCorrectArray(_ array: [String]) {
         data.setValue(array, forKey: userKey(RZPercentCorrectKey))
     }
     
@@ -394,7 +395,7 @@ class QuizDatabase {
         return dict
     }
     
-    func updatePercentCorrect(question: Question, correct: Bool) {
+    func updatePercentCorrect(_ question: Question, correct: Bool) {
         var dict = getPercentCorrectDict()
         let isPhonetic = question.isPhonetic()
         let totalKey = isPhonetic ? "totalPhonetic" : "totalComprehension"
@@ -475,14 +476,14 @@ struct Quiz : CustomStringConvertible {
         }
     }
     
-    func setFavoriteStatus(fav: Bool) {
-        if var favs = data.arrayForKey(userKey(RZFavoritesKey)) as? [Int] {
+    func setFavoriteStatus(_ fav: Bool) {
+        if var favs = data.array(forKey: userKey(RZFavoritesKey)) as? [Int] {
             if fav && !favs.contains(number) {
                 favs.append(number)
                 data.setValue(favs, forKey: userKey(RZFavoritesKey))
             } else if !fav && favs.contains(number) {
-                let index = (favs as NSArray).indexOfObject(number)
-                favs.removeAtIndex(index)
+                let index = (favs as NSArray).index(of: number)
+                favs.remove(at: index)
                 data.setValue(favs, forKey: userKey(RZFavoritesKey))
             }
         }
@@ -499,9 +500,9 @@ struct Quiz : CustomStringConvertible {
         return RZQuizDatabase.isQuizFavorite(number)
     }
     
-    func saveQuizResult(gold gold: Int, silver: Int) {
+    func saveQuizResult(gold: Int, silver: Int) {
         var results: [String : String] = [:]
-        if let resultsDict = data.dictionaryForKey(userKey(RZQuizResultsKey)) as? [String : String] {
+        if let resultsDict = data.dictionary(forKey: userKey(RZQuizResultsKey)) as? [String : String] {
             results = resultsDict
         }
         
@@ -521,14 +522,14 @@ struct Quiz : CustomStringConvertible {
     }
     
     func quizHasBeenPlayed() -> Bool {
-        if let resultsDict = data.dictionaryForKey(userKey(RZQuizResultsKey)) as? [String : String] {
+        if let resultsDict = data.dictionary(forKey: userKey(RZQuizResultsKey)) as? [String : String] {
             return resultsDict.keys.contains(number.threeCharacterString())
         }
         return false
     }
     
     func getQuizResult() -> (gold: Int, silver: Int) {
-        if let resultsDict = data.dictionaryForKey(userKey(RZQuizResultsKey)) as? [String : String] {
+        if let resultsDict = data.dictionary(forKey: userKey(RZQuizResultsKey)) as? [String : String] {
             if let result = resultsDict[number.threeCharacterString()] {
                 let splits = result.characters.split{ $0 == ":" }.map { String($0) }
                 if splits.count == 2 {
@@ -552,14 +553,14 @@ struct Quiz : CustomStringConvertible {
         return getWithOffsetIndex(-1, fromFavorites: favs)
     }
     
-    func getWithOffsetIndex(offset: Int, fromFavorites favs: Bool) -> Quiz? {
+    func getWithOffsetIndex(_ offset: Int, fromFavorites favs: Bool) -> Quiz? {
         var numbersArray = RZQuizDatabase.quizNumberMap
         
-        if let favsArray = data.arrayForKey(userKey(RZFavoritesKey)) as? [Int] where favs {
+        if let favsArray = data.array(forKey: userKey(RZFavoritesKey)) as? [Int], favs {
             numbersArray = favsArray
         }
         
-        if let thisIndex = numbersArray.indexOf(self.number) {
+        if let thisIndex = numbersArray.index(of: self.number) {
             let searchIndex = thisIndex + offset
             if searchIndex < 0 || searchIndex >= numbersArray.count { return nil }
             let quiz = Quiz(numbersArray[searchIndex])
@@ -572,7 +573,7 @@ struct Quiz : CustomStringConvertible {
         return nil
     }
     
-    func getNextUnplayed(fromFavorites: Bool) -> Quiz? {
+    func getNextUnplayed(_ fromFavorites: Bool) -> Quiz? {
         var next = getNext(fromFavorites: fromFavorites)
         while next != nil && next!.quizHasBeenPlayed() {
             next = next!.getNext(fromFavorites: fromFavorites)
@@ -604,7 +605,7 @@ struct Question: CustomStringConvertible {
     var answer: String
     let category: Int
     var text: String
-    private var options: [Option]
+    fileprivate var options: [Option]
     var shuffledOptions: [Option] {
         get {
             return options.shuffled()
@@ -650,7 +651,7 @@ struct Question: CustomStringConvertible {
             
             self.options = []
             for optionText in overrideOptions {
-                if optionText.uppercaseString == optionText {
+                if optionText.uppercased() == optionText {
                     //is phonetic option
                     self.options.append(Option(word: "sound-\(optionText)"))
                 }
@@ -668,7 +669,7 @@ struct Question: CustomStringConvertible {
         var phonetic = true
         
         for option in options {
-            if option.word != option.word.uppercaseString {
+            if option.word != option.word.uppercased() {
                 //if the option is not 100% uppercase
                 //then it isn't a phonetic question
                 phonetic = false
@@ -708,9 +709,9 @@ struct Option: CustomStringConvertible {
     }
     
     func playAudio() {
-        let success = UAPlayer().play(rawWord, ofType: ".mp3", ifConcurrent: .Interrupt)
+        let success = UAPlayer().play(rawWord, ofType: ".mp3", ifConcurrent: .interrupt)
         if !success {
-            UAPlayer().play(rawWord.lowercaseString, ofType: ".mp3", ifConcurrent: .Interrupt)
+            UAPlayer().play(rawWord.lowercased(), ofType: ".mp3", ifConcurrent: .interrupt)
         }
     }
     

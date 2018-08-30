@@ -9,6 +9,30 @@
 import Foundation
 import UIKit
 import CoreLocation
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
 
 class ClassroomsViewController : UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
     
@@ -28,34 +52,34 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
     
     //MARK: - Asynchronously fetch location and nearby classrooms
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         tableView.contentInset = UIEdgeInsets(top: 70.0, left: 0.0, bottom: 70.0, right: 0.0)
         checkUserLoggedIn(showIntroAlert: true, delayAlertPresentation: false)
     }
     
-    func checkUserLoggedIn(showIntroAlert showIntroAlert: Bool, delayAlertPresentation: Bool = false) {
+    func checkUserLoggedIn(showIntroAlert: Bool, delayAlertPresentation: Bool = false) {
         RZUserDatabase.userLoggedIn({ loggedIn in
             if !loggedIn {
                 
-                let alert = UIAlertController(title: "Cannot join Classroom", message: "You must be logged in to an iCloud account on this device to join or create a classroom.", preferredStyle: .Alert)
-                alert.addAction(UIAlertAction(title: "Try Again", style: .Default, handler: { _ in
+                let alert = UIAlertController(title: "Cannot join Classroom", message: "You must be logged in to an iCloud account on this device to join or create a classroom.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Try Again", style: .default, handler: { _ in
                     //recursively repeat this function
                     self.checkUserLoggedIn(showIntroAlert: showIntroAlert, delayAlertPresentation: delayAlertPresentation)
                 }))
-                alert.addAction(UIAlertAction(title: "Settings", style: .Default, handler: { _ in
+                alert.addAction(UIAlertAction(title: "Settings", style: .default, handler: { _ in
                     self.activityIndicator.alpha = 0.0
                     openSettings()
                     delay(1.0) {
-                        self.presentViewController(alert, animated: true, completion: nil)
+                        self.present(alert, animated: true, completion: nil)
                     }
                     
                 }))
-                alert.addAction(UIAlertAction(title: "Cancel", style: .Destructive, handler: { _ in
-                    self.dismissViewControllerAnimated(true, completion: nil)
+                alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { _ in
+                    self.dismiss(animated: true, completion: nil)
                 }))
                 
                 delay(delayAlertPresentation ? 0.5 : 0.0) {
-                    self.presentViewController(alert, animated: true, completion: nil)
+                    self.present(alert, animated: true, completion: nil)
                 }
                 
             }
@@ -67,9 +91,9 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
         })
     }
     
-    func searchForNearbyClassrooms(showIntroAlert showIntroAlert: Bool) {
+    func searchForNearbyClassrooms(showIntroAlert: Bool) {
         searching = true
-        repeatButton.enabled = false
+        repeatButton.isEnabled = false
         
         
         activityIndicator.alpha = 1.0
@@ -89,37 +113,37 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
                 //failed to access location
                 self.dataLoaded(showIntroAlert: showIntroAlert)
                 
-                let alert = UIAlertController(title: "Could not determine location", message: "Enable Location Services or search for your classroom by name.", preferredStyle: .Alert)
-                let ok = UIAlertAction(title: "OK", style: .Default, handler: nil)
-                let settings = UIAlertAction(title: "Settings", style: .Default, handler: { alert in
+                let alert = UIAlertController(title: "Could not determine location", message: "Enable Location Services or search for your classroom by name.", preferredStyle: .alert)
+                let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+                let settings = UIAlertAction(title: "Settings", style: .default, handler: { alert in
                     openSettings()
                 })
                 alert.addAction(ok)
                 alert.addAction(settings)
-                self.presentViewController(alert, animated: true, completion: nil)
+                self.present(alert, animated: true, completion: nil)
         })
     }
     
-    func dataLoaded(showIntroAlert showIntroAlert: Bool) {
+    func dataLoaded(showIntroAlert: Bool) {
         if showIntroAlert { self.showIntroAlert() }
         
         searching = false
         delay(1.5) {
-            self.repeatButton.enabled = true
+            self.repeatButton.isEnabled = true
         }
         self.tableView.reloadData()
         
         //animate
         let originalIndicatorOrigin = self.activityIndicator.frame.origin
-        let newIndicatorOrigin = CGPointMake(self.activityIndicator.frame.origin.x, self.activityIndicator.frame.origin.y + 100)
-        UIView.animateWithDuration(0.5, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
+        let newIndicatorOrigin = CGPoint(x: self.activityIndicator.frame.origin.x, y: self.activityIndicator.frame.origin.y + 100)
+        UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
             
             self.activityIndicator.frame.origin = newIndicatorOrigin
             self.activityIndicator.alpha = 0.0
             
             if self.nearbyClassrooms?.count > 0 {
                 self.tableView.alpha = 1.0
-                self.topBar.frame.origin = CGPointZero
+                self.topBar.frame.origin = CGPoint.zero
                 self.topBar.alpha = 1.0
                 self.noNearbyLabel.alpha = 0.0
             }
@@ -135,35 +159,35 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
     
     func showIntroAlert() {
         let alert: UIAlertController
-        if let classrooms = self.nearbyClassrooms where classrooms.count != 0 {
+        if let classrooms = self.nearbyClassrooms, classrooms.count != 0 {
             //there was atleast one nearby classroom
-            alert = UIAlertController(title: "Join a Classroom", message: "If you already have a nearby classroom, tap its name on the list. If you want to create a new classrom, tap the green button in the bottom right corner.", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+            alert = UIAlertController(title: "Join a Classroom", message: "If you already have a nearby classroom, tap its name on the list. If you want to create a new classrom, tap the green button in the bottom right corner.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         }
         else {
             //zero classrooms
-            alert = UIAlertController(title: "Join a Classroom", message: "There are no nearby classrooms. Would you like to create one?", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Create Classroom", style: .Default, handler: { action in
+            alert = UIAlertController(title: "Join a Classroom", message: "There are no nearby classrooms. Would you like to create one?", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Create Classroom", style: .default, handler: { action in
                 self.createClassroomButtonPressed(action)
             }))
-            alert.addAction(UIAlertAction(title: "Not Now", style: .Destructive, handler: nil))
+            alert.addAction(UIAlertAction(title: "Not Now", style: .destructive, handler: nil))
         }
         
-        self.presentViewController(alert, animated: true, completion: nil)
+        self.present(alert, animated: true, completion: nil)
     }
     
     //MARK: - Table View Data Source
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return nearbyClassrooms?.count ?? 0
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("classroom") as! ClassroomCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "classroom") as! ClassroomCell
         
         if let classrooms = nearbyClassrooms {
             let classroom = classrooms[indexPath.item]
-            let distance = currentLocation?.distanceFromLocation(classroom.location)
+            let distance = currentLocation?.distance(from: classroom.location)
             cell.decorate(name: classroom.name, distance: distance)
         }
         
@@ -172,22 +196,22 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
     
     //MARK: - User Interaction
     
-    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
     
-    @IBAction func touchRecognized(sender: UITouchGestureRecognizer) {
-        if sender.state == .Ended {
+    @IBAction func touchRecognized(_ sender: UITouchGestureRecognizer) {
+        if sender.state == .ended {
             animateSelection(nil)
         }
         
         for cell in tableView.visibleCells as! [ClassroomCell] {
-            let touch = sender.locationInView(cell.superview!)
+            let touch = sender.location(in: cell.superview!)
             if cell.frame.contains(touch) {
                 
-                let index = tableView.indexPathForCell(cell)!.item
+                let index = tableView.indexPath(for: cell)!.item
                 
-                if sender.state == .Ended {
+                if sender.state == .ended {
                     if let nearbyClassrooms = nearbyClassrooms {
                         let classroom = nearbyClassrooms[index]
                         openPasscodeForClassroom(classroom)
@@ -200,42 +224,42 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
         }
     }
     
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-        touchRecognizer.enabled = false
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        touchRecognizer.isEnabled = false
         animateSelection(nil)
         delay(0.5) {
-            self.touchRecognizer.enabled = true
+            self.touchRecognizer.isEnabled = true
         }
     }
     
-    func animateSelection(index: Int?) {
+    func animateSelection(_ index: Int?) {
         for cell in tableView.visibleCells as! [ClassroomCell] {
             
-            if let indexPath = tableView.indexPathForCell(cell) where indexPath.item == index && touchRecognizer.enabled {
-                UIView.animateWithDuration(0.15) {
+            if let indexPath = tableView.indexPath(for: cell), indexPath.item == index && touchRecognizer.isEnabled {
+                UIView.animate(withDuration: 0.15, animations: {
                     cell.backgroundColor = UIColor(white: 1.0, alpha: 0.1)
-                }
+                }) 
             }
             else {
-                UIView.animateWithDuration(0.15) {
+                UIView.animate(withDuration: 0.15, animations: {
                     cell.backgroundColor = UIColor(white: 1.0, alpha: 0.0)
-                }
+                }) 
             }
             
         }
     }
     
-    func openPasscodeForClassroom(classroom: Classroom) {
+    func openPasscodeForClassroom(_ classroom: Classroom) {
         requestPasscode(classroom.passcode, description: "Passcode for \"\(classroom.name)\"", currentController: self, completion: {
             self.joinClassroom(classroom)
         })
     }
     
-    @IBAction func back(sender: AnyObject) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+    @IBAction func back(_ sender: AnyObject) {
+        self.dismiss(animated: true, completion: nil)
     }
     
-    @IBAction func repeatSearch(sender: AnyObject) {
+    @IBAction func repeatSearch(_ sender: AnyObject) {
         if !searching {
             checkUserLoggedIn(showIntroAlert: false, delayAlertPresentation: false)
         }
@@ -243,7 +267,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
     
     //MARK: - Creating a Classroom
     
-    @IBAction func createClassroomButtonPressed(sender: AnyObject?) {
+    @IBAction func createClassroomButtonPressed(_ sender: AnyObject?) {
         if let location = currentLocation {
             requestNewClassroomName(location)
         }
@@ -257,20 +281,20 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
                 self.activityIndicator.alpha = 0.0
                 
                 //show alert
-                let alert = UIAlertController(title: "Could not determine location", message: "A location is required to create a new classroom. Make sure you have Location Services enabled.", preferredStyle: .Alert)
-                let cancel = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
-                let settings = UIAlertAction(title: "Settings", style: .Default, handler: { alert in
+                let alert = UIAlertController(title: "Could not determine location", message: "A location is required to create a new classroom. Make sure you have Location Services enabled.", preferredStyle: .alert)
+                let cancel = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+                let settings = UIAlertAction(title: "Settings", style: .default, handler: { alert in
                     openSettings()
                 })
                 alert.addAction(cancel)
                 alert.addAction(settings)
-                self.presentViewController(alert, animated: true, completion: nil)
+                self.present(alert, animated: true, completion: nil)
                 
             })
         }
     }
     
-    func requestNewClassroomName(location: CLLocation, previousNameAttempt: String? = nil) {
+    func requestNewClassroomName(_ location: CLLocation, previousNameAttempt: String? = nil) {
         var message: String = "Your classroom can have any name, but it should be easy to identify."
         if let previousName = previousNameAttempt {
             if (previousName as NSString).length < 4 {
@@ -280,16 +304,16 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
             }
         }
         
-        let alert = UIAlertController(title: "Name your Classroom", message: message, preferredStyle: .Alert)
+        let alert = UIAlertController(title: "Name your Classroom", message: message, preferredStyle: .alert)
         var nameTextField: UITextField!
-        alert.addTextFieldWithConfigurationHandler({ textField in
+        alert.addTextField(configurationHandler: { textField in
             nameTextField = textField
             nameTextField.placeholder = "Mr. Evan's 3rd Graders"
-            textField.autocapitalizationType = .Sentences
-            textField.autocorrectionType = .No
+            textField.autocapitalizationType = .sentences
+            textField.autocorrectionType = .no
         })
         
-        let next = UIAlertAction(title: "Next", style: .Default, handler: { _ in
+        let next = UIAlertAction(title: "Next", style: .default, handler: { _ in
         
             let name = nameTextField.text ?? ""
             
@@ -315,69 +339,69 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
             
         })
         
-        let cancel = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
+        let cancel = UIAlertAction(title: "Cancel", style: .default, handler: nil)
         alert.addAction(cancel)
         alert.addAction(next)
-        self.presentViewController(alert, animated: true, completion: nil)
+        self.present(alert, animated: true, completion: nil)
     }
     
-    func requestClassroomPasscode(location: CLLocation, name: String) {
+    func requestClassroomPasscode(_ location: CLLocation, name: String) {
         createPasscode("Create a 4-digit passcode for \"\(name)\"", currentController: self, completion: { possiblePasscode in
             
-            if let passcode = possiblePasscode where passcode.characters.count == 4 {
+            if let passcode = possiblePasscode, passcode.characters.count == 4 {
                 self.createClassroom(location, name: name, passcode: passcode)
             }
             else {
-                let alert = UIAlertController(title: nil, message: "You must create a 4-digit passcode for your classroom.", preferredStyle: .Alert)
-                let cancel = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Destructive, handler: nil)
-                let tryAgain = UIAlertAction(title: "Try Again", style: UIAlertActionStyle.Default, handler: { _ in
+                let alert = UIAlertController(title: nil, message: "You must create a 4-digit passcode for your classroom.", preferredStyle: .alert)
+                let cancel = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.destructive, handler: nil)
+                let tryAgain = UIAlertAction(title: "Try Again", style: UIAlertActionStyle.default, handler: { _ in
                     self.requestClassroomPasscode(location, name: name)
                 })
                 alert.addAction(cancel)
                 alert.addAction(tryAgain)
-                self.presentViewController(alert, animated: true, completion: nil)
+                self.present(alert, animated: true, completion: nil)
             }
             
         })
     }
     
-    func createClassroom(location: CLLocation, name: String, passcode: String) {
+    func createClassroom(_ location: CLLocation, name: String, passcode: String) {
         RZUserDatabase.createClassroomNamed(name, location: location, passcode: passcode, completion: { classroom in
             if let classroom = classroom {
                 self.joinClassroom(classroom)
             }
             else {
-                let alert = UIAlertController(title: "Could not create your classroom.", message: "There was a problem saving your classroom. Make sure you are connected to the internet and logged into an iCloud account on this device.", preferredStyle: .Alert)
-                let cancel = UIAlertAction(title: "Cancel", style: .Destructive, handler: nil)
-                let settings = UIAlertAction(title: "Settings", style: .Default, handler: { _ in
+                let alert = UIAlertController(title: "Could not create your classroom.", message: "There was a problem saving your classroom. Make sure you are connected to the internet and logged into an iCloud account on this device.", preferredStyle: .alert)
+                let cancel = UIAlertAction(title: "Cancel", style: .destructive, handler: nil)
+                let settings = UIAlertAction(title: "Settings", style: .default, handler: { _ in
                     openSettings()
                 })
-                let tryAgain = UIAlertAction(title: "Try Again", style: .Default, handler: { _ in
+                let tryAgain = UIAlertAction(title: "Try Again", style: .default, handler: { _ in
                     self.createClassroom(location, name: name, passcode: passcode)
                 })
                 alert.addAction(tryAgain)
                 alert.addAction(settings)
                 alert.addAction(cancel)
-                self.presentViewController(alert, animated: true, completion: nil)
+                self.present(alert, animated: true, completion: nil)
             }
         })
     }
     
     //MARK: - Searching by name
     
-    @IBAction func searchPressed(sender: AnyObject?) {
-        let alert = UIAlertController(title: "Search for a Classroom", message: nil, preferredStyle: .Alert)
+    @IBAction func searchPressed(_ sender: AnyObject?) {
+        let alert = UIAlertController(title: "Search for a Classroom", message: nil, preferredStyle: .alert)
         
         var searchTextField: UITextField?
-        alert.addTextFieldWithConfigurationHandler({ textField in
+        alert.addTextField(configurationHandler: { textField in
             textField.placeholder = "Classroom Name"
             searchTextField = textField
-            textField.autocapitalizationType = .Sentences
-            textField.autocorrectionType = .No
+            textField.autocapitalizationType = .sentences
+            textField.autocorrectionType = .no
         })
         
-        let cancel = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
-        let search = UIAlertAction(title: "Search", style: .Default, handler: { action in
+        let cancel = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+        let search = UIAlertAction(title: "Search", style: .default, handler: { action in
             if let searchTextField = searchTextField {
                 
                 let text = searchTextField.text ?? ""
@@ -388,21 +412,21 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
         
         alert.addAction(cancel)
         alert.addAction(search)
-        self.presentViewController(alert, animated: true, completion: nil)
+        self.present(alert, animated: true, completion: nil)
         
     }
     
-    func processSearchText(text: String) {
+    func processSearchText(_ text: String) {
         if (text as NSString).length < 4 {
             //search must be atleast 4 characters long
-            let alert = UIAlertController(title: "Text Too Short", message: "Your search text must be at least 4 letters long.", preferredStyle: .Alert)
-            let cancel = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
-            let tryAgain = UIAlertAction(title: "Try Again", style: .Default, handler: { alert in
+            let alert = UIAlertController(title: "Text Too Short", message: "Your search text must be at least 4 letters long.", preferredStyle: .alert)
+            let cancel = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+            let tryAgain = UIAlertAction(title: "Try Again", style: .default, handler: { alert in
                 self.searchPressed(nil)
             })
             alert.addAction(cancel)
             alert.addAction(tryAgain)
-            self.presentViewController(alert, animated: true, completion: nil)
+            self.present(alert, animated: true, completion: nil)
             return
         }
         
@@ -415,34 +439,34 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
         })
         
         //animate
-        cancelButton.transform = CGAffineTransformMakeScale(0.1, 0.1)
+        cancelButton.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
         cancelButton.alpha = 0.0
         activityIndicator.alpha = 0.0
         let originalIndicatorOrigin = self.activityIndicator.frame.origin
-        self.activityIndicator.frame.offsetInPlace(dx: 0, dy: 100)
+        self.activityIndicator.frame = self.activityIndicator.frame.offsetBy(dx: 0, dy: 100)
         
-        UIView.animateWithDuration(0.6, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: [], animations: {
+        UIView.animate(withDuration: 0.6, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0.0, options: [], animations: {
             self.cancelButton.alpha = 1.0
-            self.cancelButton.transform = CGAffineTransformMakeScale(1.0, 1.0)
+            self.cancelButton.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             self.activityIndicator.frame.origin = originalIndicatorOrigin
             self.activityIndicator.alpha = 1.0
             self.noNearbyLabel.alpha = 0.0
         }, completion: nil)
         
-        UIView.animateWithDuration(0.3) {
+        UIView.animate(withDuration: 0.3, animations: {
             self.tableView.alpha = 0.0
-        }
+        }) 
         
         
     }
     
-    @IBAction func cancelSearch(sender: AnyObject) {
+    @IBAction func cancelSearch(_ sender: AnyObject) {
         //animate
         let originalIndicatorOrigin = self.activityIndicator.frame.origin
-        self.activityIndicator.frame.offsetInPlace(dx: 0, dy: 100)
-        UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.0, options: [], animations: {
+        self.activityIndicator.frame = self.activityIndicator.frame.offsetBy(dx: 0, dy: 100)
+        UIView.animate(withDuration: 0.4, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.0, options: [], animations: {
             self.cancelButton.alpha = 0.0
-            self.cancelButton.transform = CGAffineTransformMakeScale(0.1, 0.1)
+            self.cancelButton.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
             self.activityIndicator.frame.origin = originalIndicatorOrigin
             self.activityIndicator.alpha = 1.0
             self.tableView.alpha = 0.0
@@ -455,18 +479,18 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
     
     //MARK: - Join a classroom
     
-    func joinClassroom(classroom: Classroom) {
+    func joinClassroom(_ classroom: Classroom) {
         RZUserDatabase.linkToClassroom(classroom)
         //switch to users view
-        let alert = UIAlertController(title: classroom.name, message: "You're signed in to your classroom!", preferredStyle: .Alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: { _ in
+        let alert = UIAlertController(title: classroom.name, message: "You're signed in to your classroom!", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
         
             //return to Select a User screen
             dismissController(self, untilMatch: { $0 is UsersViewController })
             
         }))
         
-        self.presentViewController(alert, animated: true, completion: nil)
+        self.present(alert, animated: true, completion: nil)
         
     }
     
@@ -477,9 +501,9 @@ class ClassroomCell : UITableViewCell {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var distanceLabel: UILabel!
     
-    func decorate(name name: String, distance: Double?) {
+    func decorate(name: String, distance: Double?) {
         nameLabel.text = name
-        self.backgroundColor = UIColor.clearColor()
+        self.backgroundColor = UIColor.clear
         if let distance = distance {
             distanceLabel.alpha = 1.0
             let meterToMile = 0.000621371

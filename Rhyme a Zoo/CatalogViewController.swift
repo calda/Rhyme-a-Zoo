@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-let RZAsyncQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
+let RZAsyncQueue = DispatchQueue(label: "RAZAsyncQueue", qos: .userInitiated)
 var RZShowingFavorites = false
 
 class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
@@ -24,27 +24,27 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
     var canHideButtonGradient = true
     var animatingFromHome = false
     
-    var offsetBeforeSwitch = CGPointZero
+    var offsetBeforeSwitch = CGPoint.zero
     var gradientVisibleBeforeSwitch = true
     
     //widths for different device classes
     let fourRow: CGFloat = 736.0
     let twoRow: CGFloat = 480.0
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if indexPath.item == hearATaleCellIndex {
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("Hear a Tale", forIndexPath: indexPath) as! DecorationCell
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Hear a Tale", for: indexPath) as! DecorationCell
             cell.decorate()
             return cell;
         }
         
         if indexPath.item == celebrationCellIndex {
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("Celebration", forIndexPath: indexPath) as! DecorationCell
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Celebration", for: indexPath) as! DecorationCell
             cell.decorate()
             return cell;
         }
         
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("rhyme", forIndexPath: indexPath) as! RhymeCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "rhyme", for: indexPath) as! RhymeCell
         cell.decorate(indexPath.item, showFavorites: RZShowingFavorites)
         return cell
     }
@@ -52,7 +52,7 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
     var hearATaleCellIndex: Int? = nil
     var celebrationCellIndex: Int? = nil
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if RZShowingFavorites {
             return RZQuizDatabase.numberOfFavories() + 1
         }
@@ -75,11 +75,11 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
         return displayedCells
     }
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return getSize()
     }
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         if indexPath.item == hearATaleCellIndex { //is Hear a Tale cell
             return
@@ -105,7 +105,7 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
         let rhyme: Rhyme
         if RZShowingFavorites {
             let favIndex = indexPath.item
-            let favs = data.arrayForKey(userKey(RZFavoritesKey)) as! [Int]
+            let favs = data.array(forKey: userKey(RZFavoritesKey)) as! [Int]
             let rhymeNumber = favs[favIndex]
             rhyme = Rhyme(rhymeNumber)
         } else {
@@ -121,20 +121,20 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
         collectionView.reloadData()*/
 
         
-        let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("rhyme") as! RhymeViewController
+        let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "rhyme") as! RhymeViewController
         controller.decorate(rhyme)
-        self.presentViewController(controller, animated: true, completion: nil)
+        self.present(controller, animated: true, completion: nil)
     }
     
     func getSize() -> CGSize {
         let (heightDivisor, widthDivisor) = multipliersForCell()
         let height = (collectionView.frame.height - (5.0 * (heightDivisor + 1))) / heightDivisor
         let width = collectionView.frame.width / widthDivisor
-        return CGSizeMake(width, height)
+        return CGSize(width: width, height: height)
     }
     
     func multipliersForCell() -> (height: CGFloat, width: CGFloat) {
-        let screenWidth = UIScreen.mainScreen().bounds.width
+        let screenWidth = UIScreen.main.bounds.width
         
         if screenWidth == fourRow {
             return (4.0, 3.15)
@@ -145,14 +145,14 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
         }
     }
     
-    func scrollViewDidScroll(scrollView: UIScrollView) {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if !canHideButtonGradient { return }
         if self.buttonGradientLeading.constant != -70.0 {
             self.buttonGradientLeading.constant = -70.0
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         
         if RZShowingFavorites && RZQuizDatabase.numberOfFavories() == 0 {
             RZShowingFavorites = false
@@ -179,32 +179,32 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
             
             var col = CGFloat(unplayedIndex / heightDivisor) - 1
             col = max(col, 0)
-            let width = UIScreen.mainScreen().bounds.width / widthDivisor
+            let width = UIScreen.main.bounds.width / widthDivisor
             let x = (width * (col)) + (5.0 * (col + 1))
             
             canHideButtonGradient = false
             delay(0.1) {
-                self.collectionView.contentOffset = CGPointMake(x, 0)
+                self.collectionView.contentOffset = CGPoint(x: x, y: 0)
                 self.canHideButtonGradient = true
             }
             animatingFromHome = false
         }
         
         if RZQuizDatabase.numberOfFavories() == 0 {
-            favoritesButton.hidden = true
+            favoritesButton.isHidden = true
         } else {
-            favoritesButton.hidden = false
+            favoritesButton.isHidden = false
         }
     }
     
-    @IBAction func homePressed(sender: AnyObject) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+    @IBAction func homePressed(_ sender: AnyObject) {
+        self.dismiss(animated: true, completion: nil)
         RZShowingFavorites = false
     }
     
-    @IBAction func toggleFavorites(sender: UIButton) {
+    @IBAction func toggleFavorites(_ sender: UIButton) {
         RZShowingFavorites = !RZShowingFavorites
-        favoritesButton.setImage(UIImage(named: RZShowingFavorites ? "button-back" : "button-heart"), forState: .Normal)
+        favoritesButton.setImage(UIImage(named: RZShowingFavorites ? "button-back" : "button-heart"), for: UIControlState())
         if RZShowingFavorites {
             offsetBeforeSwitch = collectionView.contentOffset
             gradientVisibleBeforeSwitch = buttonGradientLeading.constant > -70.0
@@ -212,12 +212,12 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
         collectionView.reloadData()
         
         self.canHideButtonGradient = false
-        collectionView.contentOffset = (RZShowingFavorites ? CGPointZero : offsetBeforeSwitch)
+        collectionView.contentOffset = (RZShowingFavorites ? CGPoint.zero : offsetBeforeSwitch)
         self.canHideButtonGradient = true
         
         if !RZShowingFavorites && gradientVisibleBeforeSwitch {
             buttonGradientLeading.constant = 0.0
-            UIView.animateWithDuration(0.5, animations: {
+            UIView.animate(withDuration: 0.5, animations: {
                 self.view.layoutIfNeeded()
             })
         } else if RZShowingFavorites {
@@ -246,15 +246,15 @@ class RhymeCell : UICollectionViewCell {
     @IBOutlet weak var coinContainerAspect: NSLayoutConstraint!
     @IBOutlet weak var coinContainer: UIView!
     
-    func decorate(index: Int, showFavorites: Bool) {
+    func decorate(_ index: Int, showFavorites: Bool) {
         self.coins = [coin1, coin2, coin3, coin4, coin5]
         self.alpha = 0.0
         
-        dispatch_async(RZAsyncQueue, {
+        RZAsyncQueue.async(execute: {
             let rhyme: Rhyme
             
             if showFavorites {
-                let favs = data.arrayForKey(userKey(RZFavoritesKey)) as! [Int]
+                let favs = data.array(forKey: userKey(RZFavoritesKey)) as! [Int]
                 if index >= favs.count { return }
                 let number = favs[index]
                 rhyme = Rhyme(number)
@@ -265,13 +265,13 @@ class RhymeCell : UICollectionViewCell {
             let quizIndex = RZQuizDatabase.getIndexForRhyme(rhyme)
             let quizNumber = rhyme.number.threeCharacterString()
             let image = UIImage(named: "thumbnail_\(quizNumber).jpg")
-            let name = rhyme.name.uppercaseString
+            let name = rhyme.name.uppercased()
             let isFavorite = rhyme.isFavorite()
             let (gold, silver) = rhyme.getQuizResult()
             let hasBeenPlayed = rhyme.quizHasBeenPlayed()
             
-            dispatch_async(dispatch_get_main_queue(), {
-                self.favoriteIcon.hidden = !isFavorite
+            DispatchQueue.main.async(execute: {
+                self.favoriteIcon.isHidden = !isFavorite
                 self.title.text = name
                 self.numberLabel.text = "\(quizIndex + 1)"
                 self.thumbnail.image = image
@@ -284,12 +284,12 @@ class RhymeCell : UICollectionViewCell {
                 }
                 setCoinsInImageViews(self.coins, gold: gold, silver: silver, big: false)
                 
-                self.coinContainer.hidden = !hasBeenPlayed
+                self.coinContainer.isHidden = !hasBeenPlayed
                 self.coinContainer.removeConstraint(self.coinContainerAspect)
-                self.coinContainerAspect = NSLayoutConstraint(item: self.coinContainer, attribute: .Width, relatedBy: .Equal, toItem: self.coinContainer, attribute: .Height, multiplier: CGFloat(countToShow), constant: 0.0)
+                self.coinContainerAspect = NSLayoutConstraint(item: self.coinContainer, attribute: .width, relatedBy: .equal, toItem: self.coinContainer, attribute: .height, multiplier: CGFloat(countToShow), constant: 0.0)
                 self.coinContainer.addConstraint(self.coinContainerAspect)
                 
-                UIView.animateWithDuration(0.2, delay: 0.0, options: UIViewAnimationOptions.AllowUserInteraction, animations: {
+                UIView.animate(withDuration: 0.2, delay: 0.0, options: UIViewAnimationOptions.allowUserInteraction, animations: {
                     self.alpha = 1.0
                 }, completion: nil)
                 
@@ -306,7 +306,7 @@ class DecorationCell : UICollectionViewCell {
     
     func decorate() {
         self.alpha = 0.0
-        UIView.animateWithDuration(0.2, delay: 0.05, options: UIViewAnimationOptions.AllowUserInteraction, animations: {
+        UIView.animate(withDuration: 0.2, delay: 0.05, options: UIViewAnimationOptions.allowUserInteraction, animations: {
             self.alpha = 1.0
         }, completion: nil)
     }
