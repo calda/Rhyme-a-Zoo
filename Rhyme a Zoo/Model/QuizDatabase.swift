@@ -15,50 +15,85 @@ let RZQuizDatabase = QuizDatabase()
 //MARK: - Expressions and Keys for accessing data
 
 ///SQLite.swift wrapper for the legacy databace from the PC version of Rhyme a Zoo.
-//private let sql = Database(NSBundle.mainBundle().pathForResource("LegacyDB", ofType: "db")!, readonly: true)
-//QUIZ table
-//private let Quizes = sql["QUIZ"]
-//private let QuizNumber = Expression<Int>("QuizNo")
-//private let QuizName = Expression<String>("Name")
-//private let QuizLevel = Expression<Int>("Level")
-//private let QuizRhymeText = Expression<String>("RhymeText")
-//private let QuizDisplayOrder = Expression<Int>("D_ORDER")
-//AUDIOTIME table
-//private let AudioTime = sql["AUDIOTIME"]
-//let AudioWord = Expression<Int>("Word")
-//let AudioStartTime = Expression<Int>("StartTime")
-//QUESTION table
-//private let Questions = sql["Question"]
-//private let QuestionNumber = Expression<Int>("QuestionNo")
-//private let QuestionAnswer = Expression<String>("Answer")
-//private let QuestionCategory = Expression<String>("Category")
-//private let QuestionText = Expression<String>("QuestionText")
-//WORDBANK table
-//private let WordBank = sql["WORDBANK"]
-//let WordText = Expression<String>("Word")
-//let WordCategory = Expression<Int>("Category")
+fileprivate enum SQL {
+    
+    static let database = try! Connection(Bundle.main.path(forResource: "LegacyDB", ofType: "db")!, readonly: true)
+    
+    enum Quiz {
+        static let table = Table("QUIZ")
+        
+        static let number = Expression<Int>("QuizNo")
+        static let name = Expression<String>("Name")
+        static let level = Expression<Int>("Level")
+        static let rhymeText = Expression<String>("RhymeText")
+        static let displayOrder = Expression<Int>("D_ORDER")
+    }
+    
+    enum AudioTime {
+        static let table = Table("AUDIOTIME")
+        static let word = Expression<Int>("Word")
+        static let startTime = Expression<Int>("StartTime")
+    }
+    
+    enum Question {
+        static let table = Table("Question")
+        static let number = Expression<Int>("QuestionNo")
+        static let quizNumber = Expression<Int>("QuizNo")
+        static let answer = Expression<String>("Answer")
+        static let category = Expression<String>("Category")
+        static let text = Expression<String>("QuestionText")
+    }
+    
+    enum WordBank {
+        static let table = Table("WORDBANK")
+        static let word = Expression<String>("Word")
+        static let category = Expression<Int>("Category")
+    }
+    
+}
+
+/// SQLite helpers
+extension SQLite.Table {
+    
+    var array: [Row] {
+        guard let databaseResult = try? SQL.database.prepare(self) else {
+            fatalError("Could not access SQLite database.")
+        }
+        
+        return Array(databaseResult)
+    }
+    
+    func filtered(by expression: Expression<Bool>) -> Table {
+        return self.filter(expression)
+    }
+    
+}
+
 
 //User Data Keys managed by the database
-let RZFavoritesKey           = "com.hearatale.raz.favorites"
-let RZQuizResultsKey         = "com.hearatale.raz.quizResults"
-let RZPercentCorrectKey      = "com.hearatale.raz.percentCorrect"
-let RZQuizLevelKey           = "com.hearatale.raz.quizLevel"
-let RZPlayerBalanceKey       = "com.hearatale.raz.balance"
-let RZTotalMoneyEarnedKey    = "com.hearatale.raz.totalMoney"
-let RZAnimalsKey             = "com.hearatale.raz.animals"
-let RZZooLevelKey            = "com.hearatale.raz.animalLevel"
-let RZKeeperNumberKey        = "com.hearatale.raz.keeperNumber"
-let RZKeeperGenderKey        = "com.hearatale.raz.keeperGender"
-let RZHasWatchedWelcomeVideo = "com.hearatale.raz.watchedWelcome"
 
-func userKey(_ key: String, forUser user: User) -> String {
-    let originalKey = key
-    return "\(originalKey).\(user.ID)"
+fileprivate enum Key: String {
+    case favorites              = "com.hearatale.raz.favorites"
+    case quizResults            = "com.hearatale.raz.quizResults"
+    case percentCorrect         = "com.hearatale.raz.percentCorrect"
+    case quizLevel              = "com.hearatale.raz.quizLevel"
+    case playerBalance          = "com.hearatale.raz.balance"
+    case totalMoneyEarned       = "com.hearatale.raz.totalMoney"
+    case animals                = "com.hearatale.raz.animals"
+    case zooLevel               = "com.hearatale.raz.animalLevel"
+    case keeperNumber           = "com.hearatale.raz.keeperNumber"
+    case keeperGender           = "com.hearatale.raz.keeperGender"
+    case hasWatchedWelcomeVideo = "com.hearatale.raz.watchedWelcome"
+    
+    func forUser(_ user: User) -> String {
+        return "\(self).\(user.ID)"
+    }
+    
+    var forCurrentUser: String {
+        return self.forUser(RZCurrentUser)
+    }
 }
 
-func userKey(_ key: String) -> String {
-    return userKey(key, forUser: RZCurrentUser)
-}
 
 //MARK: - Reading quiz data from the SQL database
 
@@ -94,25 +129,25 @@ class QuizDatabase {
         
         
         //load rhymes and questions
-//        for level in 1...levelCount {
-//            var displayOrderArray: [Int?] = [nil, nil, nil, nil, nil]
-//            for quiz in Quizes.filter(QuizLevel == level) {
-//                let quizNumber = quiz[QuizNumber]
-//                let quizDisplayOrder = quiz[QuizDisplayOrder]
-//                displayOrderArray[quizDisplayOrder - 1] = quizNumber
-//            }
-//            
-//            for quiz in displayOrderArray {
-//                if let quiz = quiz {
-//                    quizNumberMap.append(quiz)
-//                }
-//            }
-//        }
-//        
-//        
-//        for quiz in Quizes.select(QuizNumber) {
-//            quizNumberMap.append(quiz[QuizNumber])
-//        }
+        for level in 1...levelCount {
+            var displayOrderArray: [Int?] = [nil, nil, nil, nil, nil]
+            
+            for quiz in SQL.Quiz.table.filtered(by: SQL.Quiz.level == level).array {
+                let quizNumber = quiz[SQL.Quiz.number]
+                let quizDisplayOrder = quiz[SQL.Quiz.displayOrder]
+                displayOrderArray[quizDisplayOrder - 1] = quizNumber
+            }
+            
+            for quiz in displayOrderArray {
+                if let quiz = quiz {
+                    quizNumberMap.append(quiz)
+                }
+            }
+        }
+        
+        for quiz in SQL.Quiz.table.select([SQL.Quiz.number]).array {
+            quizNumberMap.append(quiz[SQL.Quiz.number])
+        }
     }
     
     func getQuiz(_ index: Int) -> Quiz {
@@ -124,15 +159,16 @@ class QuizDatabase {
         return getQuiz(index)
     }
     
-    func quizesInLevel(_ level: Int) -> [Quiz?] {
-        return []
-//        var displayOrderArray: [Quiz!] = [nil, nil, nil, nil, nil]
-//        for quiz in Quizes.filter(QuizLevel == level) {
-//            let quizNumber = quiz[QuizNumber]
-//            let quizDisplayOrder = quiz[QuizDisplayOrder]
-//            displayOrderArray[quizDisplayOrder - 1] = Quiz(quizNumber)
-//        }
-//        return displayOrderArray.filter{ $0 != nil }
+    func quizesInLevel(_ level: Int) -> [Quiz] {
+        var displayOrderArray: [Quiz?] = [nil, nil, nil, nil, nil]
+        
+        for quiz in SQL.Quiz.table.filtered(by: SQL.Quiz.level == level).array {
+            let quizNumber = quiz[SQL.Quiz.number]
+            let quizDisplayOrder = quiz[SQL.Quiz.displayOrder]
+            displayOrderArray[quizDisplayOrder - 1] = Quiz(quizNumber)
+        }
+        
+        return displayOrderArray.compactMap { $0 }
     }
     
     func getIndexForRhyme(_ rhyme: Rhyme) -> Int {
@@ -147,78 +183,79 @@ class QuizDatabase {
     //MARK: - Player Data for Quizes
     
     func getQuizData() -> [String : String] {
-        return data.dictionary(forKey: userKey(RZQuizResultsKey)) as? [String : String] ?? [:]
+        return data.dictionary(forKey: Key.quizResults.forCurrentUser) as? [String : String] ?? [:]
     }
     
     func setQuizData(_ quizData: [String : String]) {
-        data.setValue(quizData, forKey: userKey(RZQuizResultsKey))
+        data.setValue(quizData, forKey: Key.quizResults.forCurrentUser)
     }
     
     func getFavorites() -> [Int] {
-        return data.array(forKey: userKey(RZFavoritesKey)) as? [Int] ?? []
+        return data.array(forKey: Key.favorites.forCurrentUser) as? [Int] ?? []
     }
     
     func setFavorites(_ favs: [Int]) {
-        data.setValue(favs, forKey: userKey(RZFavoritesKey))
+        data.setValue(favs, forKey: Key.favorites.forCurrentUser)
     }
     
     func isQuizFavorite(_ number: Int) -> Bool {
-        if let favs = data.array(forKey: userKey(RZFavoritesKey)) as? [Int] {
+        if let favs = data.array(forKey: Key.favorites.forCurrentUser) as? [Int] {
             return favs.contains(number)
         }
         return false
     }
     
     func numberOfFavories() -> Int {
-        if let favs = data.array(forKey: userKey(RZFavoritesKey)) as? [Int] {
+        if let favs = data.array(forKey: Key.favorites.forCurrentUser) as? [Int] {
             return favs.count
         }
         return 0
     }
     
     func currentLevel() -> Int {
-        let level = data.integer(forKey: userKey(RZQuizLevelKey))
+        let level = data.integer(forKey: Key.quizLevel.forCurrentUser)
         if level == 0 {
-            data.set(1, forKey: userKey(RZQuizLevelKey))
+            data.set(1, forKey: Key.quizLevel.forCurrentUser)
             return 1
         }
         return level
     }
     
     func setQuizLevel(_ level: Int) {
-        data.set(level, forKey: userKey(RZQuizLevelKey))
+        data.set(level, forKey: Key.quizLevel.forCurrentUser)
     }
     
     @discardableResult
     func advanceLevelIfCurrentIsComplete() -> Bool {
         let current = currentLevel()
-        let complete = quizesInLevel(currentLevel()).filter{ ($0?.quizHasBeenPlayed())! }.count == 5
+        let levelIsComplete = quizesInLevel(currentLevel()).filter{ ($0.quizHasBeenPlayed()) }.count == 5
         
-        if complete {
+        if levelIsComplete {
             let newLevel = min(current + 1, levelCount)
-            data.set(newLevel, forKey: userKey(RZQuizLevelKey))
+            data.set(newLevel, forKey: Key.quizLevel.forCurrentUser)
         }
-        return complete
+        
+        return levelIsComplete
     }
     
     //MARK: - Bank
     
     func getPlayerBalance() -> Double {
-        return data.double(forKey: userKey(RZPlayerBalanceKey))
+        return data.double(forKey: Key.playerBalance.forCurrentUser)
     }
     
     func changePlayerBalanceBy(_ amount: Double) {
         let current = getPlayerBalance()
         let new = current + amount
-        data.set(new, forKey: userKey(RZPlayerBalanceKey))
+        data.set(new, forKey: Key.playerBalance.forCurrentUser)
     }
     
     func setPlayerBalance(_ value: Double) {
-        data.set(value, forKey: userKey(RZPlayerBalanceKey))
+        data.set(value, forKey: Key.playerBalance.forCurrentUser)
     }
     
     func getTotalMoneyEarned() -> (gold: Int, silver: Int) {
-        if let array = data.stringArray(forKey: userKey(RZTotalMoneyEarnedKey)) {
+        if let array = data.stringArray(forKey: Key.totalMoneyEarned.forCurrentUser) {
             let dict = arrayToDict(array)
             if let gold = Int(dict["gold"] ?? "0"), let silver = Int(dict["silver"] ?? "0") {
                 return (gold, silver)
@@ -231,7 +268,7 @@ class QuizDatabase {
     func setTotalMoneyEarned(gold: Int, silver: Int) {
         let dict = ["gold" : "\(gold)", "silver" : "\(silver)"]
         let array = dictToArray(dict)
-        data.setValue(array, forKey: userKey(RZTotalMoneyEarnedKey))
+        data.setValue(array, forKey: Key.totalMoneyEarned.forCurrentUser)
     }
     
     func getTotalMoneyEarnedArray() -> [String] {
@@ -250,16 +287,16 @@ class QuizDatabase {
     //MARK: - Zoo Management
     
     func getOwnedAnimals() -> [String] {
-        if let array = data.array(forKey: userKey(RZAnimalsKey)) as? [String] {
+        if let array = data.array(forKey: Key.animals.forCurrentUser) as? [String] {
             return array
         }
         //array doesn't exist
-        data.setValue([], forKey: userKey(RZAnimalsKey))
+        data.setValue([], forKey: Key.animals.forCurrentUser)
         return []
     }
     
     func setOwnedAnimals(_ animals: [String]) {
-        data.setValue(animals, forKey: userKey(RZAnimalsKey))
+        data.setValue(animals, forKey: Key.animals.forCurrentUser)
     }
     
     func playerOwnsAnimal(_ animal: String) -> Bool {
@@ -280,13 +317,13 @@ class QuizDatabase {
         changePlayerBalanceBy(-requiredBalance)
         var animals = getOwnedAnimals()
         animals.append(animal)
-        data.setValue(animals, forKey: userKey(RZAnimalsKey))
+        data.setValue(animals, forKey: Key.animals.forCurrentUser)
     }
     
     func currentZooLevel() -> Int {
-        let level = data.integer(forKey: userKey(RZZooLevelKey))
+        let level = data.integer(forKey: Key.zooLevel.forCurrentUser)
         if level == 0 {
-            data.set(1, forKey: userKey(RZZooLevelKey))
+            data.set(1, forKey: Key.zooLevel.forCurrentUser)
             return 1
         }
         return level
@@ -299,41 +336,41 @@ class QuizDatabase {
         }
         if complete {
             let currentLevel = currentZooLevel()
-            data.set(currentLevel + 1, forKey: userKey(RZZooLevelKey))
+            data.set(currentLevel + 1, forKey: Key.zooLevel.forCurrentUser)
         }
         return complete
     }
     
     func setZooLevel(_ level: Int) {
-        data.set(level, forKey: userKey(RZZooLevelKey))
+        data.set(level, forKey: Key.zooLevel.forCurrentUser)
     }
     
     //MARK: - Zookeeper
     
     func getKeeperGender() -> String {
-        let gender = data.string(forKey: userKey(RZKeeperGenderKey))
+        let gender = data.string(forKey: Key.keeperGender.forCurrentUser)
         if gender == nil || (gender != "boy" && gender != "girl") {
-            data.setValue("boy", forKey: userKey(RZKeeperGenderKey))
+            data.setValue("boy", forKey: Key.keeperGender.forCurrentUser)
             return "boy"
         }
         return gender!
     }
     
     func setKeeperGender(_ gender: String) {
-        data.setValue(gender, forKey: userKey(RZKeeperGenderKey))
+        data.setValue(gender, forKey: Key.keeperGender.forCurrentUser)
     }
     
     func getKeeperNumber() -> Int {
-        let number = data.integer(forKey: userKey(RZKeeperNumberKey))
+        let number = data.integer(forKey: Key.keeperNumber.forCurrentUser)
         if number == 0 {
-            data.setValue(1, forKey: userKey(RZKeeperNumberKey))
+            data.setValue(1, forKey: Key.keeperNumber.forCurrentUser)
             return 1
         }
         return number
     }
     
     func setKeeperNumber(_ number: Int) {
-        data.setValue(number, forKey: userKey(RZKeeperNumberKey))
+        data.setValue(number, forKey: Key.keeperNumber.forCurrentUser)
     }
     
     func getKeeperString() -> String {
@@ -352,15 +389,15 @@ class QuizDatabase {
     //MARK: - User Statistics
     
     func hasWatchedWelcomeVideo() -> Bool {
-        return data.bool(forKey: userKey(RZHasWatchedWelcomeVideo))
+        return data.bool(forKey: Key.hasWatchedWelcomeVideo.forCurrentUser)
     }
     
     func setHasWatchedWelcomeVideo(_ status: Bool) {
-        data.set(status, forKey: userKey(RZHasWatchedWelcomeVideo))
+        data.set(status, forKey: Key.hasWatchedWelcomeVideo.forCurrentUser)
     }
     
     func getPercentCorrectArray() -> [String] {
-        if let array = data.stringArray(forKey: userKey(RZPercentCorrectKey)) {
+        if let array = data.stringArray(forKey: Key.percentCorrect.forCurrentUser) {
             if array.count != 4 {
                 //create a new dictionary
                 let dict = ["totalComprehension" : "0", "correctComprehension" : "0", "totalPhonetic" : "0", "correctPhonetic" : "0"]
@@ -380,7 +417,7 @@ class QuizDatabase {
     }
     
     func setPercentCorrectArray(_ array: [String]) {
-        data.setValue(array, forKey: userKey(RZPercentCorrectKey))
+        data.setValue(array, forKey: Key.percentCorrect.forCurrentUser)
     }
     
     func getPercentCorrectDict() -> [String : Int] {
@@ -421,23 +458,24 @@ typealias Rhyme = Quiz
 ///Avaliable though RZQuizDatabase. Contains 4 Questions.
 struct Quiz : CustomStringConvertible {
     
-    //let quiz: Query
+    let quiz: Row
     
     ///"QUIZ" table
     let number: Int
     let name: String
     let level: Int
+    
     var questions: [Question] {
         get {
-            return []
-//            var array: [Question] = []
-//            for question in Questions.filter(QuizNumber == number) {
-//                let questionNumber = question[QuestionNumber]
-//                array.append(Question(questionNumber))
-//            }
-//            return array
+            var array: [Question] = []
+            for question in SQL.Question.table.filtered(by: SQL.Question.quizNumber == number).array {
+                let questionNumber = question[SQL.Question.number]
+                array.append(Question(questionNumber))
+            }
+            return array
         }
     }
+    
     var description: String {
         get{
             return "(Quiz \(number))[\(name)]"
@@ -445,52 +483,48 @@ struct Quiz : CustomStringConvertible {
     }
     
     init(_ number: Int) {
+        guard let quiz = SQL.Quiz.table.filtered(by: SQL.Quiz.number == number).array.first else {
+            fatalError("Could not load quiz \(number)")
+        }
+        
         self.number = number
-        self.name = "Placeholder"
-        self.level = 0
-//        self.number = number
-//        
-//        quiz = Quizes.filter(QuizNumber == self.number)
-//        let data = quiz.select(QuizName, QuizLevel).first!
-//        self.name = data[QuizName]
-//        self.level = data[QuizLevel]
+        self.quiz = quiz
+        self.name = quiz[SQL.Quiz.name]
+        self.level = quiz[SQL.Quiz.level]
     }
     
     var rhymeText: String {
         get{
-            return "todo"
-//            let data = quiz.select(QuizRhymeText).first!
-//            return data[QuizRhymeText]
+            return quiz[SQL.Quiz.rhymeText]
         }
     }
     
     var wordStartTimes: [Int] {
         get {
-            return []
-//            let data = AudioTime.filter(QuizNumber == self.number).select(AudioStartTime)
-//            var array: [Int] = []
-//            for word in data {
-//                array.append(word[AudioStartTime])
-//            }
-//            return array
+            let data = SQL.AudioTime.table.filtered(by: SQL.Quiz.number == self.number).array
+            var array: [Int] = []
+            for word in data {
+                array.append(word[SQL.AudioTime.startTime])
+            }
+            return array
         }
     }
     
     func setFavoriteStatus(_ fav: Bool) {
-        if var favs = data.array(forKey: userKey(RZFavoritesKey)) as? [Int] {
+        if var favs = data.array(forKey: Key.favorites.forCurrentUser) as? [Int] {
             if fav && !favs.contains(number) {
                 favs.append(number)
-                data.setValue(favs, forKey: userKey(RZFavoritesKey))
+                data.setValue(favs, forKey: Key.favorites.forCurrentUser)
             } else if !fav && favs.contains(number) {
                 let index = (favs as NSArray).index(of: number)
                 favs.remove(at: index)
-                data.setValue(favs, forKey: userKey(RZFavoritesKey))
+                data.setValue(favs, forKey: Key.favorites.forCurrentUser)
             }
         }
         else {
             //favs array doesn't exist
             let favs = [number]
-            data.setValue(favs, forKey: userKey(RZFavoritesKey))
+            data.setValue(favs, forKey: Key.favorites.forCurrentUser)
         }
         
         RZUserDatabase.saveCurrentUserToLinkedClassroom()
@@ -502,14 +536,14 @@ struct Quiz : CustomStringConvertible {
     
     func saveQuizResult(gold: Int, silver: Int) {
         var results: [String : String] = [:]
-        if let resultsDict = data.dictionary(forKey: userKey(RZQuizResultsKey)) as? [String : String] {
+        if let resultsDict = data.dictionary(forKey: Key.quizResults.forCurrentUser) as? [String : String] {
             results = resultsDict
         }
         
         let resultString = "\(gold):\(silver)"
         results.updateValue(resultString, forKey: number.threeCharacterString)
         
-        data.setValue(results, forKey: userKey(RZQuizResultsKey))
+        data.setValue(results, forKey: Key.quizResults.forCurrentUser)
         
         //also update player balance
         let cashInflux = Double(gold) + (Double(silver) * 0.5)
@@ -522,14 +556,14 @@ struct Quiz : CustomStringConvertible {
     }
     
     func quizHasBeenPlayed() -> Bool {
-        if let resultsDict = data.dictionary(forKey: userKey(RZQuizResultsKey)) as? [String : String] {
+        if let resultsDict = data.dictionary(forKey: Key.quizResults.forCurrentUser) as? [String : String] {
             return resultsDict.keys.contains(number.threeCharacterString)
         }
         return false
     }
     
     func getQuizResult() -> (gold: Int, silver: Int) {
-        if let resultsDict = data.dictionary(forKey: userKey(RZQuizResultsKey)) as? [String : String] {
+        if let resultsDict = data.dictionary(forKey: Key.quizResults.forCurrentUser) as? [String : String] {
             if let result = resultsDict[number.threeCharacterString] {
                 let splits = result.split{ $0 == ":" }.map { String($0) }
                 if splits.count == 2 {
@@ -556,7 +590,7 @@ struct Quiz : CustomStringConvertible {
     func getWithOffsetIndex(_ offset: Int, fromFavorites favs: Bool) -> Quiz? {
         var numbersArray = RZQuizDatabase.quizNumberMap
         
-        if let favsArray = data.array(forKey: userKey(RZFavoritesKey)) as? [Int], favs {
+        if let favsArray = data.array(forKey: Key.favorites.forCurrentUser) as? [Int], favs {
             numbersArray = favsArray
         }
         
@@ -597,7 +631,7 @@ struct Quiz : CustomStringConvertible {
 ///Owned by a Quiz. Contains 4 Options.
 struct Question: CustomStringConvertible {
     
-    //let question: Query
+    let question: Row
     
     //"QUESTION" table
     let quizNumber: Int
@@ -605,44 +639,37 @@ struct Question: CustomStringConvertible {
     var answer: String
     let category: Int
     var text: String
+    
     fileprivate var options: [Option]
+    
     var shuffledOptions: [Option] {
-        get {
-            return options.shuffled()
-        }
+        return options.shuffled()
     }
     
     var description: String {
-        get{
-            return "(Question \(number))[\(text)]"
-        }
+        return "(Question \(number))[\(text)]"
     }
 
     init(_ number: Int) {
-        self.number = number
+        //get info for question
+        guard let question = SQL.Question.table.filtered(by: SQL.Question.number == number).array.first else {
+            fatalError("Could not load question \(number)")
+        }
         
-        self.quizNumber = 0
-        self.answer = "Placeholder"
-        self.category = 0
-        self.text = "Placeholder"
-        self.text = "Placeholder"
-        self.options = []
-//        
-//        //get info for question
-//        question = Questions.filter(QuestionNumber == self.number)
-//        let data = question.select(QuizNumber, QuestionAnswer, QuestionCategory, QuestionText).first!
-//        quizNumber = data[QuizNumber]
-//        answer = data[QuestionAnswer]
-//        category = data[QuestionCategory].toInt()!
-//        text = data[QuestionText]
-//        
-//        //get options
-//        var options: [Option] = []
-//        for option in WordBank.filter(WordCategory == category) {
-//            let wordText = option[WordText]
-//            options.append(Option(word: wordText))
-//        }
-//        self.options = options
+        self.number = number
+        self.question = question
+        self.quizNumber = question[SQL.Question.quizNumber]
+        self.answer = question[SQL.Question.answer]
+        self.category = Int(question[SQL.Question.category]) ?? 0
+        self.text = question[SQL.Question.text]
+        
+        //get options
+        var options: [Option] = []
+        for option in SQL.WordBank.table.filtered(by: SQL.WordBank.category == self.category).array {
+            let wordText = option[SQL.WordBank.word]
+            options.append(Option(word: wordText))
+        }
+        self.options = options
         
         
         //check DB Override
