@@ -75,32 +75,27 @@ class RhymeViewController : UIViewController {
     }
     
     override func viewWillAppear(_ animate: Bool) {
-        self.view.clipsToBounds = true
-        self.view.layoutIfNeeded()
-        
+        view.clipsToBounds = true
         decorateForRhyme(rhyme)
-        
-        //mask the rhyme page
-        let height = rhymePage.frame.height
-        let maskHeight = height - 20.0 - (iPad() ? 60.0 : 0.0)
-        let maskWidth = (rhymePage.frame.width / rhymePage.frame.height) * maskHeight
-        let maskRect = CGRect(x: 10.0, y: 10.0, width: maskWidth, height: maskHeight)
-        
-        let maskLayer = CAShapeLayer()
-        maskLayer.path = UIBezierPath(roundedRect: maskRect, cornerRadius: maskHeight / 20.0).cgPath
-        rhymePage.layer.mask = maskLayer
-        
-        #warning("why is this mask ^^ not working correctly?")
-        
-        
-        
+
         //set up buttons
         repeatHeight.constant = 0
         repeatButton.imageView!.contentMode = .scaleAspectFit
-        self.view.layoutIfNeeded()
+        view.layoutIfNeeded()
         
         updateScrollView()
-        
+
+        // mask the rhyme page, but wait until after the first layout pass is over
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05, execute: {
+            let height = self.rhymePage.frame.height
+            let maskHeight = height - 20.0 - (iPad() ? 60.0 : 0.0)
+            let maskWidth = (self.rhymePage.frame.width / self.rhymePage.frame.height) * maskHeight
+            let maskRect = CGRect(x: 10.0, y: 10.0, width: maskWidth, height: maskHeight)
+            
+            let maskLayer = CAShapeLayer()
+            maskLayer.path = UIBezierPath(roundedRect: maskRect, cornerRadius: maskHeight / 20.0).cgPath
+            self.rhymePage.layer.mask = maskLayer
+        })
     }
     
     func updateScrollView() {
@@ -427,7 +422,7 @@ class RhymeViewController : UIViewController {
             let currentZooLevel = RZQuizDatabase.currentZooLevel()
             let building = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "building") as! BuildingViewController
             building.mustBuy = true
-            building.decorate(building: currentZooLevel, displaySize: self.view.frame.size)
+            building.decorate(building: currentZooLevel, displaySize: self.view.frame.size, displayInsets: self.view.raz_safeAreaInsets)
             self.present(building, animated: true, completion: nil)
         })
     }

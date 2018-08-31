@@ -103,13 +103,15 @@ class BuildingViewController : ZookeeperGameController {
     var building: Int!
     var mustBuy: Bool = false
     var displaySize: CGSize!
+    var displayInsets: UIEdgeInsets!
     var sceneSize: CGSize!
     
     //MARK: - Decorating the view with animals and buttons
     
-    func decorate(building: Int, displaySize: CGSize) {
+    func decorate(building: Int, displaySize: CGSize, displayInsets: UIEdgeInsets) {
         self.building = building
         self.displaySize = displaySize
+        self.displayInsets = displayInsets
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -127,7 +129,7 @@ class BuildingViewController : ZookeeperGameController {
         //generate frames for animal buttons
         animalButtons = [:]
         animalAudioNumber = [:]
-        let displayHeight = displaySize.height
+        let displayHeight = displaySize.height - 10 /* extra padding */ - displayInsets.top - displayInsets.bottom
         let currentHeight = self.backgroundImage.frame.height
         let ratio = displayHeight / currentHeight
         let backgroundSize = self.backgroundImage.frame
@@ -353,7 +355,11 @@ class BuildingViewController : ZookeeperGameController {
                             self.backButton.isEnabled = true
                             if self.building != 8 {
                                 let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "building") as! BuildingViewController
-                                controller.decorate(building: self.building + 1, displaySize: self.view.frame.size)
+                                
+                                controller.decorate(building: self.building + 1,
+                                    displaySize: self.view.frame.size,
+                                    displayInsets: self.view.raz_safeAreaInsets)
+                                
                                 self.present(controller, animated: true, completion: nil)
                             }
                         })

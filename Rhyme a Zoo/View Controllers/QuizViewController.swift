@@ -11,7 +11,6 @@ import UIKit
 
 class QuizViewController : UIViewController {
     
-    @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var blurredBackground: UIImageView!
     @IBOutlet weak var questionText: UILabel!
     @IBOutlet weak var backToRhymeButton: UIButton!
@@ -71,12 +70,6 @@ class QuizViewController : UIViewController {
             icon.layer.borderWidth = 2.0
         }
         
-        for container in optionContainers {
-            container.superview?.layoutIfNeeded()
-            container.layoutIfNeeded()
-            originalContainerFrames.append(container.frame)
-        }
-        
         //create dynamic back button
         let quizNumber = quiz.number.threeCharacterString
         let image = UIImage(named: "thumbnail_\(quizNumber).jpg")!
@@ -87,6 +80,13 @@ class QuizViewController : UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         playQuizAudio()
+        
+        // save the original frames of the quiz options
+        for container in optionContainers {
+            container.superview?.layoutIfNeeded()
+            container.layoutIfNeeded()
+            originalContainerFrames.append(container.frame)
+        }
     }
     
     func createDynamicButtonWithImage(_ content: UIImage) {
@@ -404,17 +404,17 @@ class QuizViewController : UIViewController {
     }
     
     func highlightOption(_ option: Int) {
-        var scale: CGFloat = 1.2
+        var scale: CGFloat = 1.1
         let aspect = self.view.frame.width / self.view.frame.height
-        if aspect < 1.35 { scale = 1.1 } //4S and iPad
+        if aspect < 1.35 { scale = 1.03 } //4S and iPad
         
         for container in optionContainers {
             if container.tag == option {
-                UIView.animate(withDuration: 0.3, animations: {
+                UIView.animate(withDuration: 0.225, animations: {
                     container.transform = CGAffineTransform(scaleX: scale, y: scale)
                 }) 
             } else {
-                UIView.animate(withDuration: 0.3, animations: {
+                UIView.animate(withDuration: 0.225, animations: {
                     container.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
                 }) 
             }
@@ -463,7 +463,7 @@ class QuizViewController : UIViewController {
                 }, completion: nil)
             
             UIView.animate(withDuration: 0.7, delay: 0.0, usingSpringWithDamping: 0.3, initialSpringVelocity: 0.0, options: [], animations: {
-                self.optionContainers[guess].transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+                self.optionContainers[guess].transform = CGAffineTransform(scaleX: 1.15, y: 1.15)
                 }, completion: nil) 
             
             delay(1.0) {

@@ -105,7 +105,7 @@ class ZooViewController : ZookeeperGameController {
         if canOpenBuilding {
             
             let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "building") as! BuildingViewController
-            controller.decorate(building: building, displaySize: self.view.frame.size)
+            controller.decorate(building: building, displaySize: view.frame.size, displayInsets: view.raz_safeAreaInsets)
             self.present(controller, animated: true, completion: nil)
             
         }
