@@ -16,7 +16,6 @@ class RhymeViewController : UIViewController {
     @IBOutlet weak var buttonGradientView: UIView!
     @IBOutlet weak var buttonGradientWidth: NSLayoutConstraint!
     @IBOutlet weak var likeButton: UIButton!
-    @IBOutlet weak var likeBottom: NSLayoutConstraint!
     @IBOutlet weak var previousButton: UIButton!
     @IBOutlet weak var nextButton: UIButton!
     @IBOutlet weak var quizButton: UIButton!
@@ -77,11 +76,12 @@ class RhymeViewController : UIViewController {
     
     override func viewWillAppear(_ animate: Bool) {
         self.view.clipsToBounds = true
+        self.view.layoutIfNeeded()
         
         decorateForRhyme(rhyme)
         
         //mask the rhyme page
-        let height = UIScreen.main.bounds.height
+        let height = rhymePage.frame.height
         let maskHeight = height - 20.0 - (iPad() ? 60.0 : 0.0)
         let maskWidth = (rhymePage.frame.width / rhymePage.frame.height) * maskHeight
         let maskRect = CGRect(x: 10.0, y: 10.0, width: maskWidth, height: maskHeight)
@@ -90,16 +90,11 @@ class RhymeViewController : UIViewController {
         maskLayer.path = UIBezierPath(roundedRect: maskRect, cornerRadius: maskHeight / 20.0).cgPath
         rhymePage.layer.mask = maskLayer
         
-        //remove the buttonGradientView if this is a 4S
-        let size = UIScreen.main.bounds.size
-        if size.width <= 480.0 {
-            //is 4S
-            buttonGradientWidth.constant = 0
-            self.view.layoutIfNeeded()
-        }
+        #warning("why is this mask ^^ not working correctly?")
+        
+        
         
         //set up buttons
-        likeBottom.constant = 10
         repeatHeight.constant = 0
         repeatButton.imageView!.contentMode = .scaleAspectFit
         self.view.layoutIfNeeded()
@@ -292,7 +287,6 @@ class RhymeViewController : UIViewController {
     func rhymeFinishedPlaying() {
         
         //animate buttons
-        likeBottom.constant = 70
         repeatHeight.constant = 50
         quizButton.isEnabled = true
         UIView.animate(withDuration: 0.7, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: .allowUserInteraction, animations: {
@@ -303,6 +297,7 @@ class RhymeViewController : UIViewController {
         if !rhyme.quizHasBeenPlayed() {
             self.quizBounceTimer = Timer.scheduledTimer(timeInterval: 3.5, target: self, selector: #selector(RhymeViewController.bounceQuizIcon), userInfo: nil, repeats: true)
             delay(0.25) {
+                return // FIXME
                 self.quizButtonPressed(self)
             }
         }
@@ -327,7 +322,6 @@ class RhymeViewController : UIViewController {
     
     @IBAction func repeatButtonPressed(_ sender: AnyObject) {
         playRhyme()
-        likeBottom.constant = 10
         repeatHeight.constant = 0
         UIView.animate(withDuration: 0.4, animations: {
             self.view.layoutIfNeeded()
@@ -387,7 +381,6 @@ class RhymeViewController : UIViewController {
         quizButton.isEnabled = false
         previousButton.isEnabled = false
         
-        likeBottom.constant = 10
         repeatHeight.constant = 0
         UIView.animate(withDuration: 0.4, animations: {
             self.view.layoutIfNeeded()

@@ -307,8 +307,7 @@ class UserIconCell : UICollectionViewCell {
     @IBOutlet weak var iconImage: UIImageView!
     
     func decorate(_ iconName: String) {
-        let image = UIImage(named: "\(iconName).jpg")
-        iconImage.image = image
+        iconImage.image = UIImage.thumbnail(for: "\(iconName).jpg", maxSize: iPad() ? 600 : 400)
         self.layer.rasterizationScale = UIScreen.main.scale
         self.layer.shouldRasterize = true
         
