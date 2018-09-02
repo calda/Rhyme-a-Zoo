@@ -67,6 +67,7 @@ class VideoViewController : UIViewController {
     @objc func showImage(_ timer: Timer) {
         if let imageName = timer.userInfo as? String {
             self.imageView.image = UIImage(named: imageName)
+            self.backgroundImageView.image = UIImage(named: imageName)
         }
         else {
             self.dismiss(animated: true, completion: nil)
@@ -84,6 +85,7 @@ class VideoViewController : UIViewController {
     //MARK: - Configuring the view
     
     @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var backgroundImageView: UIImageView!
     @IBOutlet weak var skipButton: UIVisualEffectView!
     @IBOutlet weak var progressBar: UIView!
     
@@ -91,6 +93,7 @@ class VideoViewController : UIViewController {
         loadDataForVideo()
         if let frames = frames {
             imageView.image = UIImage(named: frames[0].imageName)
+            backgroundImageView.image = UIImage(named: frames[0].imageName)
         }
         
         if RZSettingSkipVideos.currentSetting() == false {
