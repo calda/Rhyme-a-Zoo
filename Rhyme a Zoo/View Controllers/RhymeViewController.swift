@@ -14,7 +14,6 @@ class RhymeViewController : UIViewController {
     @IBOutlet weak var rhymePage: UIImageView!
     @IBOutlet weak var blurredPage: UIImageView!
     @IBOutlet weak var buttonGradientView: UIView!
-    @IBOutlet weak var buttonGradientWidth: NSLayoutConstraint!
     @IBOutlet weak var likeButton: UIButton!
     @IBOutlet weak var previousButton: UIButton!
     @IBOutlet weak var nextButton: UIButton!

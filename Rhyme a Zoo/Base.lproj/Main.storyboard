@@ -36,11 +36,11 @@
                                     <size key="itemSize" width="328" height="151"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                    <inset key="sectionInset" minX="85" minY="5" maxX="5" maxY="5"/>
+                                    <inset key="sectionInset" minX="70" minY="5" maxX="5" maxY="5"/>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="rhyme" id="lVc-FF-61X" customClass="RhymeCell" customModule="Rhyme_a_Zoo" customModuleProvider="target">
-                                        <rect key="frame" x="85" y="5" width="328" height="151"/>
+                                        <rect key="frame" x="70" y="5" width="328" height="151"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="328" height="151"/>
@@ -197,7 +197,7 @@
                                         </connections>
                                     </collectionViewCell>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Celebration" id="X88-6W-cjb" customClass="DecorationCell" customModule="Rhyme_a_Zoo" customModuleProvider="target">
-                                        <rect key="frame" x="85" y="198" width="328" height="151"/>
+                                        <rect key="frame" x="70" y="198" width="328" height="151"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="328" height="151"/>
@@ -256,7 +256,7 @@
                                         </variation>
                                     </collectionViewCell>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Hear a Tale" id="EKw-th-9PF" customClass="DecorationCell" customModule="Rhyme_a_Zoo" customModuleProvider="target">
-                                        <rect key="frame" x="418" y="5" width="328" height="151"/>
+                                        <rect key="frame" x="403" y="5" width="328" height="151"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="328" height="151"/>
@@ -318,10 +318,10 @@
                                 </connections>
                             </collectionView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xf7-H9-Fw9" userLabel="home">
-                                <rect key="frame" x="54" y="0.0" width="70" height="70"/>
+                                <rect key="frame" x="74" y="10" width="50" height="50"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="70" id="b8T-U7-rsn"/>
-                                    <constraint firstAttribute="height" constant="70" id="zTG-QH-4Dx"/>
+                                    <constraint firstAttribute="width" constant="50" id="b8T-U7-rsn"/>
+                                    <constraint firstAttribute="height" constant="50" id="zTG-QH-4Dx"/>
                                 </constraints>
                                 <state key="normal" image="button-home"/>
                                 <connections>
@@ -330,10 +330,10 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rvK-hz-bm6" userLabel="favorites">
-                                <rect key="frame" x="54" y="60" width="70" height="70"/>
+                                <rect key="frame" x="74" y="70" width="50" height="50"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="70" id="1Rl-dn-QXF"/>
-                                    <constraint firstAttribute="width" constant="70" id="DW0-Ld-IiF"/>
+                                    <constraint firstAttribute="height" constant="50" id="1Rl-dn-QXF"/>
+                                    <constraint firstAttribute="width" constant="50" id="DW0-Ld-IiF"/>
                                 </constraints>
                                 <state key="normal" image="button-heart"/>
                                 <connections>
@@ -343,7 +343,7 @@
                         </subviews>
                         <color key="backgroundColor" red="0.078431372549019607" green="0.50588235294117645" blue="0.88627450980392153" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="rvK-hz-bm6" firstAttribute="top" secondItem="xf7-H9-Fw9" secondAttribute="bottom" constant="-10" id="9lh-2c-Uq5"/>
+                            <constraint firstItem="rvK-hz-bm6" firstAttribute="top" secondItem="xf7-H9-Fw9" secondAttribute="bottom" constant="10" id="9lh-2c-Uq5"/>
                             <constraint firstItem="R6j-1W-S8l" firstAttribute="height" secondItem="oRz-K9-7qQ" secondAttribute="height" id="9zZ-il-6tK"/>
                             <constraint firstAttribute="trailing" secondItem="DHn-d6-laA" secondAttribute="trailing" id="Mbq-wH-Uoz"/>
                             <constraint firstItem="DHn-d6-laA" firstAttribute="top" secondItem="oRz-K9-7qQ" secondAttribute="top" id="QVB-OB-ZwS">
@@ -354,19 +354,23 @@
                             <constraint firstItem="R6j-1W-S8l" firstAttribute="width" secondItem="oRz-K9-7qQ" secondAttribute="width" id="idz-kS-ydQ"/>
                             <constraint firstAttribute="centerX" secondItem="R6j-1W-S8l" secondAttribute="centerX" id="mdX-a6-u0c"/>
                             <constraint firstItem="vG7-RL-6Xr" firstAttribute="top" secondItem="rvK-hz-bm6" secondAttribute="bottom" constant="10" id="oHk-zO-lFh"/>
-                            <constraint firstItem="xf7-H9-Fw9" firstAttribute="top" secondItem="oRz-K9-7qQ" secondAttribute="top" id="vZq-WE-Pyf"/>
+                            <constraint firstItem="xf7-H9-Fw9" firstAttribute="top" secondItem="oRz-K9-7qQ" secondAttribute="top" constant="10" id="vZq-WE-Pyf"/>
                             <constraint firstItem="vG7-RL-6Xr" firstAttribute="top" secondItem="DHn-d6-laA" secondAttribute="bottom" id="vlp-PW-fR9">
                                 <variation key="heightClass=regular-widthClass=regular" constant="100"/>
                             </constraint>
-                            <constraint firstItem="xf7-H9-Fw9" firstAttribute="leading" secondItem="oRz-K9-7qQ" secondAttribute="leadingMargin" constant="-10" id="vp7-ZJ-ubp"/>
+                            <constraint firstItem="xf7-H9-Fw9" firstAttribute="leading" secondItem="oRz-K9-7qQ" secondAttribute="leadingMargin" constant="10" id="vp7-ZJ-ubp"/>
                             <constraint firstItem="DHn-d6-laA" firstAttribute="leading" secondItem="oRz-K9-7qQ" secondAttribute="leading" id="z88-ht-sEZ"/>
                         </constraints>
+                        <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
                         <variation key="default">
                             <mask key="constraints">
                                 <exclude reference="oHk-zO-lFh"/>
                             </mask>
                         </variation>
                     </view>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="viewRespectsSystemMinimumLayoutMargins" value="NO"/>
+                    </userDefinedRuntimeAttributes>
                     <connections>
                         <outlet property="collectionView" destination="DHn-d6-laA" id="rUK-GE-uvp"/>
                         <outlet property="favoritesButton" destination="rvK-hz-bm6" id="pOr-fl-PIW"/>
@@ -668,7 +672,11 @@
                             <constraint firstAttribute="trailing" secondItem="CJL-Pj-Crc" secondAttribute="trailing" id="whH-Fe-L0B"/>
                             <constraint firstItem="zoL-ym-fN8" firstAttribute="trailing" secondItem="HKY-1h-LNa" secondAttribute="trailing" id="yDs-3X-Qqr"/>
                         </constraints>
+                        <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
                     </view>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="viewRespectsSystemMinimumLayoutMargins" value="NO"/>
+                    </userDefinedRuntimeAttributes>
                     <connections>
                         <outlet property="blurredPage" destination="mNT-iH-xTD" id="hz7-QM-CC6"/>
                         <outlet property="buttonGradientView" destination="zoL-ym-fN8" id="5W6-BL-J08"/>
@@ -1323,6 +1331,7 @@
                             <constraint firstAttribute="trailing" secondItem="Bml-sb-8RD" secondAttribute="trailing" id="wS1-j2-f5L"/>
                             <constraint firstAttribute="centerY" secondItem="Bml-sb-8RD" secondAttribute="centerY" constant="-320" id="zPa-Le-CZh"/>
                         </constraints>
+                        <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
                         <variation key="default">
                             <mask key="constraints">
                                 <exclude reference="0We-m0-k4y"/>
@@ -1343,6 +1352,9 @@
                             </mask>
                         </variation>
                     </view>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="viewRespectsSystemMinimumLayoutMargins" value="NO"/>
+                    </userDefinedRuntimeAttributes>
                     <connections>
                         <outlet property="backToRhymeButton" destination="9Fa-Xl-7ug" id="BwZ-Ta-NgD"/>
                         <outlet property="blurredBackground" destination="3Cg-Na-lXx" id="a2d-iW-vWz"/>
@@ -1625,6 +1637,7 @@
                             <constraint firstItem="K7g-MO-5Ee" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" id="uLI-3f-DrL"/>
                             <constraint firstAttribute="bottomMargin" secondItem="K7g-MO-5Ee" secondAttribute="bottom" id="xjq-8K-AQA"/>
                         </constraints>
+                        <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
                         <variation key="default">
                             <mask key="constraints">
                                 <exclude reference="PK3-Po-2mL"/>
@@ -1634,6 +1647,9 @@
                             </mask>
                         </variation>
                     </view>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="viewRespectsSystemMinimumLayoutMargins" value="NO"/>
+                    </userDefinedRuntimeAttributes>
                     <connections>
                         <outlet property="buttonsSuperview" destination="pcc-f7-yiI" id="QOh-JT-Zy9"/>
                         <outlet property="panGestureRecognizer" destination="NXy-V6-ZJM" id="2IO-tl-FG4"/>
@@ -1690,7 +1706,7 @@
                                 <blurEffect style="light"/>
                             </visualEffectView>
                             <imageView contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background1.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="90v-Tw-c3k" userLabel="background">
-                                <rect key="frame" x="139.33333333333331" y="5" width="533.33333333333348" height="344"/>
+                                <rect key="frame" x="135.33333333333331" y="5" width="541.33333333333348" height="349"/>
                                 <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="90v-Tw-c3k" secondAttribute="height" multiplier="2048:1321" id="zgl-DD-9CR"/>
@@ -1739,7 +1755,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QSf-je-SP0" userLabel="level 1">
-                                <rect key="frame" x="144.33333333333334" y="294" width="50" height="50"/>
+                                <rect key="frame" x="140.33333333333334" y="294" width="50" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="Xda-E9-X8j"/>
                                     <constraint firstAttribute="width" constant="50" id="cOj-NE-Hle"/>
@@ -1750,7 +1766,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S2E-O6-da6" userLabel="level 2">
-                                <rect key="frame" x="204.33333333333334" y="294" width="50" height="50"/>
+                                <rect key="frame" x="200.33333333333334" y="294" width="50" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="91Z-zd-tDg"/>
                                     <constraint firstAttribute="width" constant="50" id="T9m-I7-o8E"/>
@@ -1761,7 +1777,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TYQ-aP-kBo" userLabel="level 3">
-                                <rect key="frame" x="264.33333333333331" y="294" width="50" height="50"/>
+                                <rect key="frame" x="260.33333333333331" y="294" width="50" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="BuN-Qh-fbc"/>
                                     <constraint firstAttribute="width" constant="50" id="Zz4-Hw-8d2"/>
@@ -1772,7 +1788,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" tag="4" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Kpk-aR-pea" userLabel="level 4">
-                                <rect key="frame" x="324.33333333333331" y="294" width="50" height="50"/>
+                                <rect key="frame" x="320.33333333333331" y="294" width="50" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="NRs-Lb-d2g"/>
                                     <constraint firstAttribute="height" constant="50" id="hWi-Z5-kQj"/>
@@ -1783,7 +1799,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" tag="5" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tgu-rp-iXE" userLabel="level 5">
-                                <rect key="frame" x="384.33333333333331" y="294" width="50" height="50"/>
+                                <rect key="frame" x="380.33333333333331" y="294" width="50" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="Xk9-p8-b5S"/>
                                     <constraint firstAttribute="height" constant="50" id="yjx-KR-iVg"/>
@@ -1794,7 +1810,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" tag="6" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8w9-ej-y9Z" userLabel="level 6">
-                                <rect key="frame" x="444.33333333333331" y="294" width="50" height="50"/>
+                                <rect key="frame" x="440.33333333333331" y="294" width="50" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="jtX-7N-wWq"/>
                                     <constraint firstAttribute="height" constant="50" id="tao-Vp-2J5"/>
@@ -1805,7 +1821,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" tag="7" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T02-de-24h" userLabel="level 7">
-                                <rect key="frame" x="504.33333333333326" y="294" width="50" height="50"/>
+                                <rect key="frame" x="500.33333333333326" y="294" width="50" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="7B0-2L-mod"/>
                                     <constraint firstAttribute="height" constant="50" id="eFg-SV-5lX"/>
@@ -1816,7 +1832,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bJy-na-WTl" userLabel="question">
-                                <rect key="frame" x="504.33333333333326" y="294" width="50" height="50"/>
+                                <rect key="frame" x="500.33333333333326" y="294" width="50" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="Jck-xn-eMD"/>
                                     <constraint firstAttribute="height" constant="50" id="TBs-Xt-Is0"/>
@@ -1828,7 +1844,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" tag="8" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ULV-iE-Zld" userLabel="level 8">
-                                <rect key="frame" x="564.33333333333337" y="294" width="50" height="50"/>
+                                <rect key="frame" x="560.33333333333337" y="294" width="50" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="eCb-mz-BSK"/>
                                     <constraint firstAttribute="height" constant="50" id="quw-R2-h16"/>
@@ -1847,6 +1863,7 @@
                             <constraint firstItem="1TO-ey-cQt" firstAttribute="top" secondItem="T02-de-24h" secondAttribute="bottom" constant="10" id="2iO-bQ-nXZ"/>
                             <constraint firstItem="ZJq-ad-voN" firstAttribute="top" secondItem="4o8-TH-nju" secondAttribute="bottom" constant="10" id="38b-No-Ycf"/>
                             <constraint firstItem="4o8-TH-nju" firstAttribute="leading" secondItem="KlK-pQ-gtf" secondAttribute="leadingMargin" constant="10" id="3P6-on-z22"/>
+                            <constraint firstItem="1TO-ey-cQt" firstAttribute="top" secondItem="90v-Tw-c3k" secondAttribute="bottom" id="7WG-Co-0qA"/>
                             <constraint firstItem="1TO-ey-cQt" firstAttribute="top" secondItem="8w9-ej-y9Z" secondAttribute="bottom" constant="10" id="7jX-1a-3aY"/>
                             <constraint firstItem="3eW-Zl-dZB" firstAttribute="height" secondItem="KlK-pQ-gtf" secondAttribute="height" id="7pX-pD-zpb"/>
                             <constraint firstAttribute="centerX" secondItem="3eW-Zl-dZB" secondAttribute="centerX" id="8lh-A6-Snx"/>
@@ -1872,7 +1889,6 @@
                             <constraint firstItem="QSf-je-SP0" firstAttribute="top" secondItem="bJy-na-WTl" secondAttribute="bottom" constant="10" id="ah0-Pf-pFr"/>
                             <constraint firstItem="bJy-na-WTl" firstAttribute="leading" secondItem="8w9-ej-y9Z" secondAttribute="trailing" constant="10" id="cNC-dv-whT"/>
                             <constraint firstItem="1TO-ey-cQt" firstAttribute="top" secondItem="bJy-na-WTl" secondAttribute="bottom" constant="10" id="efT-vB-tWk"/>
-                            <constraint firstAttribute="bottomMargin" secondItem="90v-Tw-c3k" secondAttribute="bottom" constant="5" id="fMh-OW-jZG"/>
                             <constraint firstItem="1TO-ey-cQt" firstAttribute="top" secondItem="TYQ-aP-kBo" secondAttribute="bottom" constant="10" id="gJu-2u-vpb"/>
                             <constraint firstItem="1TO-ey-cQt" firstAttribute="top" secondItem="ULV-iE-Zld" secondAttribute="bottom" constant="10" id="gSf-r9-Sk4"/>
                             <constraint firstItem="bJy-na-WTl" firstAttribute="leading" secondItem="QSf-je-SP0" secondAttribute="trailing" constant="300" id="gdp-Tx-CsC"/>
@@ -1888,6 +1904,7 @@
                             <constraint firstItem="4o8-TH-nju" firstAttribute="top" secondItem="lbc-rY-3oh" secondAttribute="bottom" constant="10" id="wCg-zk-dOc"/>
                             <constraint firstAttribute="centerX" secondItem="90v-Tw-c3k" secondAttribute="centerX" id="ylm-jO-yiS"/>
                         </constraints>
+                        <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
                         <variation key="default">
                             <mask key="constraints">
                                 <exclude reference="wCg-zk-dOc"/>
@@ -1908,6 +1925,9 @@
                             <outletCollection property="gestureRecognizers" destination="72S-7X-w2y" appends="YES" id="U4F-iP-d0x"/>
                         </connections>
                     </view>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="viewRespectsSystemMinimumLayoutMargins" value="NO"/>
+                    </userDefinedRuntimeAttributes>
                     <connections>
                         <outlet property="backgroundImage" destination="90v-Tw-c3k" id="kGp-UQ-0Lb"/>
                         <outlet property="questionButtonLeading" destination="Xt2-T7-GO4" id="5fV-Pd-xvp"/>
@@ -2111,6 +2131,7 @@
                             <constraint firstAttribute="centerY" secondItem="HAC-0N-7PX" secondAttribute="centerY" id="vLE-5b-kLW"/>
                             <constraint firstItem="IPc-b9-Jq1" firstAttribute="leading" secondItem="SmP-bt-NZA" secondAttribute="trailing" constant="5" id="voU-L5-xN5"/>
                         </constraints>
+                        <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
                         <variation key="default">
                             <mask key="constraints">
                                 <exclude reference="5ss-YT-xZJ"/>
@@ -2132,6 +2153,9 @@
                             </mask>
                         </variation>
                     </view>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="viewRespectsSystemMinimumLayoutMargins" value="NO"/>
+                    </userDefinedRuntimeAttributes>
                     <connections>
                         <outlet property="bodyImage" destination="SmP-bt-NZA" id="tac-XG-JfF"/>
                         <outlet property="boyButton" destination="tUV-3E-aNr" id="XEn-Yd-uUL"/>
@@ -2345,6 +2369,7 @@
                             <constraint firstAttribute="centerX" secondItem="M0m-Wc-wlY" secondAttribute="centerX" id="wrh-Ah-lgy"/>
                             <constraint firstItem="fPh-9B-4Wo" firstAttribute="width" secondItem="M0m-Wc-wlY" secondAttribute="width" id="xi2-ql-b2V"/>
                         </constraints>
+                        <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
                         <variation key="default">
                             <mask key="subviews">
                                 <exclude reference="M0m-Wc-wlY"/>
@@ -2380,6 +2405,9 @@
                             </mask>
                         </variation>
                     </view>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="viewRespectsSystemMinimumLayoutMargins" value="NO"/>
+                    </userDefinedRuntimeAttributes>
                     <connections>
                         <outlet property="backgroundImageView" destination="czN-qi-YhU" id="lsY-me-FZE"/>
                         <outlet property="imageView" destination="fPh-9B-4Wo" id="jom-jb-wTt"/>
@@ -2415,7 +2443,7 @@
                                 <blurEffect style="light"/>
                             </visualEffectView>
                             <imageView contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="building1.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="c1c-PJ-2Re" userLabel="background">
-                                <rect key="frame" x="176" y="5" width="460" height="344"/>
+                                <rect key="frame" x="169.33333333333334" y="0.0" width="473.33333333333326" height="354"/>
                                 <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="c1c-PJ-2Re" secondAttribute="height" multiplier="1656:1238" id="45y-Iw-fWC"/>
@@ -2498,7 +2526,7 @@
                         <constraints>
                             <constraint firstAttribute="centerY" secondItem="DfR-hu-71e" secondAttribute="centerY" id="1E5-lM-QUV"/>
                             <constraint firstItem="hYz-sE-0oL" firstAttribute="top" secondItem="kJT-zW-Xmh" secondAttribute="bottom" constant="10" id="1iG-uK-lno"/>
-                            <constraint firstAttribute="bottomMargin" secondItem="c1c-PJ-2Re" secondAttribute="bottom" constant="5" id="4Qz-0w-Sfh"/>
+                            <constraint firstItem="c1c-PJ-2Re" firstAttribute="top" secondItem="3db-Bq-qTh" secondAttribute="bottom" id="2UT-Oy-VfB"/>
                             <constraint firstItem="6zr-4g-M3p" firstAttribute="top" secondItem="oti-KD-CNR" secondAttribute="bottom" id="9Lk-k3-mCl"/>
                             <constraint firstItem="oti-KD-CNR" firstAttribute="top" secondItem="kJT-zW-Xmh" secondAttribute="bottom" constant="10" id="CqB-RY-tDI"/>
                             <constraint firstItem="g73-pP-pNf" firstAttribute="leading" secondItem="7QA-3j-4Zk" secondAttribute="leading" constant="10" id="DzJ-o0-foM"/>
@@ -2510,10 +2538,10 @@
                             <constraint firstAttribute="trailingMargin" secondItem="oti-KD-CNR" secondAttribute="trailing" constant="10" id="OUU-d8-JNT"/>
                             <constraint firstItem="tL8-I5-lsk" firstAttribute="height" secondItem="Bd5-sn-8gV" secondAttribute="height" id="Png-bO-6PW"/>
                             <constraint firstAttribute="centerX" secondItem="tL8-I5-lsk" secondAttribute="centerX" id="Qur-F0-ftB"/>
+                            <constraint firstItem="6zr-4g-M3p" firstAttribute="top" secondItem="c1c-PJ-2Re" secondAttribute="bottom" id="Z8D-t6-ZkL"/>
                             <constraint firstAttribute="centerY" secondItem="tL8-I5-lsk" secondAttribute="centerY" id="anE-bH-Ers"/>
                             <constraint firstItem="g73-pP-pNf" firstAttribute="leading" secondItem="Bd5-sn-8gV" secondAttribute="leading" id="ewo-Lr-H7q"/>
                             <constraint firstItem="v8i-kg-Zmd" firstAttribute="top" secondItem="3db-Bq-qTh" secondAttribute="bottom" constant="10" id="gfx-5M-RTn"/>
-                            <constraint firstItem="c1c-PJ-2Re" firstAttribute="top" secondItem="Bd5-sn-8gV" secondAttribute="topMargin" constant="5" id="gri-X4-HaR"/>
                             <constraint firstAttribute="centerX" secondItem="c1c-PJ-2Re" secondAttribute="centerX" id="hwh-SC-OS8"/>
                             <constraint firstItem="g73-pP-pNf" firstAttribute="top" secondItem="3db-Bq-qTh" secondAttribute="bottom" id="jio-Ee-PAs"/>
                             <constraint firstItem="7QA-3j-4Zk" firstAttribute="leading" secondItem="Bd5-sn-8gV" secondAttribute="leadingMargin" id="kCL-v8-0uk"/>
@@ -2526,6 +2554,7 @@
                             <constraint firstItem="kJT-zW-Xmh" firstAttribute="top" secondItem="v8i-kg-Zmd" secondAttribute="bottom" constant="10" id="z4W-ps-oCF"/>
                             <constraint firstItem="6zr-4g-M3p" firstAttribute="top" secondItem="hYz-sE-0oL" secondAttribute="bottom" id="zFU-iU-ley"/>
                         </constraints>
+                        <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
                         <variation key="default">
                             <mask key="constraints">
                                 <exclude reference="ewo-Lr-H7q"/>
@@ -2541,6 +2570,9 @@
                             <outletCollection property="gestureRecognizers" destination="GV3-FL-SH0" appends="YES" id="Hjh-Eh-t2w"/>
                         </connections>
                     </view>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="viewRespectsSystemMinimumLayoutMargins" value="NO"/>
+                    </userDefinedRuntimeAttributes>
                     <connections>
                         <outlet property="backButton" destination="v8i-kg-Zmd" id="JCl-4M-4Qf"/>
                         <outlet property="backgroundImage" destination="c1c-PJ-2Re" id="6aM-gq-RQ4"/>
@@ -3019,6 +3051,7 @@
                             <constraint firstItem="Cdh-5H-OxP" firstAttribute="leading" secondItem="nzj-CI-moe" secondAttribute="leading" id="psI-3V-EsJ"/>
                             <constraint firstItem="L7c-mE-kyb" firstAttribute="leading" secondItem="nzj-CI-moe" secondAttribute="leading" id="vNJ-46-e4J"/>
                         </constraints>
+                        <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
                         <variation key="default">
                             <mask key="constraints">
                                 <exclude reference="HE1-QB-uwl"/>
@@ -3028,6 +3061,9 @@
                             </mask>
                         </variation>
                     </view>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="viewRespectsSystemMinimumLayoutMargins" value="NO"/>
+                    </userDefinedRuntimeAttributes>
                     <connections>
                         <outlet property="availableCoinsArea" destination="YFB-t8-opf" id="DOy-Mg-lPP"/>
                         <outlet property="availableCoinsView" destination="1Xn-D2-D9b" id="K19-Uj-MIp"/>

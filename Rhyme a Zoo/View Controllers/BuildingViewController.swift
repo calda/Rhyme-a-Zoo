@@ -20,36 +20,36 @@ class BuildingViewController : ZookeeperGameController {
     
     //each point is a percentage of the total width/height of the background image
     let percentageFrames: [String: CGRect] = [
-        "giraffe"     : CGRect(origin: CGPoint(x: 0.637, y: 0.0493), size: CGSize(width: 0.318, height: 0.921)),
-        "hippo"       : CGRect(origin: CGPoint(x: 0.038, y: 0.011), size: CGSize(width: 0.378, height: 0.369)),
-        "kangaroo"    : CGRect(origin: CGPoint(x: 0.115, y: 0.433), size: CGSize(width: 0.450, height: 0.550)),
-        "panda"       : CGRect(origin: CGPoint(x: 0.431, y: 0.108), size: CGSize(width: 0.312, height: 0.447)),
-        "ostrich"     : CGRect(origin: CGPoint(x: 0.396, y: 0.192), size: CGSize(width: 0.28, height: 0.596)),
-        "owl"         : CGRect(origin: CGPoint(x: -0.035, y: 0.08), size: CGSize(width: 0.288, height: 0.504)),
-        "parrot"      : CGRect(origin: CGPoint(x: 0.675, y: 0.085), size: CGSize(width: 0.422, height: 0.896)),
-        "flamingo"    : CGRect(origin: CGPoint(x: 0.12, y: 0.377), size: CGSize(width: 0.265, height: 0.664)),
-        "seal"        : CGRect(origin: CGPoint(x: 0.108, y: 0.397), size: CGSize(width: 0.52, height: 0.53)),
-        "shark"       : CGRect(origin: CGPoint(x: 0.567, y: 0.325), size: CGSize(width: 0.381, height: 0.287)),
-        "squid"       : CGRect(origin: CGPoint(x: 0.165, y: 0.02), size: CGSize(width: 0.302, height: 0.456)),
-        "dolphin"     : CGRect(origin: CGPoint(x: 0.469, y: 0.087), size: CGSize(width: 0.451, height: 0.222)),
-        "wolf"        : CGRect(origin: CGPoint(x: 0.628, y: 0.391), size: CGSize(width: 0.316, height: 0.556)),
-        "lion"        : CGRect(origin: CGPoint(x: 0.009, y: 0.393), size: CGSize(width: 0.527, height: 0.588)),
-        "tiger"       : CGRect(origin: CGPoint(x: 0.015, y: 0.023), size: CGSize(width: 0.3, height: 0.373)),
-        "jaguar"      : CGRect(origin: CGPoint(x: 0.319, y: 0.003), size: CGSize(width: 0.419, height: 0.266)),
-        "alligator"   : CGRect(origin: CGPoint(x: 0.055, y: 0.056), size: CGSize(width: 0.431, height: 0.479)),
-        "iguana"      : CGRect(origin: CGPoint(x: 0.589, y: 0.444), size: CGSize(width: 0.373, height: 0.503)),
-        "turtle"      : CGRect(origin: CGPoint(x: 0.556, y: 0.055), size: CGSize(width: 0.396, height: 0.317)),
-        "rattlesnake" : CGRect(origin: CGPoint(x: 0.021, y: 0.619), size: CGSize(width: 0.388, height: 0.264)),
-        "baboon"      : CGRect(origin: CGPoint(x: 0.101, y: 0.008), size: CGSize(width: 0.183, height: 0.399)),
-        "monkey"      : CGRect(origin: CGPoint(x: 0.558, y: 0.467), size: CGSize(width: 0.315, height: 0.391)),
-        "gorilla"     : CGRect(origin: CGPoint(x: 0.691, y: 0.009), size: CGSize(width: 0.279, height: 0.519)),
-        "chimp"       : CGRect(origin: CGPoint(x: 0.236, y: 0.339), size: CGSize(width: 0.279, height: 0.633)),
-        "pterodactyl" : CGRect(origin: CGPoint(x: 0.758, y: 0.129), size: CGSize(width: 0.29, height: 0.316)),
-        "stegasaurus" : CGRect(origin: CGPoint(x: 0.281, y: 0.417), size: CGSize(width: 0.288, height: 0.25)),
-        "trex"        : CGRect(origin: CGPoint(x: 0.527, y: 0.197), size: CGSize(width: 0.389, height: 0.791)),
-        "triceratop"  : CGRect(origin: CGPoint(x: 0.021, y: 0.315), size: CGSize(width: 0.244, height: 0.36)),
-        "mermaid"     : CGRect(origin: CGPoint(x: 0.616, y: 0.293), size: CGSize(width: 0.353, height: 0.784)),
-        "centaur"     : CGRect(origin: CGPoint(x: 0.278, y: 0.173), size: CGSize(width: 0.302, height: 0.498))
+        "giraffe"     : CGRect(x: 0.637,    y: 0.0493,  width: 0.318,   height: 0.921),
+        "hippo"       : CGRect(x: 0.038,    y: 0.011,   width: 0.378,   height: 0.369),
+        "kangaroo"    : CGRect(x: 0.115,    y: 0.433,   width: 0.450,   height: 0.550),
+        "panda"       : CGRect(x: 0.431,    y: 0.108,   width: 0.312,   height: 0.447),
+        "ostrich"     : CGRect(x: 0.396,    y: 0.192,   width: 0.28,    height: 0.596),
+        "owl"         : CGRect(x: -0.035,   y: 0.08,    width: 0.288,   height: 0.504),
+        "parrot"      : CGRect(x: 0.675,    y: 0.085,   width: 0.422,   height: 0.896),
+        "flamingo"    : CGRect(x: 0.12,     y: 0.377,   width: 0.265,   height: 0.664),
+        "seal"        : CGRect(x: 0.108,    y: 0.397,   width: 0.52,    height: 0.53),
+        "shark"       : CGRect(x: 0.567,    y: 0.325,   width: 0.381,   height: 0.287),
+        "squid"       : CGRect(x: 0.165,    y: 0.02,    width: 0.302,   height: 0.456),
+        "dolphin"     : CGRect(x: 0.469,    y: 0.087,   width: 0.451,   height: 0.222),
+        "wolf"        : CGRect(x: 0.628,    y: 0.391,   width: 0.316,   height: 0.556),
+        "lion"        : CGRect(x: 0.009,    y: 0.393,   width: 0.527,   height: 0.588),
+        "tiger"       : CGRect(x: 0.015,    y: 0.023,   width: 0.3,     height: 0.373),
+        "jaguar"      : CGRect(x: 0.319,    y: 0.003,   width: 0.419,   height: 0.266),
+        "alligator"   : CGRect(x: 0.055,    y: 0.056,   width: 0.431,   height: 0.479),
+        "iguana"      : CGRect(x: 0.589,    y: 0.444,   width: 0.373,   height: 0.503),
+        "turtle"      : CGRect(x: 0.556,    y: 0.055,   width: 0.396,   height: 0.317),
+        "rattlesnake" : CGRect(x: 0.021,    y: 0.619,   width: 0.388,   height: 0.264),
+        "baboon"      : CGRect(x: 0.101,    y: 0.008,   width: 0.183,   height: 0.399),
+        "monkey"      : CGRect(x: 0.558,    y: 0.467,   width: 0.315,   height: 0.391),
+        "gorilla"     : CGRect(x: 0.691,    y: 0.009,   width: 0.279,   height: 0.519),
+        "chimp"       : CGRect(x: 0.236,    y: 0.339,   width: 0.279,   height: 0.633),
+        "pterodactyl" : CGRect(x: 0.758,    y: 0.129,   width: 0.29,    height: 0.316),
+        "stegasaurus" : CGRect(x: 0.281,    y: 0.417,   width: 0.288,   height: 0.25),
+        "trex"        : CGRect(x: 0.527,    y: 0.197,   width: 0.389,   height: 0.791),
+        "triceratop"  : CGRect(x: 0.021,    y: 0.315,   width: 0.244,   height: 0.36),
+        "mermaid"     : CGRect(x: 0.616,    y: 0.293,   width: 0.353,   height: 0.784),
+        "centaur"     : CGRect(x: 0.278,    y: 0.173,   width: 0.302,   height: 0.498)
     ]
     
     //each point is a percentage of the total width/height of the background image
@@ -79,7 +79,7 @@ class BuildingViewController : ZookeeperGameController {
         "gorilla"     : CGPoint(x: 0.914, y: 0.475),
         "chimp"       : CGPoint(x: 0.251, y: 0.896),
         "pterodactyl" : CGPoint(x: 0.853, y: 0.387),
-        "stegasaurus" : CGPoint(x: 0.47, y: 0.675),
+        "stegasaurus" : CGPoint(x: 0.47,  y: 0.675),
         "trex"        : CGPoint(x: 0.663, y: 0.925),
         "triceratop"  : CGPoint(x: 0.163, y: 0.627),
         "mermaid"     : CGPoint(x: 0.735, y: 0.805),
@@ -125,6 +125,7 @@ class BuildingViewController : ZookeeperGameController {
         let image = UIImage(named:"building\(building).jpg")
         backgroundImage.image = image
         blurredBackground.image = image
+        backgroundImage.configureAsEdgeToEdgeImageView(in: self)
         
         //generate frames for animal buttons
         animalButtons = [:]

@@ -34,6 +34,7 @@ class ZooViewController : ZookeeperGameController {
         //update background to level
         let level = RZQuizDatabase.currentZooLevel()
         backgroundImage.image = UIImage(named: "background\(level).jpg")
+        backgroundImage.configureAsEdgeToEdgeImageView(in: self)
         
         for button in buildingButtons {
             if button.tag > level {

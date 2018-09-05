@@ -362,6 +362,8 @@ fileprivate func convertToOptionalCATransitionSubtype(_ input: String?) -> CATra
 // Helper for accessing safe area insets on iOS 10
 extension UIView {
     
+    /// The Safe Area Edge Insets of the view,
+    // or `.zero` if the Safe Area API is unavailable.
     var raz_safeAreaInsets: UIEdgeInsets {
         if #available(iOS 11.0, *) {
             return self.safeAreaInsets
@@ -372,7 +374,84 @@ extension UIView {
     
 }
 
-// helper for
+extension UIScreen {
+    
+    /// Whether of not the device's screen has Safe Area Insets
+    class var hasSafeAreaInsets: Bool {
+        if #available(iOS 11.0, *) {
+            return UIApplication.shared.keyWindow!.safeAreaInsets != .zero
+        } else {
+            return false
+        }
+    }
+    
+}
+
+extension UIImageView {
+    
+    /// Configured the image view as edge-to-edge on a traditional rectangular screen,
+    /// or adds a bit of padding and a corner radius on a screen with edge insets
+    func configureAsEdgeToEdgeImageView(in viewController: UIViewController) {
+        guard let topConstraint = self.constraint(
+                with: topAnchor,
+                and: viewController.topLayoutGuide.bottomAnchor),
+            
+            let bottomConstraint = self.constraint(
+                with: bottomAnchor,
+                and: viewController.bottomLayoutGuide.topAnchor)
+            
+        else {
+            fatalError("Could not find the expected layout constraints. The edge-to-edge Image View must have a topAnchor constraint to the Top Layout Guide, and a bottomAnchor constraint to the Bottom Layout Guide.")
+        }
+        
+        // if this is a screen with safe area insets, we can't do edge-to-edge images.
+        // instead, add a bit of padding and set a corner radius
+        if UIScreen.hasSafeAreaInsets {
+            topConstraint.constant = 5
+            bottomConstraint.constant = 5
+            layer.cornerRadius = 15
+            layer.masksToBounds = true
+        }
+        
+        // if this is a traditional rectangular screen,
+        // then edge-to-edge images are just fine
+        else {
+            topConstraint.constant = 0
+            bottomConstraint.constant = 0
+            layer.cornerRadius = 0
+        }
+        
+        viewController.view.layoutIfNeeded()
+    }
+    
+}
+    
+extension UIView {
+    
+    /// find a constraint between the two given Layout Anchors
+    /// searches `self.constraints` and `self.superview.constraints`
+    func constraint<AnchorType>(
+        with firstAnchor: NSLayoutAnchor<AnchorType>?,
+        and secondAnchor: NSLayoutAnchor<AnchorType>?) -> NSLayoutConstraint?
+    {
+        guard let firstAnchor = firstAnchor,
+            let secondAnchor = secondAnchor else
+        {
+            return nil
+        }
+        
+        let expectedAnchors = Set(arrayLiteral: firstAnchor, secondAnchor)
+        var constraints = self.constraints
+        constraints.append(contentsOf: self.superview?.constraints ?? [])
+        
+        return constraints.first(where: { constraint in
+            let constraintAnchors = Set(arrayLiteral: constraint.firstAnchor, constraint.secondAnchor)
+            return constraintAnchors == expectedAnchors
+        })
+    }
+    
+}
+
 extension UIImage {
     
     //pass in the path without extension of an image, and a reduced-size image may be returned.
