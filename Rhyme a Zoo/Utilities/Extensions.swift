@@ -1,12 +1,10 @@
-//  CoreSwift.swift
+//  Extensions
 //
-//  A collection of core Swift functions and classes
+//  A collection of helpful Swift extensions and classes
 //  Copyright (c) 2015 Cal Stephens. All rights reserved.
 //
 
-import Foundation
 import UIKit
-import CoreLocation
 import UIKit.UIGestureRecognizerSubclass
 
 //MARK: - Functions
@@ -30,16 +28,6 @@ func playTransitionForView(_ view: UIView, duration: Double, transition transiti
     transition.duration = duration
     transition.timingFunction = CAMediaTimingFunction(name: .easeOut)
     transition.type = convertToCATransitionType(transitionName)
-    
-    //run fix for transition subtype
-    //subtypes don't take device orientation into account
-    //let orientation = UIApplication.shared.statusBarOrientation
-    //if orientation == .LandscapeLeft || orientation == .PortraitUpsideDown {
-        //if subtype == kCATransitionFromLeft { subtype = kCATransitionFromRight }
-        //else if subtype == kCATransitionFromRight { subtype = kCATransitionFromLeft }
-        //else if subtype == kCATransitionFromTop { subtype = kCATransitionFromBottom }
-        //else if subtype == kCATransitionFromBottom { subtype = kCATransitionFromTop }
-    //}
     
     transition.subtype = convertToOptionalCATransitionSubtype(subtype)
     view.layer.add(transition, forKey: nil)
@@ -222,88 +210,6 @@ class UITouchGestureRecognizer : UIGestureRecognizer {
     
 }
 
-///A basic class to manage Location access
-class LocationManager : NSObject, CLLocationManagerDelegate {
-    
-    var waitingForAuthorization: [(completion: (CLLocation) -> (), failure: (LocationFailureReason) -> ())] = []
-    var waitingForUpdate: [(completion: (CLLocation) -> (), failure: (LocationFailureReason) -> ())] = []
-    var manager = CLLocationManager()
-    
-    ///Manager must be kept as a strong reference at the class-level.
-    init(accuracy: CLLocationAccuracy) {
-        super.init()
-        manager.delegate = self
-        manager.desiredAccuracy = accuracy
-    }
-    
-    func getCurrentLocation(_ completion: @escaping (CLLocation) -> (), failure: @escaping (LocationFailureReason) -> () ) {
-        let auth = CLLocationManager.authorizationStatus()
-        if auth == .restricted || auth == .denied {
-            failure(.permissionsDenied)
-            return
-        }
-        
-        if auth == .notDetermined {
-            waitingForAuthorization.append((completion: completion, failure: failure))
-            manager.requestWhenInUseAuthorization()
-            return
-        }
-        
-        updateLocationIfEnabled(completion, failure: failure)
-        
-    }
-    
-    func getCurrentLocation(_ completion: @escaping (CLLocation) -> ()) {
-        getCurrentLocation(completion, failure: { error in })
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        for (completion, failure) in waitingForAuthorization {
-            if status == .authorizedWhenInUse {
-                updateLocationIfEnabled(completion, failure: failure)
-            }
-            else {
-                failure(.permissionsDenied)
-            }
-        }
-        waitingForAuthorization = []
-    }
-    
-    fileprivate func updateLocationIfEnabled(_ completion: @escaping (CLLocation) -> (), failure: @escaping (LocationFailureReason) -> ()) {
-        if !CLLocationManager.locationServicesEnabled() {
-            failure(.locationServicesDisabled)
-            return
-        }
-        
-        waitingForUpdate.append((completion: completion, failure: failure))
-        manager.startUpdatingLocation()
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location = locations.first {
-            for (completion, _) in waitingForUpdate {
-                completion(location)
-            }
-        }
-        waitingForUpdate = []
-        manager.stopUpdatingLocation()
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        for (_, failure) in waitingForUpdate {
-            failure(.error(error as NSError))
-        }
-        waitingForUpdate = []
-        manager.stopUpdatingLocation()
-    }
-    
-}
-
-enum LocationFailureReason {
-    case permissionsDenied
-    case locationServicesDisabled
-    case error(NSError)
-}
 
 ///Standard Stack data structure
 

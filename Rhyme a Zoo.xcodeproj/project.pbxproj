@@ -2644,13 +2644,14 @@
 		2E7DE1B8213871C5002AE703 /* jaguar.png in Resources */ = {isa = PBXBuildFile; fileRef = 2E7DD767213871C3002AE703 /* jaguar.png */; };
 		2E7DE1B9213871C5002AE703 /* background9.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2E7DD768213871C3002AE703 /* background9.jpg */; };
 		2E7DE1BA213871C5002AE703 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2E7DD769213871C3002AE703 /* Images.xcassets */; };
-		2E7DE1BB213871C5002AE703 /* CoreSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7DD76B213871C3002AE703 /* CoreSwift.swift */; };
+		2E7DE1BB213871C5002AE703 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7DD76B213871C3002AE703 /* Extensions.swift */; };
 		2E7DE1BC213871C5002AE703 /* UniversalAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7DD76C213871C3002AE703 /* UniversalAudio.swift */; };
 		2E7DE1BD213871C5002AE703 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7DD76D213871C3002AE703 /* AppDelegate.swift */; };
 		2E7DE1BE21387312002AE703 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2E7DD646213871C3002AE703 /* Main.storyboard */; };
 		2E7DE1C121387815002AE703 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E7DE1C021387815002AE703 /* SQLite.framework */; };
 		2E7DE1C221387991002AE703 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E7DE1C021387815002AE703 /* SQLite.framework */; };
 		2E7DE1C321387991002AE703 /* SQLite.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2E7DE1C021387815002AE703 /* SQLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2EAB797421406FBE004FAD66 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EAB797321406FBE004FAD66 /* LocationManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -5308,10 +5309,11 @@
 		2E7DD767213871C3002AE703 /* jaguar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = jaguar.png; sourceTree = "<group>"; };
 		2E7DD768213871C3002AE703 /* background9.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = background9.jpg; sourceTree = "<group>"; };
 		2E7DD769213871C3002AE703 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		2E7DD76B213871C3002AE703 /* CoreSwift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreSwift.swift; sourceTree = "<group>"; };
+		2E7DD76B213871C3002AE703 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		2E7DD76C213871C3002AE703 /* UniversalAudio.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniversalAudio.swift; sourceTree = "<group>"; };
 		2E7DD76D213871C3002AE703 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2E7DE1C021387815002AE703 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = Carthage/Build/iOS/SQLite.framework; sourceTree = "<group>"; };
+		2EAB797321406FBE004FAD66 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -8141,9 +8143,10 @@
 		2E7DD76A213871C3002AE703 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				2E7DD76B213871C3002AE703 /* CoreSwift.swift */,
+				2E7DD76B213871C3002AE703 /* Extensions.swift */,
 				2E7DD76D213871C3002AE703 /* AppDelegate.swift */,
 				2E7DD76C213871C3002AE703 /* UniversalAudio.swift */,
+				2EAB797321406FBE004FAD66 /* LocationManager.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -10853,11 +10856,12 @@
 				2E7DD772213871C4002AE703 /* ZookeeperGameController.swift in Sources */,
 				2E7DD76E213871C4002AE703 /* NewUserViewController.swift in Sources */,
 				2E7DD77D213871C4002AE703 /* SettingsViewController.swift in Sources */,
-				2E7DE1BB213871C5002AE703 /* CoreSwift.swift in Sources */,
+				2E7DE1BB213871C5002AE703 /* Extensions.swift in Sources */,
 				2E7DD776213871C4002AE703 /* PasscodeViewController.swift in Sources */,
 				2E7DD773213871C4002AE703 /* QuizViewController.swift in Sources */,
 				2E7DD77B213871C4002AE703 /* VideoViewController.swift in Sources */,
 				2E7DD780213871C4002AE703 /* UserDatabase.swift in Sources */,
+				2EAB797421406FBE004FAD66 /* LocationManager.swift in Sources */,
 				2E7DD77E213871C4002AE703 /* QuizDatabase.swift in Sources */,
 				2E7DD77A213871C4002AE703 /* KeeperViewController.swift in Sources */,
 				2E7DD76F213871C4002AE703 /* UsersViewController.swift in Sources */,
