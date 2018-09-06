@@ -13,6 +13,7 @@ import AVFoundation
 private let UAAudioQueue = DispatchQueue(label: "com.hearatale.raz.audio", attributes: [])
 private var UAAudioIsPlaying = false
 private var UAShouldHaltPlayback = false
+private var UAAudioIsDisabled = false
 
 enum UAConcurrentAudioMode {
     ///The audio track will immediately start playing.
@@ -29,6 +30,14 @@ func UAHaltPlayback() {
     delay(0.05) {
         UAShouldHaltPlayback = false
     }
+}
+
+func UADisablePlayback(forSeconds duration: TimeInterval) {
+    UAAudioIsDisabled = true
+    
+    Timer.scheduledTimer(withTimeInterval: duration, repeats: false, block: { _ in
+        UAAudioIsDisabled = false
+    })
 }
 
 func UAIsAudioPlaying() -> Bool {
@@ -53,7 +62,12 @@ class UAPlayer {
     var shouldHalt = false
     
     @discardableResult
-    func play(_ name: String, ofType type: String, ifConcurrent mode: UAConcurrentAudioMode = .interrupt ) -> Bool {
+    func play(
+        _ name: String,
+        ofType type: String,
+        ifConcurrent mode: UAConcurrentAudioMode = .interrupt ) -> Bool
+    {
+        if UAAudioIsDisabled { return false  }
         
         self.name = name
         try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio, options: [.allowAirPlay, .duckOthers, .allowBluetooth])
@@ -90,6 +104,8 @@ class UAPlayer {
     }
     
     func startPlayback() {
+         if UAAudioIsDisabled { return }
+        
         if let player = player {
             UAAudioIsPlaying = true
             player.play()

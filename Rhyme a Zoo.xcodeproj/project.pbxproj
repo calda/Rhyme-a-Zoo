@@ -2652,6 +2652,7 @@
 		2E7DE1C221387991002AE703 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E7DE1C021387815002AE703 /* SQLite.framework */; };
 		2E7DE1C321387991002AE703 /* SQLite.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2E7DE1C021387815002AE703 /* SQLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2EAB797421406FBE004FAD66 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EAB797321406FBE004FAD66 /* LocationManager.swift */; };
+		2EC5FAAB2141C34600841D19 /* HomeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC5FAAA2141C34600841D19 /* HomeButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -5314,6 +5315,7 @@
 		2E7DD76D213871C3002AE703 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2E7DE1C021387815002AE703 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = Carthage/Build/iOS/SQLite.framework; sourceTree = "<group>"; };
 		2EAB797321406FBE004FAD66 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		2EC5FAAA2141C34600841D19 /* HomeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -8147,6 +8149,7 @@
 				2E7DD76D213871C3002AE703 /* AppDelegate.swift */,
 				2E7DD76C213871C3002AE703 /* UniversalAudio.swift */,
 				2EAB797321406FBE004FAD66 /* LocationManager.swift */,
+				2EC5FAAA2141C34600841D19 /* HomeButton.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -10863,6 +10866,7 @@
 				2E7DD780213871C4002AE703 /* UserDatabase.swift in Sources */,
 				2EAB797421406FBE004FAD66 /* LocationManager.swift in Sources */,
 				2E7DD77E213871C4002AE703 /* QuizDatabase.swift in Sources */,
+				2EC5FAAB2141C34600841D19 /* HomeButton.swift in Sources */,
 				2E7DD77A213871C4002AE703 /* KeeperViewController.swift in Sources */,
 				2E7DD76F213871C4002AE703 /* UsersViewController.swift in Sources */,
 				2E7DD775213871C4002AE703 /* ClassroomsViewController.swift in Sources */,
