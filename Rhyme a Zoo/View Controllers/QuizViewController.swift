@@ -404,9 +404,7 @@ class QuizViewController : UIViewController {
     }
     
     func highlightOption(_ option: Int) {
-        var scale: CGFloat = 1.1
-        let aspect = self.view.frame.width / self.view.frame.height
-        if aspect < 1.35 { scale = 1.03 } //4S and iPad
+        let scale: CGFloat = 1.08
         
         for container in optionContainers {
             if container.tag == option {
