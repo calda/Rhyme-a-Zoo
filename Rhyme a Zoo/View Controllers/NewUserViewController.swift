@@ -27,7 +27,7 @@ func updateAvailableIconsForUsers(_ users: [User], availableIcons: inout [String
             if usedIcon.lowercased().hasPrefix(availableIcons[i].lowercased()) {
                 
                 //leave one of the user's current icon
-                if user.toUserString() == RZCurrentUser.toUserString() {
+                if user.toUserString() == RZCurrentUser?.toUserString() {
                     if userRemoved { continue }
                     else { userRemoved = true }
                 }

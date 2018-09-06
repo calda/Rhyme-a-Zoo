@@ -250,7 +250,8 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
     }
     
     func openPasscodeForClassroom(_ classroom: Classroom) {
-        requestPasscode(classroom.passcode, description: "Passcode for \"\(classroom.name)\"", currentController: self, completion: {
+        requestPasscode(classroom.passcode, description: "Passcode for \"\(classroom.name)\"", currentController: self, completion: { success in
+            guard success else { return }
             self.joinClassroom(classroom)
         })
     }

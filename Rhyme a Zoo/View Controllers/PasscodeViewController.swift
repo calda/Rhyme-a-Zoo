@@ -201,90 +201,35 @@ class PasscodeViewController : UIViewController {
     
 }
 
-func requestPasscode(_ correctPasscode: String, description: String, currentController current: UIViewController, completion: (() -> ())? = nil) {
+func requestPasscode(_ correctPasscode: String, description: String, currentController current: UIViewController, forKids: Bool = false, completion: ((Bool) -> ())? = nil) {
     let passcode = UIStoryboard(name: "User", bundle: nil).instantiateViewController(withIdentifier: "passcode") as! PasscodeViewController
     passcode.correctPasscode = correctPasscode
     passcode.descriptionString = description
-    passcode.view.frame = current.view.frame
-    current.view.addSubview(passcode.view)
-    current.view.isUserInteractionEnabled = false
-
-    //animate
-    let offscreenOrigin = CGPoint(x: 0, y: current.view.frame.height * 1.2)
-    passcode.view.frame.origin = offscreenOrigin
     
-    UIView.animate(withDuration: 0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
-        passcode.view.frame.origin = CGPoint.zero
-    }, completion: { _ in
-        current.view.isUserInteractionEnabled = true
-    })
-    
-    passcode.completion = { success in
-        UIView.animate(withDuration: 0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
-            passcode.view.frame.origin = offscreenOrigin
-        }, completion: { _ in
-            passcode.view.removeFromSuperview()
-            if success {
-                completion?()
-            }
-        })
-    }
-}
-
-func requestPasscdoe(_ correctPasscode: String, description: String, currentController current: UIViewController, forKids: Bool = false, successCompletion: ((Bool) -> ())?) {
-    let passcode = UIStoryboard(name: "User", bundle: nil).instantiateViewController(withIdentifier: "passcode") as! PasscodeViewController
-    passcode.correctPasscode = correctPasscode
-    passcode.descriptionString = description
     passcode.playAudioPrompts = forKids
-    passcode.view.frame = current.view.frame
-    current.view.addSubview(passcode.view)
-    current.view.isUserInteractionEnabled = false
-    
-    //animate
-    let offscreenOrigin = CGPoint(x: 0, y: current.view.frame.height * 1.2)
-    passcode.view.frame.origin = offscreenOrigin
-    
-    UIView.animate(withDuration: 0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
-        passcode.view.frame.origin = CGPoint.zero
-    }, completion: { _ in
-            current.view.isUserInteractionEnabled = true
-    })
+    passcode.modalPresentationStyle = .overCurrentContext
+    current.present(passcode, animated: true, completion: nil)
     
     passcode.completion = { success in
-        UIView.animate(withDuration: 0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
-            passcode.view.frame.origin = offscreenOrigin
-            }, completion: { _ in
-                passcode.view.removeFromSuperview()
-                successCompletion?(success)
+        passcode.dismiss(animated: true, completion: {
+            completion?(success)
         })
+        
     }
-
 }
 
 func createPasscode(_ description: String, currentController current: UIViewController, completion: @escaping (String?) -> ()) {
     let passcode = UIStoryboard(name: "User", bundle: nil).instantiateViewController(withIdentifier: "passcode") as! PasscodeViewController
     passcode.creationMode = true
     passcode.descriptionString = description
-    passcode.view.frame = current.view.frame
-    current.view.addSubview(passcode.view)
-    current.view.isUserInteractionEnabled = false
     
-    //animate
-    let offscreenOrigin = CGPoint(x: 0, y: current.view.frame.height * 1.2)
-    passcode.view.frame.origin = offscreenOrigin
-    
-    UIView.animate(withDuration: 0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
-        passcode.view.frame.origin = CGPoint.zero
-    }, completion: { _ in
-            current.view.isUserInteractionEnabled = true
-    })
+    passcode.modalPresentationStyle = .overCurrentContext
+    current.present(passcode, animated: true, completion: nil)
     
     passcode.creationComplation = { newPasscode in
-        UIView.animate(withDuration: 0.7, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
-            passcode.view.frame.origin = offscreenOrigin
-            }, completion: { _ in
-                passcode.view.removeFromSuperview()
-                completion(newPasscode)
+        passcode.dismiss(animated: true, completion: {
+            completion(newPasscode)
         })
+        
     }
 }

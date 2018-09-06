@@ -196,7 +196,8 @@ class UserDatabase {
         let predicate = NSPredicate(format: "distanceToLocation:fromLocation:(Location, %@) < 8047", location) //within 5 miles
         let query = CKQuery(recordType: "Classroom", predicate: predicate)
         query.sortDescriptors = [CKLocationSortDescriptor(key: "Location", relativeLocation: location)]
-        cloud.perform(query, inZoneWith: nil, completionHandler: classroomQueryCompletionHandler(reverseResults: false, completion: completion) as! ([CKRecord]?, Error?) -> Void)
+        
+        cloud.perform(query, inZoneWith: nil, completionHandler: classroomQueryCompletionHandler(reverseResults: false, completion: completion))
     }
     
     func getClassroomsMatchingText(_ text: String, location: CLLocation?, completion: @escaping ([Classroom]) -> ()) {
@@ -207,12 +208,12 @@ class UserDatabase {
         } else {
             query.sortDescriptors = [NSSortDescriptor(key: "Name", ascending: true)]
         }
-        cloud.perform(query, inZoneWith: nil, completionHandler: classroomQueryCompletionHandler(reverseResults: false, completion: completion) as! ([CKRecord]?, Error?) -> Void)
+        cloud.perform(query, inZoneWith: nil, completionHandler: classroomQueryCompletionHandler(reverseResults: false, completion: completion))
     }
     
-    fileprivate func classroomQueryCompletionHandler(reverseResults: Bool, completion: @escaping ([Classroom]) -> ()) -> ([CKRecord]?, NSError?) -> () {
+    fileprivate func classroomQueryCompletionHandler(reverseResults: Bool, completion: @escaping ([Classroom]) -> ()) -> ([CKRecord]?, Error?) -> () {
         
-        func classroomQueryCompletionHandler(_ results: [CKRecord]?, error: NSError?) {
+        func classroomQueryCompletionHandler(_ results: [CKRecord]?, error: Error?) {
             
             if let error = error {
                 print(error.localizedDescription)
@@ -444,7 +445,7 @@ class User : NSObject {
     }
     
     func getUpdatedRecord(_ classroom: Classroom) -> CKRecord? {
-        guard let actualUser = RZCurrentUser else { return nil }
+        let actualUser = RZCurrentUser
         RZCurrentUser = self
         
         let record: CKRecord
@@ -455,7 +456,7 @@ class User : NSObject {
         }
         
         record.setObject(toUserString() as CKRecordValue, forKey: "UserString")
-        record.setObject(self.passcode! as CKRecordValue, forKey: "Passcode")
+        record.setObject(self.passcode as CKRecordValue?, forKey: "Passcode")
         record.setObject(dictToArray(RZQuizDatabase.getQuizData()) as CKRecordValue, forKey: "QuizData")
         record.setObject(CKRecord.Reference(record: classroom.record, action: .deleteSelf), forKey: "Classroom")
         record.setObject(RZQuizDatabase.getFavorites() as CKRecordValue, forKey: "Favorites")

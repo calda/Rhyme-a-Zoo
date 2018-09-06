@@ -246,7 +246,9 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
         alert.addAction(UIAlertAction(title: "Nevermind", style: .default, handler: nil))
         alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in
             
-            requestPasscode(self.classroom.passcode, description: "Verify passcode to delete Classroom.", currentController: self, completion: {
+            requestPasscode(self.classroom.passcode, description: "Verify passcode to delete Classroom.", currentController: self, completion: { success in
+                guard success else { return }
+                
                 let classroomName = self.classroom.name
                 RZUserDatabase.deleteClassroom(self.classroom)
                 RZUserDatabase.unlinkClassroom()
@@ -503,9 +505,7 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
     func finishNewStudentFlow(_ name: String, iconName: String, passcode: String?) {
         let user = User(name: name, iconName: iconName, passcode: passcode)
         users.append(user)
-        //sort the new array by name again
-        let nsusers = users as NSArray
-        users = nsusers.sortedArray(using: [NSSortDescriptor(key: "name", ascending: true)]) as! [User]
+        users.sort(by: { $0.name < $1.name })
         tableView.reloadData()
         
         //show an alert
@@ -557,8 +557,6 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
         mail.setMessageBody(messageBody, isHTML: true)
         
         settingsController.present(mail, animated: true, completion: nil)
-        
-        
     }
     
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
@@ -1341,11 +1339,15 @@ class BigUserCell : UITableViewCell {
             alert.addAction(UIAlertAction(title: "Nevermind", style: .default, handler: nil))
             alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in
                 
+                let deletingAlert = UIAlertController(title: "Deleting \(user.name)...", message: nil, preferredStyle: .alert)
+                controller.present(deletingAlert, animated: true, completion: nil)
+                
                 RZUserDatabase.deleteLocalUser(user, deleteFromClassroom: true)
-                controller.backButtonPressed(self)
                 delay(1.0) {
-                    controller.tableView.reloadData()
                     RZUserDatabase.getUsersForClassroom(controller.classroom, completion: { users in
+                        deletingAlert.dismiss(animated: true, completion: nil)
+                        controller.backButtonPressed(self)
+                        
                         if let delegate = controller.tableView.delegate as? SettingsUsersDelegate {
                             delegate.users = users
                             controller.tableView.reloadData()
@@ -1354,6 +1356,7 @@ class BigUserCell : UITableViewCell {
                 }
                 
             }))
+            
             controller.present(alert, animated: true, completion: nil)
         }
     }

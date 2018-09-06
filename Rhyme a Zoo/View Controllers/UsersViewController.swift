@@ -60,6 +60,8 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     }
     
     func loadUsers() {
+        self.activityIndicator.isHidden = false
+        
         //present welcome view if there are no users
         //present main view if there is only one user
         //but stay on this view if there is a linked classroom
@@ -80,11 +82,10 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
                     self.classroomLabel.alpha = 1.0
                     self.classroomIcon.alpha = 1.0
                 }, completion: nil)
-                self.cloudUsers = true
                 
                 //get users
                 RZUserDatabase.getUsersForClassroom(classroom, completion: { users in
-                    
+                    self.cloudUsers = true
                     self.users = users
                     self.activityIndicator.isHidden = true
                     self.decorateForLoadedUsers()
@@ -169,7 +170,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
             //confirm with passcode
             if let passcode = RZUserDatabase.getLinkedClassroomPasscode() {
                 
-                requestPasscdoe(passcode, description: "Verify passcode to leave classroom on this device.", currentController: self) { success in
+                requestPasscode(passcode, description: "Verify passcode to leave classroom on this device.", currentController: self) { success in
                     if success {
                         RZUserDatabase.unlinkClassroom()
                     }
@@ -294,17 +295,9 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
     
     //MARK: - Selection of Cells
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        //if indexPath.item == users.count { //add user button is last
-        //    return
-        //}
-        //let user = users[indexPath.item]
-        //checkUserPasscode(user)
-    }
-    
     func checkUserPasscode(_ user: User) {
         if let passcode = user.passcode, RZSettingRequirePasscode.currentSetting() == true {
-            requestPasscdoe(passcode, description: "Enter the passcode for \(user.name)", currentController: self, forKids: true, successCompletion: { success in
+            requestPasscode(passcode, description: "Enter the passcode for \(user.name)", currentController: self, forKids: true, completion: { success in
                 if success {
                     self.logInToUser(user)
                 }
@@ -420,7 +413,9 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
         RZUserDatabase.getLinkedClassroom({ classroom in
         
             if let classroom = classroom {
-                requestPasscode(classroom.passcode, description: "Passcode for \(classroom.name)", currentController: self, completion: {
+                requestPasscode(classroom.passcode, description: "Passcode for \(classroom.name)", currentController: self, completion: { success in
+                    guard success else { return }
+                    
                     let settings = UIStoryboard(name: "User", bundle: nil).instantiateViewController(withIdentifier: "classroomSettings") as! SettingsViewController
                     settings.classroom = classroom
                     self.present(settings, animated: true, completion: nil)
