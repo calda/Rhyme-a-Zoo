@@ -60,14 +60,13 @@ class VideoViewController : UIViewController {
         }
         
         //add timer for progress bar
-        let progressTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(VideoViewController.updatePercentageBar), userInfo: nil, repeats: true)
+        let progressTimer = Timer.scheduledTimer(timeInterval: 0.005, target: self, selector: #selector(VideoViewController.updatePercentageBar), userInfo: nil, repeats: true)
         timers.append(progressTimer)
     }
     
     @objc func showImage(_ timer: Timer) {
         if let imageName = timer.userInfo as? String {
             self.imageView.image = UIImage(named: imageName)
-            self.backgroundImageView.image = UIImage(named: imageName)
         }
         else {
             self.dismiss(animated: true, completion: nil)
@@ -85,15 +84,32 @@ class VideoViewController : UIViewController {
     //MARK: - Configuring the view
     
     @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var backgroundImageView: UIImageView!
+    @IBOutlet weak var imageContainer: UIView!
+    @IBOutlet weak var imageContainerStackView: UIStackView!
     @IBOutlet weak var skipButton: UIVisualEffectView!
     @IBOutlet weak var progressBar: UIView!
     
     override func viewWillAppear(_ animated: Bool) {
         loadDataForVideo()
+        
         if let frames = frames {
             imageView.image = UIImage(named: frames[0].imageName)
-            backgroundImageView.image = UIImage(named: frames[0].imageName)
+            imageContainer.configureAsEdgeToEdgeImageView(in: self, optional: true)
+            
+            if UIScreen.hasSafeAreaInsets {
+                // on Safe Area screens, don't let the timer bar overlap the image
+                imageContainerStackView.spacing = 0
+            } else {
+                // on traditional hardware, allow the timer to clip the image
+                // so that the content stays 16:9
+                imageContainerStackView.spacing = -10
+            }
+            
+            if iPad() {
+                imageContainerStackView.spacing = 0
+                imageContainer.layer.cornerRadius = 20
+                imageContainer.layer.masksToBounds = true
+            }
         }
         
         if RZSettingSkipVideos.currentSetting() == false {

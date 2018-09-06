@@ -293,11 +293,14 @@ extension UIScreen {
     
 }
 
-extension UIImageView {
+extension UIView {
     
     /// Configured the image view as edge-to-edge on a traditional rectangular screen,
     /// or adds a bit of padding and a corner radius on a screen with edge insets
-    func configureAsEdgeToEdgeImageView(in viewController: UIViewController) {
+    func configureAsEdgeToEdgeImageView(
+        in viewController: UIViewController,
+        optional: Bool = false)
+    {
         guard let topConstraint = self.constraint(
                 with: topAnchor,
                 and: viewController.topLayoutGuide.bottomAnchor),
@@ -307,7 +310,11 @@ extension UIImageView {
                 and: viewController.bottomLayoutGuide.topAnchor)
             
         else {
-            fatalError("Could not find the expected layout constraints. The edge-to-edge Image View must have a topAnchor constraint to the Top Layout Guide, and a bottomAnchor constraint to the Bottom Layout Guide.")
+            if optional {
+                return
+            } else {
+                fatalError("Could not find the expected layout constraints. The edge-to-edge Image View must have a topAnchor constraint to the Top Layout Guide, and a bottomAnchor constraint to the Bottom Layout Guide.")
+            }
         }
         
         // if this is a screen with safe area insets, we can't do edge-to-edge images.

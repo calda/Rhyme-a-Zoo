@@ -21,7 +21,7 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
     var offsetBeforeFavoritesToggled = CGPoint.zero
     
     //widths for different device classes
-    let fourRow: CGFloat = 1100.0
+    let fourRow: CGFloat = 1000.0
     let twoRow: CGFloat = 480.0
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

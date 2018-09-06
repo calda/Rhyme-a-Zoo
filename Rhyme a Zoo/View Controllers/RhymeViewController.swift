@@ -25,7 +25,6 @@ class RhymeViewController : UIViewController {
     @IBOutlet weak var rhymeText: UILabel!
     @IBOutlet weak var scrollContent: UIView!
     @IBOutlet weak var scrollView: UIScrollView!
-    @IBOutlet weak var scrollContentHeight: NSLayoutConstraint!
     var rhymeString: String!
     
     var rhyme: Rhyme! = Rhyme(1) //for testing if this is inital
@@ -82,12 +81,10 @@ class RhymeViewController : UIViewController {
         repeatButton.imageView!.contentMode = .scaleAspectFit
         view.layoutIfNeeded()
         
-        updateScrollView()
-
         // mask the rhyme page, but wait until after the first layout pass is over
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05, execute: {
             let height = self.rhymePage.frame.height
-            let maskHeight = height - 20.0 - (iPad() ? 60.0 : 0.0)
+            let maskHeight = height - 20.0
             let maskWidth = (self.rhymePage.frame.width / self.rhymePage.frame.height) * maskHeight
             let maskRect = CGRect(x: 10.0, y: 10.0, width: maskWidth, height: maskHeight)
             
@@ -95,24 +92,6 @@ class RhymeViewController : UIViewController {
             maskLayer.path = UIBezierPath(roundedRect: maskRect, cornerRadius: maskHeight / 20.0).cgPath
             self.rhymePage.layer.mask = maskLayer
         })
-    }
-    
-    func updateScrollView() {
-        //check if the content height needs to be updated
-        let width = scrollView.frame.width
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.paragraphSpacing = 9.5
-        let attributes = [convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle) : paragraphStyle, convertFromNSAttributedStringKey(NSAttributedString.Key.font) : rhymeText.font] as [String : Any]
-        let idealSize = (rhymeString as NSString).boundingRect(with: CGSize(width: width, height: 1000), options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes), context: nil)
-        
-        let difference = abs(idealSize.height - scrollView.frame.height)
-        if difference > 6.0 && idealSize.height > scrollView.frame.height {
-            scrollContentHeight.constant = difference * 1.2
-            self.view.layoutIfNeeded()
-        } else {
-            scrollContentHeight.constant = 0.0
-        }
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -291,7 +270,6 @@ class RhymeViewController : UIViewController {
         if !rhyme.quizHasBeenPlayed() {
             self.quizBounceTimer = Timer.scheduledTimer(timeInterval: 3.5, target: self, selector: #selector(RhymeViewController.bounceQuizIcon), userInfo: nil, repeats: true)
             delay(0.25) {
-                return // FIXME
                 self.quizButtonPressed(self)
             }
         }
@@ -382,7 +360,7 @@ class RhymeViewController : UIViewController {
         
         self.rhyme = rhyme
         decorateForRhyme(rhyme, updateBackground: false)
-        updateScrollView()
+
         endPlayback()
         playTransitionForView(self.view, duration: 0.5, transition: transition)
         delay(0.5) {
