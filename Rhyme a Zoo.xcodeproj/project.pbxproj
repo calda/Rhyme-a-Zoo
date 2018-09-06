@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2E25436C1B6EA78000AF5338 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E25436B1B6EA78000AF5338 /* CloudKit.framework */; };
 		2E7DD76E213871C4002AE703 /* NewUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7DCD0A213871BF002AE703 /* NewUserViewController.swift */; };
 		2E7DD76F213871C4002AE703 /* UsersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7DCD0B213871BF002AE703 /* UsersViewController.swift */; };
 		2E7DD770213871C4002AE703 /* ZooViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7DCD0C213871BF002AE703 /* ZooViewController.swift */; };
@@ -2648,25 +2647,11 @@
 		2E7DE1BC213871C5002AE703 /* UniversalAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7DD76C213871C3002AE703 /* UniversalAudio.swift */; };
 		2E7DE1BD213871C5002AE703 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7DD76D213871C3002AE703 /* AppDelegate.swift */; };
 		2E7DE1BE21387312002AE703 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2E7DD646213871C3002AE703 /* Main.storyboard */; };
-		2E7DE1C121387815002AE703 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E7DE1C021387815002AE703 /* SQLite.framework */; };
-		2E7DE1C221387991002AE703 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E7DE1C021387815002AE703 /* SQLite.framework */; };
-		2E7DE1C321387991002AE703 /* SQLite.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2E7DE1C021387815002AE703 /* SQLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2EAB797421406FBE004FAD66 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EAB797321406FBE004FAD66 /* LocationManager.swift */; };
 		2EC5FAAB2141C34600841D19 /* HomeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC5FAAA2141C34600841D19 /* HomeButton.swift */; };
+		2EC5FAAD2141DF5400841D19 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E25436B1B6EA78000AF5338 /* CloudKit.framework */; };
+		2EC5FAB02141E14700841D19 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E7DE1C021387815002AE703 /* SQLite.framework */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		2E089A0A1B40B24200693309 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				2E7DE1C321387991002AE703 /* SQLite.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		2E08997D1B40A5D200693309 /* Rhyme a Zoo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Rhyme a Zoo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5323,9 +5308,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2E7DE1C121387815002AE703 /* SQLite.framework in Frameworks */,
-				2E25436C1B6EA78000AF5338 /* CloudKit.framework in Frameworks */,
-				2E7DE1C221387991002AE703 /* SQLite.framework in Frameworks */,
+				2EC5FAAD2141DF5400841D19 /* CloudKit.framework in Frameworks */,
+				2EC5FAB02141E14700841D19 /* SQLite.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5338,6 +5322,7 @@
 				2E08997F1B40A5D200693309 /* Rhyme a Zoo */,
 				2E25436B1B6EA78000AF5338 /* CloudKit.framework */,
 				2E7DE1C021387815002AE703 /* SQLite.framework */,
+				2EC5FAAC2141DF5300841D19 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -8154,6 +8139,13 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
+		2EC5FAAC2141DF5300841D19 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -8162,9 +8154,9 @@
 			buildConfigurationList = 2E08999C1B40A5D300693309 /* Build configuration list for PBXNativeTarget "Rhyme a Zoo" */;
 			buildPhases = (
 				2E0899791B40A5D200693309 /* Sources */,
+				2EC5FAAF2141E08700841D19 /* ShellScript */,
 				2E08997A1B40A5D200693309 /* Frameworks */,
 				2E08997B1B40A5D200693309 /* Resources */,
-				2E089A0A1B40B24200693309 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -10844,6 +10836,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2EC5FAAF2141E08700841D19 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/SQLite.framework",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SQLite.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		2E0899791B40A5D200693309 /* Sources */ = {
