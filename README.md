@@ -1,18 +1,40 @@
-# Rhyme-a-Zoo
-<b>Rhyme a Zoo for iOS</b> </br>
-Developed by Cal Stephens  </br>
-for Walter Evans at Georgia Regents University
+# Rhyme a Zoo
 
-##A note to future developers
-If there comes a time where somebody must perform maintinence on Rhyme a Zoo, <i>my condolences</i>. Rhyme a Zoo is written in Swift 1.2, which is only supported in Xcode 6. Xcode 7+ requires the use of Swift 2, which is not syntax-compatible.
+An interactive storybook app for kids that promotes early-childhood literacy, published by Augusta University. Players listen to classic rhymes and answer basic comprehension questions. Answering questions correctly gives them coins, which they can use to buy animals for their zoo.
 
+<p align="center">
+    <img src="/images/Rhyme a Zoo 1.png" width="600px">
+</p>
 
-You have two options:
-- Find a download for Xcode 6.4 (shouldn't be too tricky, but it won't be supported forever)
-- Update to Swift 2
+<p align="center">
+    <img src="/images/Rhyme a Zoo 2.png" width="600px">
+</p>
 
-<b>Updating to Swift 2 is not a trivial task.</b> <br> 
-SQLite.swift (the library I use to access the SQL database from the original PC version) has signifigant changes between the Swift 1.2 and Swift 2 versions, meaning a rewrite of the RZQuizDatabase class will be necessary. All of these changes will need to be tested and verified. 
-<br>
-##tl;dr: Use Xcode 6.4 if at all possible.
-Otherwise, I'm sorry.
+<p align="center">
+    <img src="/images/Rhyme a Zoo 3.png" width="600px">
+</p>
+
+<p align="center">
+    <img src="/images/Rhyme a Zoo 4.png" width="600px">
+</p>
+
+<p align="center">
+    <img src="/images/Rhyme a Zoo 5.png" width="600px">
+</p>
+
+<p align="center">
+    <img src="/images/Rhyme a Zoo 6.png" width="600px">
+</p>
+
+<p align="center">
+    <img src="/images/Rhyme a Zoo 7.png" width="600px">
+</p>
+
+<p align="center">
+    <img src="/images/Rhyme a Zoo 8.png" width="600px">
+</p>
+
+<p align="center">
+    <img src="/images/Rhyme a Zoo 9.png" width="600px">
+</p>
+
