@@ -80,6 +80,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
             if let classroom = classroom {
                 self.requireName = true
                 RZUserDatabase.getUsersForClassroom(classroom, completion: { users in
+                    guard let users = users else { return }
                     updateAvailableIconsForUsers(users, availableIcons: &self.availableIcons)
                     self.collectionView.reloadData()
                 })

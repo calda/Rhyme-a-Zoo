@@ -192,7 +192,7 @@ class UserDatabase {
         })
     }
     
-    func getNearbyClassrooms(_ location: CLLocation, completion: @escaping ([Classroom]) -> ()) {
+    func getNearbyClassrooms(_ location: CLLocation, completion: @escaping ([Classroom]?) -> ()) {
         let predicate = NSPredicate(format: "distanceToLocation:fromLocation:(Location, %@) < 8047", location) //within 5 miles
         let query = CKQuery(recordType: "Classroom", predicate: predicate)
         query.sortDescriptors = [CKLocationSortDescriptor(key: "Location", relativeLocation: location)]
@@ -200,7 +200,7 @@ class UserDatabase {
         cloud.perform(query, inZoneWith: nil, completionHandler: classroomQueryCompletionHandler(reverseResults: false, completion: completion))
     }
     
-    func getClassroomsMatchingText(_ text: String, location: CLLocation?, completion: @escaping ([Classroom]) -> ()) {
+    func getClassroomsMatchingText(_ text: String, location: CLLocation?, completion: @escaping ([Classroom]?) -> ()) {
         let predicate = NSPredicate(format: "Name BEGINSWITH %@", text)
         let query = CKQuery(recordType: "Classroom", predicate: predicate)
         if let location = location {
@@ -211,12 +211,13 @@ class UserDatabase {
         cloud.perform(query, inZoneWith: nil, completionHandler: classroomQueryCompletionHandler(reverseResults: false, completion: completion))
     }
     
-    fileprivate func classroomQueryCompletionHandler(reverseResults: Bool, completion: @escaping ([Classroom]) -> ()) -> ([CKRecord]?, Error?) -> () {
+    fileprivate func classroomQueryCompletionHandler(reverseResults: Bool, completion: @escaping ([Classroom]?) -> ()) -> ([CKRecord]?, Error?) -> () {
         
         func classroomQueryCompletionHandler(_ results: [CKRecord]?, error: Error?) {
             
-            if let error = error {
-                print(error.localizedDescription)
+            guard error == nil else {
+                sync() { completion(nil) }
+                return
             }
             
             if let records = results {
@@ -281,11 +282,12 @@ class UserDatabase {
     
     //MARK: - CloudKit User Management
     
-    func getUsersForClassroom(_ classroom: Classroom, completion: @escaping ([User]) -> ()) {
+    func getUsersForClassroom(_ classroom: Classroom, completion: @escaping ([User]?) -> ()) {
         let predicate = NSPredicate(format: "Classroom = %@", classroom.record.recordID)
         let query = CKQuery(recordType: "User", predicate: predicate)
         query.sortDescriptors = [NSSortDescriptor(key: "UserString", ascending: true)]
         cloud.perform(query, inZoneWith: nil, completionHandler: { results, error in
+            guard error == nil else { return }
             
             var users: [User] = []
             
@@ -334,7 +336,7 @@ class UserDatabase {
             if let classroom = classroom {
                 RZUserDatabase.getUsersForClassroom(classroom, completion: { users in
                     
-                    for user in users {
+                    for user in users ?? [] {
                         if user.ID == newUser.ID {
                             //the user already exists in the classroom
                             //make sure the record doesn't get duplicated

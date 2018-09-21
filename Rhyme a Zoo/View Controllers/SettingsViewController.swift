@@ -93,6 +93,7 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
         if cell.identifier == "students" {
             let row = tableView.dequeueReusableCell(withIdentifier: cell.identifier, for: indexPath) as! StudentsCell
             RZUserDatabase.getUsersForClassroom(classroom, completion: { users in
+                guard let users = users else { return }
                 row.decorateForUsers(users)
             })
             row.backgroundColor = UIColor.clear
@@ -275,6 +276,8 @@ class SettingsViewController : UIViewController, SettingsViewTableDelegate, UIGe
         switchToDelegate(delegate, isBack: false, atOffset: nil)
         self.activityIndicator.isHidden = false
         RZUserDatabase.getUsersForClassroom(self.classroom, completion: { users in
+            guard let users = users else { return }
+            
             delay(0.3) {
                 delegate.users = users
                 self.activityIndicator.isHidden = true
@@ -518,21 +521,6 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
     //MARK: Other Interactions
     
     func sendPasscodeEmail() {
-        
-        if !MFMailComposeViewController.canSendMail() {
-            //show an alert to tell the user to set up mail
-            let alert = UIAlertController(title: "You haven't set up your email yet.", message: "Set up your email in the Settings App and then try again.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Nevermind", style: .destructive, handler: nil))
-            alert.addAction(UIAlertAction(title: "Settings", style: .default, handler: { _ in
-                openSettings()
-            }))
-            return
-        }
-        
-        let mail = MFMailComposeViewController()
-        mail.mailComposeDelegate = self
-        mail.setSubject("Rhyme a Zoo: Student Passcodes for \(settingsController.classroom.name)")
-        
         //create message body
         var messageBody = ""
         var allUsersHavePasscode = true
@@ -554,9 +542,10 @@ class SettingsUsersDelegate : NSObject, SettingsViewTableDelegate, MFMailCompose
             messageBody = messageBody + line + line2
         }
         
-        mail.setMessageBody(messageBody, isHTML: true)
-        
-        settingsController.present(mail, animated: true, completion: nil)
+        EmailManager.sendCustomEmail(
+            subject: "Rhyme a Zoo: Student Passcodes for \(settingsController.classroom.name)",
+            body: messageBody,
+            from: settingsController)
     }
     
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
@@ -1022,7 +1011,7 @@ class SettingsQuizScoresDelegate: NSObject, SettingsViewTableDelegate {
 
 //MARK: - Delegate for Composing Data Email
 
-class SettingsComposeEmailDelegate : NSObject, SettingsViewTableDelegate, MFMailComposeViewControllerDelegate {
+class SettingsComposeEmailDelegate : NSObject, SettingsViewTableDelegate {
     
     let settingsController: SettingsViewController
     let users: [User]
@@ -1101,7 +1090,10 @@ class SettingsComposeEmailDelegate : NSObject, SettingsViewTableDelegate, MFMail
     
     func processSelectedCell(_ index: Int) {
         if index == cells.count + 1 {
-            sendCustomEmail()
+            EmailManager.sendCustomEmail(
+                subject: "Rhyme a Zoo Student Data",
+                body: createEmailBody(),
+                from: settingsController)
         }
         else if index == 0 {
             return
@@ -1126,28 +1118,7 @@ class SettingsComposeEmailDelegate : NSObject, SettingsViewTableDelegate, MFMail
         }
     }
     
-    func sendCustomEmail() {
-        
-        if !MFMailComposeViewController.canSendMail() {
-            //show an alert to tell the user to set up mail
-            let alert = UIAlertController(title: "You haven't set up your email yet.", message: "Set up your email in the Settings App and then try again.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Nevermind", style: .destructive, handler: nil))
-            alert.addAction(UIAlertAction(title: "Settings", style: .default, handler: { _ in
-                openSettings()
-            }))
-            return
-        }
-        
-        let mail = MFMailComposeViewController()
-        mail.setMessageBody(createEmailBody(), isHTML: true)
-        mail.setSubject("Rhyme a Zoo Student Data")
-        mail.mailComposeDelegate = self
-        
-        settingsController.present(mail, animated: true, completion: nil)
-    }
-    
     func createEmailBody() -> String {
-        
         var emailBody: String = ""
         
         //add introduction
@@ -1175,7 +1146,7 @@ class SettingsComposeEmailDelegate : NSObject, SettingsViewTableDelegate, MFMail
                     decorate?(cell, user)
                     //create string from cell
                     let unknown = "Unknown"
-                    let cellString = "\(cell.titleLabel.text ?? unknown): &nbsp;<i>\(cell.itemLabel.text ?? unknown)</i></br>"
+                    let cellString = "\(cell.titleLabel.text?.trimmingCharacters(in: .whitespaces) ?? unknown): &nbsp;<i>\(cell.itemLabel.text ?? unknown)</i></br>"
                     emailBody += cellString
                 }
             }
@@ -1185,6 +1156,10 @@ class SettingsComposeEmailDelegate : NSObject, SettingsViewTableDelegate, MFMail
         
         return emailBody
     }
+    
+}
+
+extension SettingsViewController: MFMailComposeViewControllerDelegate {
     
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
         controller.dismiss(animated: true, completion: nil)
@@ -1345,6 +1320,8 @@ class BigUserCell : UITableViewCell {
                 RZUserDatabase.deleteLocalUser(user, deleteFromClassroom: true)
                 delay(1.0) {
                     RZUserDatabase.getUsersForClassroom(controller.classroom, completion: { users in
+                        guard let users = users else { return }
+                        
                         deletingAlert.dismiss(animated: true, completion: nil)
                         controller.backButtonPressed(self)
                         
@@ -1447,7 +1424,7 @@ func checkAllUsersHavePasscode() {
         if let classroom = classroom {
             RZUserDatabase.getUsersForClassroom(classroom, completion: { users in
                 var noPasscode: [User] = []
-                for user in users {
+                for user in users ?? [] {
                     if user.passcode == nil {
                         noPasscode.append(user)
                     }
@@ -1490,6 +1467,87 @@ func checkAllUsersHavePasscode() {
         }
     })
 }
+
+
+// MARK: - Email system
+
+enum EmailManager {
+    
+    enum MailApp: String, CaseIterable {
+        case system = "Apple Mail"
+        case outlook = "Microsoft Outlook"
+        case other = "Other..."
+        
+        var supported: Bool {
+            switch self {
+            case .system:
+                return MFMailComposeViewController.canSendMail()
+            case .outlook:
+                return UIApplication.shared.canOpenURL(URL(string: "ms-outlook://")!)
+            case .other:
+                return true
+            }
+        }
+        
+        func sendEmail(with htmlBody: String,
+                       named subject: String,
+                       from controller: UIViewController)
+        {
+            switch self {
+            case .system:
+                let mail = MFMailComposeViewController()
+                mail.setMessageBody(htmlBody, isHTML: true)
+                mail.setSubject(subject)
+                mail.mailComposeDelegate = controller as? MFMailComposeViewControllerDelegate
+                controller.present(mail, animated: true, completion: nil)
+                
+            case .outlook:
+                let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!
+                let encodedBody = htmlBody.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!
+                let outlookURL = URL(string: "ms-outlook://compose?subject=\(encodedSubject)&body=\(encodedBody)")!
+                UIApplication.shared.open(outlookURL)
+                
+            case .other:
+                let plaintextContents = htmlBody
+                    .replacingOccurrences(of: "<b>", with: "")
+                    .replacingOccurrences(of: "</b>", with: "")
+                    .replacingOccurrences(of: "<i>", with: "")
+                    .replacingOccurrences(of: "</i>", with: "")
+                    .replacingOccurrences(of: "&nbsp;", with: "")
+                    .replacingOccurrences(of: "</br>", with: "\n")
+                
+                controller.present(
+                    UIActivityViewController(
+                        activityItems: [plaintextContents],
+                        applicationActivities: nil),
+                    animated: true)
+            }
+        }
+        
+    }
+    
+    static func sendCustomEmail(subject: String, body: String, from controller: UIViewController) {
+        let supportedEmailApps = MailApp.allCases.filter { $0.supported }
+        if supportedEmailApps.count == 1 {
+            supportedEmailApps[0].sendEmail(with: body, named: subject, from: controller)
+        }
+            
+        else {
+            let alert = UIAlertController(title: "Select Email App", message: nil, preferredStyle: .actionSheet)
+            
+            supportedEmailApps.forEach { emailApp in
+                alert.addAction(UIAlertAction(title: emailApp.rawValue, style: .default, handler: { _ in
+                    emailApp.sendEmail(with: body, named: subject, from: controller)
+                }))
+            }
+            
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            controller.present(alert, animated: true)
+        }
+    }
+    
+}
+
 
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertFromCATransitionSubtype(_ input: CATransitionSubtype) -> String {

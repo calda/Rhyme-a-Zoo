@@ -77,7 +77,7 @@ class LocationManager : NSObject, CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         for (_, failure) in waitingForUpdate {
-            failure(.error(error as NSError))
+            failure(.error(error))
         }
         waitingForUpdate = []
         manager.stopUpdatingLocation()
@@ -88,6 +88,6 @@ class LocationManager : NSObject, CLLocationManagerDelegate {
 enum LocationFailureReason {
     case permissionsDenied
     case locationServicesDisabled
-    case error(NSError)
+    case error(Error)
 }
 

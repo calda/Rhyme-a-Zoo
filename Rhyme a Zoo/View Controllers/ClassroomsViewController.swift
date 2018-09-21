@@ -103,16 +103,21 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
         
         //load classrooms
         locationManager.getCurrentLocation({ location in
-            
             self.currentLocation = location
             RZUserDatabase.getNearbyClassrooms(location, completion: { nearby in
+                guard let nearby = nearby else {
+                    self.showConnectionIssueAlert()
+                    return
+                }
+                
                 self.nearbyClassrooms = nearby
                 self.dataLoaded(showIntroAlert: showIntroAlert)
             })
-            }, failure: { error in
-                //failed to access location
-                self.dataLoaded(showIntroAlert: showIntroAlert)
-                
+        }, failure: { error in
+            //failed to access location
+            self.dataLoaded(showIntroAlert: false)
+            
+            if showIntroAlert {
                 let alert = UIAlertController(title: "Could not determine location", message: "Enable Location Services or search for your classroom by name.", preferredStyle: .alert)
                 let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
                 let settings = UIAlertAction(title: "Settings", style: .default, handler: { alert in
@@ -121,6 +126,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
                 alert.addAction(ok)
                 alert.addAction(settings)
                 self.present(alert, animated: true, completion: nil)
+            }
         })
     }
     
@@ -155,6 +161,14 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
         }, completion: { success in
             self.activityIndicator.frame.origin = originalIndicatorOrigin
         })
+    }
+    
+    private func showConnectionIssueAlert() {
+        let alert = UIAlertController(title: "Could Not Load Classrooms", message: "You don't seem to be connected to the internet right now.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+        
+        self.dataLoaded(showIntroAlert: false)
     }
     
     func showIntroAlert() {
@@ -326,7 +340,7 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
             
             //check name is unique
             RZUserDatabase.getClassroomsMatchingText(name, location: nil, completion: { classrooms in
-                for classroom in classrooms {
+                for classroom in classrooms ?? [] {
                     if classroom.name == name {
                         self.requestNewClassroomName(location, previousNameAttempt: name)
                         return
@@ -435,6 +449,11 @@ class ClassroomsViewController : UIViewController, UITableViewDataSource, UITabl
         self.nearbyClassroomsLabel.text = "Starts with \"\(text)\""
         
         RZUserDatabase.getClassroomsMatchingText(text, location: currentLocation, completion: { classrooms in
+            guard let classrooms = classrooms else {
+                self.showConnectionIssueAlert()
+                return
+            }
+            
             self.nearbyClassrooms = classrooms
             self.dataLoaded(showIntroAlert: false)
         })

@@ -85,13 +85,17 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
                 
                 //get users
                 RZUserDatabase.getUsersForClassroom(classroom, completion: { users in
+                    guard let users = users else {
+                        self.connectionIssues(duringLoad: true)
+                        return
+                    }
+                    
                     self.cloudUsers = true
                     self.users = users
                     self.activityIndicator.isHidden = true
                     self.decorateForLoadedUsers()
                     self.collectionView.reloadData()
                     self.classroomLinked = true
-                    
                 })
                 
                 return
@@ -129,8 +133,8 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
             
         }
         
-        delay(5.0) {
-            //if it takes more that five seconds to load the users
+        delay(10.0) {
+            //if it takes more than ten seconds to load the users
             if !self.classroomLinked {
                 self.connectionIssues(duringLoad: true)
             }
