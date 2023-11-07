@@ -329,7 +329,7 @@ class RhymeViewController : UIViewController {
         let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "quiz") as! QuizViewController
         controller.quiz = rhyme
         quizBounceTimer?.invalidate()
-        self.present(controller, animated: true, completion: nil)
+        self.presentFullScreen(controller, animated: true, completion: nil)
     }
     
     
@@ -400,7 +400,7 @@ class RhymeViewController : UIViewController {
             let building = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "building") as! BuildingViewController
             building.mustBuy = true
             building.decorate(building: currentZooLevel, displaySize: self.view.frame.size, displayInsets: self.view.raz_safeAreaInsets)
-            self.present(building, animated: true, completion: nil)
+            self.presentFullScreen(building, animated: true, completion: nil)
         })
     }
     

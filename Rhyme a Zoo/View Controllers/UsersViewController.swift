@@ -254,12 +254,12 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
         if coverGradient.alpha == 1.0 {
             if users.count == 0 { //present welcome view if there are no users
                 let welcome = UIStoryboard(name: "User", bundle: nil).instantiateViewController(withIdentifier: "welcome") 
-                self.present(welcome, animated: false, completion: nil)
+                self.presentFullScreen(welcome, animated: false, completion: nil)
             }
             else if users.count == 1 && !cloudUsers && !viewAppearingAnimated { //present main view if there is only one user
                 RZCurrentUser = RZUserDatabase.getLocalUsers()[0]
                 let home = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController()!
-                self.present(home, animated: false, completion: nil)
+                self.presentFullScreen(home, animated: false, completion: nil)
             } else {
                 coverGradient.alpha = 0.0
             }
@@ -316,7 +316,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
         RZCurrentUser = user
         user.pullDataFromCloud()
         let mainMenu = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController()!
-        self.present(mainMenu, animated: true, completion: nil)
+        self.presentFullScreen(mainMenu, animated: true, completion: nil)
         
         if !RZUserDatabase.hasLinkedClassroom() { return }
         
@@ -370,7 +370,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
                     else {
                         //is Add User cell
                         let newUser = UIStoryboard(name: "User", bundle: nil).instantiateViewController(withIdentifier: "newUser") as! NewUserViewController
-                        self.present(newUser, animated: true, completion: nil)
+                        self.presentFullScreen(newUser, animated: true, completion: nil)
                     }
                 } else {
                     selectCell(cell)
@@ -422,7 +422,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
                     
                     let settings = UIStoryboard(name: "User", bundle: nil).instantiateViewController(withIdentifier: "classroomSettings") as! SettingsViewController
                     settings.classroom = classroom
-                    self.present(settings, animated: true, completion: nil)
+                    self.presentFullScreen(settings, animated: true, completion: nil)
                 })
             }
             
@@ -455,7 +455,7 @@ class UsersViewController : UIViewController, UICollectionViewDelegateFlowLayout
                 //present settings controller
                 let settings = UIStoryboard(name: "User", bundle: nil).instantiateViewController(withIdentifier: "classroomSettings") as! SettingsViewController
                 settings.classroom = classroom
-                self.present(settings, animated: true, completion: nil)
+                self.presentFullScreen(settings, animated: true, completion: nil)
                 
                 //switch to users delegate
                 delay(0.6) {

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2E2CE3102AF9E47800277BF9 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 2E2CE30F2AF9E47800277BF9 /* SQLite */; };
+		2E2CE3162AF9F3C200277BF9 /* UIViewController+presentFullScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E2CE3152AF9F3C200277BF9 /* UIViewController+presentFullScreen.swift */; };
 		2E7DD76E213871C4002AE703 /* NewUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7DCD0A213871BF002AE703 /* NewUserViewController.swift */; };
 		2E7DD76F213871C4002AE703 /* UsersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7DCD0B213871BF002AE703 /* UsersViewController.swift */; };
 		2E7DD770213871C4002AE703 /* ZooViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7DCD0C213871BF002AE703 /* ZooViewController.swift */; };
@@ -2657,6 +2658,7 @@
 		2E08997D1B40A5D200693309 /* Rhyme a Zoo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Rhyme a Zoo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2E0899811B40A5D200693309 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2E25436B1B6EA78000AF5338 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
+		2E2CE3152AF9F3C200277BF9 /* UIViewController+presentFullScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+presentFullScreen.swift"; sourceTree = "<group>"; };
 		2E5845D91B65E2A8005080B5 /* Rhyme a Zoo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Rhyme a Zoo.entitlements"; sourceTree = "<group>"; };
 		2E7DCD0A213871BF002AE703 /* NewUserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewUserViewController.swift; sourceTree = "<group>"; };
 		2E7DCD0B213871BF002AE703 /* UsersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersViewController.swift; sourceTree = "<group>"; };
@@ -8133,6 +8135,7 @@
 				2E7DD76C213871C3002AE703 /* UniversalAudio.swift */,
 				2EAB797321406FBE004FAD66 /* LocationManager.swift */,
 				2EC5FAAA2141C34600841D19 /* HomeButton.swift */,
+				2E2CE3152AF9F3C200277BF9 /* UIViewController+presentFullScreen.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -10853,6 +10856,7 @@
 				2E7DD777213871C4002AE703 /* WelcomeViewController.swift in Sources */,
 				2E7DD771213871C4002AE703 /* RhymeViewController.swift in Sources */,
 				2E7DD772213871C4002AE703 /* ZookeeperGameController.swift in Sources */,
+				2E2CE3162AF9F3C200277BF9 /* UIViewController+presentFullScreen.swift in Sources */,
 				2E7DD76E213871C4002AE703 /* NewUserViewController.swift in Sources */,
 				2E7DD77D213871C4002AE703 /* SettingsViewController.swift in Sources */,
 				2E7DE1BB213871C5002AE703 /* Extensions.swift in Sources */,

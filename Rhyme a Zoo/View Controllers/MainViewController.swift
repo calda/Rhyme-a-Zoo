@@ -176,7 +176,7 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
                     if let controller = controller as? CatalogViewController {
                         controller.animatingFromHome = true
                     }
-                    self.present(controller, animated: true, completion: nil)
+                    self.presentFullScreen(controller, animated: true, completion: nil)
                 }
                 
             }
@@ -190,7 +190,7 @@ class MainViewController: UIViewController, UIGestureRecognizerDelegate {
     @IBAction func editUser(_ sender: UIButton) {
         let editUserController = UIStoryboard(name: "User", bundle: nil).instantiateViewController(withIdentifier: "newUser") as! NewUserViewController
         editUserController.openInEditModeForUser(RZCurrentUser)
-        self.present(editUserController, animated: true, completion: nil)
+        self.presentFullScreen(editUserController, animated: true, completion: nil)
     }
     
     func createImageForZookeeper() {

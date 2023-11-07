@@ -254,7 +254,7 @@ class NewUserViewController : UIViewController, UICollectionViewDataSource, UICo
         RZCurrentUser = user
         
         let mainMenu = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController()!
-        self.present(mainMenu, animated: true, completion: nil)
+        self.presentFullScreen(mainMenu, animated: true, completion: nil)
     }
     
     //MARK: Edit Mode (launched from Home view)

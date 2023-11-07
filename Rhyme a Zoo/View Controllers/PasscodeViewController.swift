@@ -208,7 +208,7 @@ func requestPasscode(_ correctPasscode: String, description: String, currentCont
     
     passcode.playAudioPrompts = forKids
     passcode.modalPresentationStyle = .overCurrentContext
-    current.present(passcode, animated: true, completion: nil)
+    current.presentFullScreen(passcode, animated: true, completion: nil)
     
     passcode.completion = { success in
         passcode.dismiss(animated: true, completion: {
@@ -224,7 +224,7 @@ func createPasscode(_ description: String, currentController current: UIViewCont
     passcode.descriptionString = description
     
     passcode.modalPresentationStyle = .overCurrentContext
-    current.present(passcode, animated: true, completion: nil)
+    current.presentFullScreen(passcode, animated: true, completion: nil)
     
     passcode.creationComplation = { newPasscode in
         passcode.dismiss(animated: true, completion: {

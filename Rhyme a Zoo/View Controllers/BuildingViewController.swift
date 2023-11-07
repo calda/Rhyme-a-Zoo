@@ -361,7 +361,7 @@ class BuildingViewController : ZookeeperGameController {
                                     displaySize: self.view.frame.size,
                                     displayInsets: self.view.raz_safeAreaInsets)
                                 
-                                self.present(controller, animated: true, completion: nil)
+                                self.presentFullScreen(controller, animated: true, completion: nil)
                             }
                         })
                     }

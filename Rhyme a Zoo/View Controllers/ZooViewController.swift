@@ -107,7 +107,7 @@ class ZooViewController : ZookeeperGameController {
             
             let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "building") as! BuildingViewController
             controller.decorate(building: building, displaySize: view.frame.size, displayInsets: view.raz_safeAreaInsets)
-            self.present(controller, animated: true, completion: nil)
+            self.presentFullScreen(controller, animated: true, completion: nil)
             
         }
         else {

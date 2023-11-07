@@ -119,7 +119,7 @@ class CatalogViewController : UIViewController, UICollectionViewDelegateFlowLayo
         
         let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "rhyme") as! RhymeViewController
         controller.decorate(rhyme)
-        self.present(controller, animated: true, completion: nil)
+        self.presentFullScreen(controller, animated: true, completion: nil)
     }
     
     var cellSize: CGSize {

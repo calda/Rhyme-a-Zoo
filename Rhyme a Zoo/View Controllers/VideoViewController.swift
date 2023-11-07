@@ -157,6 +157,6 @@ func playVideo(name: String, currentController: UIViewController, completion: ((
     let videoController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "video") as! VideoViewController
     videoController.videoName = name
     videoController.completion = completion
-    currentController.present(videoController, animated: true, completion: nil)
+    currentController.presentFullScreen(videoController, animated: true, completion: nil)
 }
 
