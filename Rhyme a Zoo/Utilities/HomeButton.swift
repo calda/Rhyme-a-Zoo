@@ -31,23 +31,12 @@ class HomeButton: UIButton {
                 viewController = previousController
             }
             
-            // ⚠️ hack ahead ⚠️
             viewController.dismiss(animated: true, completion: nil)
-            
-            // the dismissal animation is a bit buggy --
-            // it dismisses the top-most VC instantly, and then plays the animation
-            // on the MainViewController's first-presented VC.
-            // Get around this issue by  transplanting the visible view heirarchy
-            // onto the VC that will actually get dismissed
             
             // we also have to temporarily disable audio playback, because some VCs
             // play audio on viewDidAppear
             UAHaltPlayback()
             UADisablePlayback(forSeconds: 0.5)
-            
-            if let dismissingViewController = viewController.presentedViewController {
-                dismissingViewController.view.addSubview(topController.view)
-            }
         }
     }
     
