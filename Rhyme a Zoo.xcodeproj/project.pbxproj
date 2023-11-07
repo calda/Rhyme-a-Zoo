@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2E2CE3102AF9E47800277BF9 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 2E2CE30F2AF9E47800277BF9 /* SQLite */; };
 		2E7DD76E213871C4002AE703 /* NewUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7DCD0A213871BF002AE703 /* NewUserViewController.swift */; };
 		2E7DD76F213871C4002AE703 /* UsersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7DCD0B213871BF002AE703 /* UsersViewController.swift */; };
 		2E7DD770213871C4002AE703 /* ZooViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7DCD0C213871BF002AE703 /* ZooViewController.swift */; };
@@ -2650,7 +2651,6 @@
 		2EAB797421406FBE004FAD66 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EAB797321406FBE004FAD66 /* LocationManager.swift */; };
 		2EC5FAAB2141C34600841D19 /* HomeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC5FAAA2141C34600841D19 /* HomeButton.swift */; };
 		2EC5FAAD2141DF5400841D19 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E25436B1B6EA78000AF5338 /* CloudKit.framework */; };
-		2EC5FAB02141E14700841D19 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E7DE1C021387815002AE703 /* SQLite.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -5298,7 +5298,6 @@
 		2E7DD76B213871C3002AE703 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		2E7DD76C213871C3002AE703 /* UniversalAudio.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniversalAudio.swift; sourceTree = "<group>"; };
 		2E7DD76D213871C3002AE703 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		2E7DE1C021387815002AE703 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = Carthage/Build/iOS/SQLite.framework; sourceTree = "<group>"; };
 		2EAB797321406FBE004FAD66 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		2EC5FAAA2141C34600841D19 /* HomeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -5308,8 +5307,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2E2CE3102AF9E47800277BF9 /* SQLite in Frameworks */,
 				2EC5FAAD2141DF5400841D19 /* CloudKit.framework in Frameworks */,
-				2EC5FAB02141E14700841D19 /* SQLite.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5321,7 +5320,6 @@
 			children = (
 				2E08997F1B40A5D200693309 /* Rhyme a Zoo */,
 				2E25436B1B6EA78000AF5338 /* CloudKit.framework */,
-				2E7DE1C021387815002AE703 /* SQLite.framework */,
 				2EC5FAAC2141DF5300841D19 /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -8154,7 +8152,6 @@
 			buildConfigurationList = 2E08999C1B40A5D300693309 /* Build configuration list for PBXNativeTarget "Rhyme a Zoo" */;
 			buildPhases = (
 				2E0899791B40A5D200693309 /* Sources */,
-				2EC5FAAF2141E08700841D19 /* ShellScript */,
 				2E08997A1B40A5D200693309 /* Frameworks */,
 				2E08997B1B40A5D200693309 /* Resources */,
 			);
@@ -8163,6 +8160,9 @@
 			dependencies = (
 			);
 			name = "Rhyme a Zoo";
+			packageProductDependencies = (
+				2E2CE30F2AF9E47800277BF9 /* SQLite */,
+			);
 			productName = "Rhyme a Zoo";
 			productReference = 2E08997D1B40A5D200693309 /* Rhyme a Zoo.app */;
 			productType = "com.apple.product-type.application";
@@ -8195,10 +8195,14 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
 			mainGroup = 2E0899741B40A5D200693309;
+			packageReferences = (
+				2E2CE30E2AF9E47800277BF9 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
+			);
 			productRefGroup = 2E08997E1B40A5D200693309 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -10837,28 +10841,6 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		2EC5FAAF2141E08700841D19 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/SQLite.framework",
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SQLite.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		2E0899791B40A5D200693309 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -11022,7 +11004,8 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -11042,8 +11025,11 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = "Rhyme a Zoo/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.raz.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -11065,8 +11051,11 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = "Rhyme a Zoo/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.raz.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -11097,6 +11086,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2E2CE30E2AF9E47800277BF9 /* XCRemoteSwiftPackageReference "SQLite.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stephencelis/SQLite.swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.14.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2E2CE30F2AF9E47800277BF9 /* SQLite */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2E2CE30E2AF9E47800277BF9 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
+			productName = SQLite;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2E0899751B40A5D200693309 /* Project object */;
 }
